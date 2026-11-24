@@ -5,7 +5,6 @@ import { JsonLd } from "@/components/JsonLd";
 import { ArrowRight, Mail, Phone } from "@/components/icons";
 import { breadcrumbSchema, graph, ids } from "@/lib/schema";
 import { site } from "@/lib/site";
-import { turnstileSiteKey } from "@/lib/turnstile";
 
 export const metadata: Metadata = {
   title: { absolute: site.seo.contact.title },
@@ -36,7 +35,7 @@ export default function ContactPage() {
           <div className="rounded-[32px] bg-white p-6 shadow-[0_30px_60px_-30px_rgba(12,47,90,0.45),0_0_0_1px_rgba(12,47,90,0.04)] sm:p-10 lg:p-12">
             <h2 className="font-display text-[26px] font-extrabold tracking-[-0.02em] text-navy">Quick Contact</h2>
             <div className="mt-6">
-              <ContactForm turnstileSiteKey={turnstileSiteKey()} />
+              <ContactForm />
             </div>
           </div>
 

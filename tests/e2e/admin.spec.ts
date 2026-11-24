@@ -28,7 +28,8 @@ test("+ New author from a book keeps the book form and selects the new author", 
 
 test("+ New book from an author creates a book linked to that author", async ({ page }) => {
   await login(page);
-  await page.goto("/admin/collections/authors/");
+  // The list is paginated and the site has dozens of authors: search for the new one.
+  await page.goto(`/admin/collections/authors/?search=${encodeURIComponent(authorName)}`);
   await page.getByRole("link", { name: authorName }).first().click();
   await page.getByRole("button", { name: "Add new", exact: true }).click();
   const drawer = page.locator(".drawer--is-open").last();

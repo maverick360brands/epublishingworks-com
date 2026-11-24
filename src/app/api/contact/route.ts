@@ -1,13 +1,10 @@
-import { clientIp, isEmail, rowsToHtml, sendFormEmail } from "@/lib/forms";
-import { verifyTurnstile } from "@/lib/turnstile";
+import { isEmail, isSameSite, isSpam, rowsToHtml, sendFormEmail } from "@/lib/forms";
 
 // Replaces the Thrive "Quick Contact" form on /contact/: name, email, message.
 export async function POST(request: Request) {
   const form = await request.formData();
-  if (String(form.get("website") ?? "")) return Response.json({ ok: true }); // honeypot
-  if (!(await verifyTurnstile(String(form.get("cf-turnstile-response") ?? ""), clientIp(request)))) {
-    return Response.json({ error: "Please complete the spam check and try again." }, { status: 400 });
-  }
+  if (await isSpam(form, request)) return Response.json({ ok: true }); // dropped quietly
+  if (!isSameSite(request)) return Response.json({ error: "Please send your message from our website." }, { status: 403 });
   const value = (k: string) => String(form.get(k) ?? "").trim().slice(0, 5000);
   const data = { name: value("name"), email: value("email"), message: value("message") };
   if (!data.name || !data.message || !isEmail(data.email)) {

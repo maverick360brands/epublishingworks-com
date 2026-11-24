@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 
-// Both forms, against a local production build: Turnstile uses Cloudflare's always-pass test
-// keys off production, and without Resend configured submissions are logged and accepted.
+// Both forms, against a local production build: without Resend configured, submissions are logged
+// and accepted.
 
 test("the contact form sends and thanks the visitor in place", async ({ page }) => {
   await page.goto("/contact/", { waitUntil: "networkidle" }); // interact only after hydration
@@ -52,5 +52,5 @@ test("the manuscript form insists on at least one interest", async ({ page }) =>
   await page.getByLabel("Yes, already edited.").check();
   await page.getByLabel("Referral").check();
   await page.getByRole("button", { name: "Submit Manuscript" }).click();
-  await expect(page.getByRole("alert")).toContainText("at least one");
+  await expect(page.getByRole("alert").filter({ hasText: /\S/ })).toContainText("at least one"); // skip Next.js's empty route announcer
 });

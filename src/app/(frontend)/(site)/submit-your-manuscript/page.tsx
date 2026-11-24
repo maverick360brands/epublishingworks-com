@@ -8,7 +8,6 @@ import { CheckCircle } from "@/components/icons";
 import { bookAuthorLabel, getCatalog, heroBooks } from "@/lib/content";
 import { breadcrumbSchema, graph } from "@/lib/schema";
 import { site } from "@/lib/site";
-import { turnstileSiteKey } from "@/lib/turnstile";
 
 export const metadata: Metadata = {
   title: { absolute: site.seo.submit.title },
@@ -85,7 +84,7 @@ export default async function SubmitManuscriptPage() {
               Fields marked <span className="text-gold-ink">*</span> are required.
             </p>
             <div className="mt-8">
-              <ManuscriptForm turnstileSiteKey={turnstileSiteKey()} uploadsEnabled={Boolean(process.env.BLOB_READ_WRITE_TOKEN)} />
+              <ManuscriptForm uploadsEnabled={Boolean(process.env.BLOB_READ_WRITE_TOKEN)} />
             </div>
           </div>
         </div>

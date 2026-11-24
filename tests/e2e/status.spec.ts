@@ -7,7 +7,7 @@ const EMAIL = process.env.E2E_EMAIL || "editor@example.com";
 const PASSWORD = process.env.E2E_PASSWORD || "editor-pass-123";
 const fs = await import("node:fs");
 const legacy = fs.readFileSync("tests/fixtures/legacy-urls.txt", "utf8").trim().split("\n");
-// Legacy addresses that moved (old new), e.g. a misspelled WordPress address.
+// Legacy addresses that moved (old new), from migration/redirects.csv.
 const moved = fs.readFileSync("tests/fixtures/legacy-redirects.txt", "utf8").trim().split("\n").map((l) => l.split(" "));
 
 const status = async (request: APIRequestContext, path: string) => {
@@ -41,10 +41,10 @@ test("every legacy WordPress URL still returns 200", async ({ request }) => {
   for (const path of legacy) expect.soft((await status(request, path)).code, path).toBe(200);
 });
 
-test("moved legacy WordPress URLs redirect permanently to the new address", async ({ request }) => {
+test("moved legacy WordPress URLs redirect permanently (301, one hop) to the new address", async ({ request }) => {
   for (const [from, to] of moved) {
     const res = await status(request, from);
-    expect.soft(res.code, from).toBe(308);
+    expect.soft(res.code, from).toBe(301);
     expect.soft(new URL(res.location, "http://x").pathname, from).toBe(to);
     expect.soft((await status(request, to)).code, to).toBe(200);
   }
@@ -75,14 +75,14 @@ test("a hidden book redirects to its author's page, temporarily", async ({ reque
 
 test("a renamed book's old address redirects permanently to the new one", async ({ request }) => {
   await signIn(request);
-  const id = await bookId(request, "unshakable");
+  const id = await bookId(request, "strong-spirits-alice-duncan");
   try {
-    await request.patch(`/api/cms/books/${id}`, { data: { slug: "unshakablebook" } });
-    expect(await eventually(async () => (await status(request, "/unshakable/")).code === 308)).toBe(true);
+    await request.patch(`/api/cms/books/${id}`, { data: { slug: "strong-spirits-renamed" } });
+    expect(await eventually(async () => (await status(request, "/strong-spirits-alice-duncan/")).code === 308)).toBe(true);
     // Every 308 along the way must carry the new address.
-    expect((await status(request, "/unshakable/")).location).toMatch(/\/unshakablebook\/$/);
+    expect((await status(request, "/strong-spirits-alice-duncan/")).location).toMatch(/\/strong-spirits-renamed\/$/);
   } finally {
-    await request.patch(`/api/cms/books/${id}`, { data: { slug: "unshakable" } });
+    await request.patch(`/api/cms/books/${id}`, { data: { slug: "strong-spirits-alice-duncan" } });
   }
-  expect(await eventually(async () => (await status(request, "/unshakable/")).code === 200)).toBe(true);
+  expect(await eventually(async () => (await status(request, "/strong-spirits-alice-duncan/")).code === 200)).toBe(true);
 });

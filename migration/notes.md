@@ -171,7 +171,7 @@ The book landing pages and the template page use their own minimal footer: "Copy
 
 - Thrive layout: sections, columns, wave dividers, diagonal gradients, photo-as-column-background with blue overlay, sticky two-state header. Layout is described per section in `migration/pages/*.md` (`<!-- layout: … -->`).
 - Shared Thrive symbols repeated across pages: FAQ block (Home, FAQ, Submission Guidelines), Testimonials block (The Advantage, Submission Guidelines), 3-step roadmap (Home, Submission Guidelines; variant on About), closing CTA band (Home, The Advantage). These should become reusable components.
-- Forms (2) with Thrive's AJAX handler, Dropbox upload and unknown API connections; the new stack must rebuild both (with Turnstile) and decide where manuscripts go (Dropbox or elsewhere) and who gets notified.
+- Forms (2) with Thrive's AJAX handler, Dropbox upload and unknown API connections; the new stack must rebuild both and decide where manuscripts go (Dropbox or elsewhere) and who gets notified.
 - Carousels, accordion, tabs, star ratings, animated underline highlights, button hover animations, countdown timers (book pages).
 - Inline SVG icons from Thrive icon packs (Font Awesome / Material duotone names noted in the page files): replace with the stack's icon set.
 - Testimonial "cards" with photo + stars + headline + quote: data is in `content/site/testimonials.json`.
@@ -235,7 +235,7 @@ Because `/apprentice-registration-page/` is indexable and in the sitemap, Google
 - **`/thank-you/`** is `noindex` and left out of the sitemap. Its "within 48 hours" line is kept verbatim (it conflicts with "2 to 4 business days" elsewhere; see section 11).
 - **Reviews heading typo** ("some our authors") reads "some of our authors".
 - **Navigation:** Books, Authors, About, The Advantage, Submissions, Blog, Contact (the WordPress menu had About as "Why Choose Us?", The Advantage, Submission Guidelines, and FAQ). FAQ and Reviews are in the footer.
-- **Forms:** same fields as Thrive; fields whose labels carried `*` are now actually required. Manuscript files upload to Vercel Blob (instead of the Dropbox folder "EPW Manuscript Submissions") and the notification email links to them. Both forms add Cloudflare Turnstile.
+- **Forms:** same fields as Thrive; fields whose labels carried `*` are now actually required. Manuscript files upload to Vercel Blob (instead of the Dropbox folder "EPW Manuscript Submissions") and the notification email links to them. No Turnstile: ePublishingWorks' own spam controller will be connected (honeypot and same-site check until then).
 - **Fonts:** one self-hosted variable font (Manrope) replaces Manrope, Muli, and Lato from Google Fonts.
 - **Home page:** the carousel's books are featured (in its order) on the cover wall and a new "Featured books" row; "Eternal Beloved" by Mary Ellen Johnson appears only in that carousel, not on her author page, so it isn't in the catalog yet.
 

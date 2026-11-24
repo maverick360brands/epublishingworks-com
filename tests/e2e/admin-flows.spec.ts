@@ -29,7 +29,7 @@ async function save(page: Page) {
 
 test("ticking Feature in home hero puts the cover on the home page", async ({ page }) => {
   await login(page);
-  await openBySlug(page, "books", "breathlesslove");
+  await openBySlug(page, "books", "the-protector-marliss-melton");
   const box = page.locator("#field-heroFeatured");
   if (await box.isChecked()) {
     await box.uncheck();
@@ -38,36 +38,36 @@ test("ticking Feature in home hero puts the cover on the home page", async ({ pa
   await box.check();
   await save(page);
   // Featured books come first, most recently edited first: this one leads the wall now.
-  expect(await eventually(async () => (await (await page.request.get("/")).text()).match(/_next\/image\/\?url=[^"&]*breathless/i) !== null)).toBe(true);
+  expect(await eventually(async () => (await (await page.request.get("/")).text()).match(/_next\/image\/\?url=[^"&]*the-protector/i) !== null)).toBe(true);
 });
 
 test("hiding a book sends its address to the author's page", async ({ page }) => {
   await login(page);
-  await openBySlug(page, "books", "breathlesslove");
+  await openBySlug(page, "books", "the-protector-marliss-melton");
   try {
     await page.locator("#field-hidden").check();
     await save(page);
-    expect(await eventually(async () => (await page.request.get("/breathlesslove/", { maxRedirects: 0 })).status() === 307)).toBe(true);
+    expect(await eventually(async () => (await page.request.get("/the-protector-marliss-melton/", { maxRedirects: 0 })).status() === 307)).toBe(true);
   } finally {
     await page.locator("#field-hidden").uncheck();
     await save(page);
   }
-  expect(await eventually(async () => (await page.request.get("/breathlesslove/", { maxRedirects: 0 })).status() === 200)).toBe(true);
+  expect(await eventually(async () => (await page.request.get("/the-protector-marliss-melton/", { maxRedirects: 0 })).status() === 200)).toBe(true);
 });
 
 test("renaming a post's address redirects the old one permanently", async ({ page }) => {
   await login(page);
-  await openBySlug(page, "posts", "is-it-too-early-to-talk-to-a-publisher");
+  await openBySlug(page, "posts", "how-to-republish-your-backlist");
   const field = page.locator("#field-slug");
   try {
-    await field.fill("too-early-to-talk-to-a-publisher");
+    await field.fill("republish-your-backlist");
     await save(page);
-    expect(await eventually(async () => (await page.request.get("/blog/is-it-too-early-to-talk-to-a-publisher/", { maxRedirects: 0 })).status() === 308)).toBe(true);
+    expect(await eventually(async () => (await page.request.get("/blog/how-to-republish-your-backlist/", { maxRedirects: 0 })).status() === 308)).toBe(true);
   } finally {
-    await field.fill("is-it-too-early-to-talk-to-a-publisher");
+    await field.fill("how-to-republish-your-backlist");
     await save(page);
   }
-  expect(await eventually(async () => (await page.request.get("/blog/is-it-too-early-to-talk-to-a-publisher/", { maxRedirects: 0 })).status() === 200)).toBe(true);
+  expect(await eventually(async () => (await page.request.get("/blog/how-to-republish-your-backlist/", { maxRedirects: 0 })).status() === 200)).toBe(true);
 });
 
 test("an author with books can't be deleted", async ({ page }) => {

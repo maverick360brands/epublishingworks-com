@@ -1,11 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useRef, useState, type FormEvent } from "react";
-import { Turnstile, type TurnstileHandle } from "./Turnstile";
+import { useState, type FormEvent } from "react";
 
 // Replaces the Thrive "Quick Contact" form: name, email, and message, with an inline success
-// message (as on WordPress). Spam protection: Turnstile plus a honeypot.
+// message (as on WordPress). Spam: a honeypot here; the server adds its own checks.
 
 const input =
   "block h-[52px] w-full rounded-[14px] border border-line bg-white px-4 text-[16px] text-navy placeholder:text-body/60 transition-[border-color,box-shadow] focus:border-blue focus:shadow-[0_0_0_4px_color-mix(in_srgb,var(--color-blue)_14%,transparent)] focus:outline-none";
@@ -13,9 +12,7 @@ const label = "mb-2 block font-display text-[15px] font-bold text-navy";
 
 type Status = { kind: "idle" | "sending" | "sent" } | { kind: "error"; message: string };
 
-export function ContactForm({ turnstileSiteKey }: { turnstileSiteKey: string }) {
-  const turnstile = useRef<TurnstileHandle>(null);
-  const [token, setToken] = useState("");
+export function ContactForm() {
   const [status, setStatus] = useState<Status>({ kind: "idle" });
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
@@ -28,7 +25,6 @@ export function ContactForm({ turnstileSiteKey }: { turnstileSiteKey: string }) 
       if (!res.ok) throw new Error(body.error ?? "Your message wasn't sent. Please try again, or call us at 866-846-5123.");
       setStatus({ kind: "sent" });
     } catch (error) {
-      turnstile.current?.reset();
       setStatus({ kind: "error", message: (error as Error).message });
     }
   }
@@ -71,8 +67,6 @@ export function ContactForm({ turnstileSiteKey }: { turnstileSiteKey: string }) 
         </label>
       </div>
 
-      <Turnstile ref={turnstile} siteKey={turnstileSiteKey} onToken={setToken} />
-
       {status.kind === "error" ? (
         <p role="alert" className="rounded-[14px] bg-[#fdecea] px-4 py-3 font-semibold text-[#a3221a]">
           {status.message}
@@ -87,7 +81,7 @@ export function ContactForm({ turnstileSiteKey }: { turnstileSiteKey: string }) 
           </Link>
           ).
         </p>
-        <button type="submit" disabled={status.kind === "sending" || !token} className="btn btn-gold btn-lg shrink-0 disabled:opacity-60">
+        <button type="submit" disabled={status.kind === "sending"} className="btn btn-gold btn-lg shrink-0 disabled:opacity-60">
           {status.kind === "sending" ? "Sending…" : "Send Message"}
         </button>
       </div>

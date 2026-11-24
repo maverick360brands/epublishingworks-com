@@ -74,7 +74,7 @@ Admin → Users → Create New. Enter their email and a temporary password, and 
 | Manuscript submission | `/submit-your-manuscript/` | `/api/manuscript/` | Same questions as the Thrive form. The file (.pdf, .doc, .docx, .zip, up to 20 MB) uploads from the browser straight to Vercel Blob under `manuscripts/` with a random, unguessable name; the email links to it. |
 | Contact | `/contact/` | `/api/contact/` | |
 
-Both forms use Cloudflare Turnstile and a honeypot, then email the team through Resend and send the visitor to `/thank-you/`. One Turnstile check per manuscript submission is exchanged for a 30-minute signed ticket (`src/lib/forms.ts`) that the upload and the form both accept. Without `RESEND_API_KEY` and `CONTACT_TO_EMAIL`, submissions are logged and still accepted (so staging works). Subjects sent off production start with `[staging]`.
+Both forms email the team through Resend (the manuscript form then sends the visitor to `/thank-you/`; the contact form thanks them in place). Spam filtering: a honeypot field and a same-site check, with ePublishingWorks' own spam controller to plug in at `isSpam()` in `src/lib/forms.ts` (no Turnstile on this site, by Dustin's decision). Each manuscript submission gets a 30-minute signed ticket that the upload and the form both require, so the upload route only hands out Blob tokens to the site's own form. Without `RESEND_API_KEY` and `CONTACT_TO_EMAIL`, submissions are logged and still accepted (so staging works). Subjects sent off production start with `[staging]`.
 
 ## SEO and AEO features
 
@@ -96,7 +96,6 @@ Both forms use Cloudflare Turnstile and a honeypot, then email the team through 
 | `RESEND_API_KEY` | Sends form email through Resend. |
 | `CONTACT_TO_EMAIL` | Comma-separated recipients for form submissions. |
 | `CONTACT_FROM_EMAIL` | Optional sender, e.g. `ePublishingWorks Website <website@epublishingworks.com>` (the domain must be verified in Resend). |
-| `NEXT_PUBLIC_TURNSTILE_SITE_KEY`, `TURNSTILE_SECRET_KEY` | Cloudflare Turnstile, Production only. Previews fall back to Cloudflare's always-pass test keys; production without them rejects every form. |
 | `DATABASE_URL` | Neon Postgres for the CMS. Set by the Neon integration. |
 | `PAYLOAD_SECRET` | Long random string that secures admin sign-ins and signs form tickets (`openssl rand -hex 32`). Required: the build fails without it. |
 | `ADMIN_SETUP_EMAIL` | The only email that can create the first admin account (before anyone is signed in). |
@@ -110,7 +109,7 @@ Both forms use Cloudflare Turnstile and a honeypot, then email the team through 
 
 - **Vercel project** `epublishingworks-com` (created, Maverick360 team, Vercel Authentication on): connect the Neon and Blob stores, set `PAYLOAD_SECRET` and `ADMIN_SETUP_EMAIL`, then **delete `CONTENT_SOURCE`** (the preview runs without a database until then; the build refuses files mode once a real domain is attached). Make `main` the repo's default and production branch.
 - **Resend:** verify the sending domain and set `RESEND_API_KEY`, `CONTACT_TO_EMAIL`, `CONTACT_FROM_EMAIL`.
-- **Turnstile:** create the widget for `epublishingworks.com` and `www.epublishingworks.com` and set both keys in Production.
+- **Spam controller:** connect ePublishingWorks' spam controller at `isSpam()` in `src/lib/forms.ts`.
 - **Admin:** after the first production deploy, create the first user at `/admin/` with the `ADMIN_SETUP_EMAIL` address, then add the editors.
 - **Catalog review:** read `migration/catalog-report.md` (books without buy links, genre judgment calls, anything the extraction couldn't resolve).
 - **Blog:** have the client review the six launch articles (in the admin under Posts).

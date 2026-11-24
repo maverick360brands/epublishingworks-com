@@ -1,4 +1,6 @@
 // Shared server-side helpers for the site's forms (manuscript submission and contact).
+// Spam: a honeypot field and a same-site check for now; ePublishingWorks' own spam controller
+// plugs in at isSpam() below (TODO(dustin): which service, and its keys).
 // Email goes out through Resend (https://resend.com) once RESEND_API_KEY and CONTACT_TO_EMAIL are
 // set. Without them the submission is logged and still accepted, so staging and the form tests
 // work before email is configured. Every subject sent off production is tagged [staging].
@@ -8,8 +10,30 @@ export const escapeHtml = (s: string) => s.replace(/[&<>"']/g, (c) => ({ "&": "&
 
 export const isEmail = (s: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s);
 
-/** The client's IP as Vercel reports it, for Turnstile. */
+/** The client's IP as Vercel reports it (for a spam controller). */
 export const clientIp = (request: Request) => request.headers.get("x-real-ip") ?? request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? null;
+
+/** True when the request comes from one of this site's own pages (Origin, else Referer, matches Host). */
+export function isSameSite(request: Request): boolean {
+  const host = request.headers.get("x-forwarded-host") ?? request.headers.get("host");
+  const from = request.headers.get("origin") ?? request.headers.get("referer");
+  if (!host || !from) return false;
+  try {
+    return new URL(from).host === host;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Where ePublishingWorks' spam controller plugs in: return true to drop a submission. Until it's
+ * connected, the honeypot (`website` field) and the same-site check are the only filters.
+ */
+export async function isSpam(form: FormData, request: Request): Promise<boolean> {
+  if (String(form.get("website") ?? "")) return true; // honeypot: hidden from people, filled in by bots
+  void request;
+  return false;
+}
 
 /** Label/value rows as simple HTML paragraphs (values escaped, line breaks kept). */
 export const rowsToHtml = (rows: [string, string][]) =>
@@ -44,11 +68,13 @@ export async function sendFormEmail({ subject, html, replyTo }: { subject: strin
   return "sent";
 }
 
-// A submission ticket proves the visitor passed Turnstile a moment ago. The manuscript form needs
-// two requests (the file upload, then the form), and a Turnstile token can be checked only once,
-// so the first check is exchanged for a short-lived signed ticket that both requests accept.
+// A submission ticket is a short-lived signed pass, issued only to the site's own pages, that both
+// steps of a manuscript submission (the file upload, then the form) must present. It keeps the
+// Blob upload route from handing out upload tokens to anyone who finds its address.
 const TICKET_TTL_MS = 30 * 60_000;
-const secret = () => process.env.PAYLOAD_SECRET || "";
+// Signed with PAYLOAD_SECRET (required wherever the CMS runs). A files-mode preview has no CMS and
+// no uploads, so it signs with a fixed key rather than refusing every submission.
+const secret = () => process.env.PAYLOAD_SECRET || (process.env.CONTENT_SOURCE === "files" ? "files-preview-only" : "");
 const sign = (payload: string) => createHmac("sha256", secret()).update(`submission:${payload}`).digest("base64url");
 
 export function issueTicket(now = Date.now()) {

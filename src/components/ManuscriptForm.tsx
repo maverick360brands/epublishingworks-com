@@ -4,13 +4,12 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { upload } from "@vercel/blob/client";
 import { useRef, useState, type FormEvent, type ReactNode } from "react";
-import { Turnstile, type TurnstileHandle } from "./Turnstile";
 import { MANUSCRIPT_EXTENSIONS, MANUSCRIPT_MAX_BYTES } from "@/lib/manuscript";
 
-// Replaces the Thrive manuscript form, with the same questions and choices. On submit: one
-// Turnstile check buys a short-lived ticket (/api/manuscript/ticket/), the file goes straight to
-// Vercel Blob (/api/manuscript/upload/), then the answers and the file link are sent
-// (/api/manuscript/) and the visitor lands on /thank-you/.
+// Replaces the Thrive manuscript form, with the same questions and choices. On submit: a
+// short-lived ticket (/api/manuscript/ticket/), the file straight to Vercel Blob
+// (/api/manuscript/upload/), then the answers and the file link (/api/manuscript/), and the
+// visitor lands on /thank-you/.
 
 const GENRES = ["Thriller", "Cozy Mystery", "Mystery", "Romance", "Poetry", "Young Adult Fiction", "Non-Fiction", "Memoir/Auto-Biography", "Children's", "Other"];
 const INTERESTS = ["Higher Royalties", "Retain Book Ownership", "Ability to Focus on Writing", "Professional Guidance", "Alignment and Fit", "Our Genre List", "Other"];
@@ -47,26 +46,20 @@ const Fieldset = ({ legend, children }: { legend: string; children: ReactNode })
 
 type Status = { kind: "idle" } | { kind: "working"; step: string; progress?: number } | { kind: "error"; message: string };
 
-export function ManuscriptForm({ turnstileSiteKey, uploadsEnabled }: { turnstileSiteKey: string; uploadsEnabled: boolean }) {
+export function ManuscriptForm({ uploadsEnabled }: { uploadsEnabled: boolean }) {
   const router = useRouter();
-  const turnstile = useRef<TurnstileHandle>(null);
   const ticket = useRef<{ value: string; at: number } | null>(null);
-  const [token, setToken] = useState("");
   const [status, setStatus] = useState<Status>({ kind: "idle" });
   const [about, setAbout] = useState("");
   const [file, setFile] = useState<File | null>(null);
-  const [hasTicket, setHasTicket] = useState(false);
   const working = status.kind === "working";
 
   async function getTicket() {
     if (ticket.current && Date.now() - ticket.current.at < 25 * 60_000) return ticket.current.value;
-    if (!token) throw new Error("Please complete the spam check above the Submit button.");
-    const res = await fetch("/api/manuscript/ticket/", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ token }) });
+    const res = await fetch("/api/manuscript/ticket/", { method: "POST" });
     const body = (await res.json().catch(() => ({}))) as { ticket?: string; error?: string };
-    turnstile.current?.reset();
-    if (!res.ok || !body.ticket) throw new Error(body.error ?? "The spam check failed. Please try again.");
+    if (!res.ok || !body.ticket) throw new Error(body.error ?? "Something went wrong. Please try again.");
     ticket.current = { value: body.ticket, at: Date.now() };
-    setHasTicket(true);
     return body.ticket;
   }
 
@@ -79,7 +72,7 @@ export function ManuscriptForm({ turnstileSiteKey, uploadsEnabled }: { turnstile
       return;
     }
     try {
-      setStatus({ kind: "working", step: "Checking…" });
+      setStatus({ kind: "working", step: "Preparing…" });
       const t = await getTicket();
       data.set("ticket", t);
       data.delete("manuscript");
@@ -242,8 +235,6 @@ export function ManuscriptForm({ turnstileSiteKey, uploadsEnabled }: { turnstile
         </label>
       </div>
 
-      <Turnstile ref={turnstile} siteKey={turnstileSiteKey} onToken={setToken} />
-
       {status.kind === "error" ? (
         <p role="alert" className="rounded-[14px] bg-[#fdecea] px-4 py-3 font-semibold text-[#a3221a]">
           {status.message}
@@ -264,7 +255,7 @@ export function ManuscriptForm({ turnstileSiteKey, uploadsEnabled }: { turnstile
           </Link>
           ).
         </p>
-        <button type="submit" disabled={working || (!token && !hasTicket)} className="btn btn-gold btn-lg shrink-0 disabled:opacity-60">
+        <button type="submit" disabled={working} className="btn btn-gold btn-lg shrink-0 disabled:opacity-60">
           {working ? "Submitting…" : "Submit Manuscript"}
         </button>
       </div>

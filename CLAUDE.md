@@ -53,7 +53,9 @@ Thrive Apprentice course URLs were dropped on purpose (no course); see `migratio
 
 - Forms: manuscript submission (`/submit-your-manuscript/`, with file upload to Vercel Blob) and contact
   (`/contact/`). Both email the team through Resend. TODO(dustin): recipient addresses (`CONTACT_TO_EMAIL`).
-- Turnstile widget and Production keys in Vercel: TODO(dustin) (see new-site step 8).
+- Spam: no Cloudflare Turnstile on this site (Dustin, 2026-11-24: "We will use our own spam controller").
+  Honeypot and same-site check until then; the controller plugs in at `isSpam()` in `src/lib/forms.ts`.
+  TODO(dustin): which spam controller, and its keys.
 - Email platform / CRM: none found on the WordPress site.
 - Analytics IDs (production only): the WordPress site loads Google tag `GT-K4VMCWDN`. TODO(dustin): confirm
   it should carry over (set `NEXT_PUBLIC_GA_ID` in Vercel Production).
@@ -69,6 +71,7 @@ made in the admin create their own redirects.
 
 ## Site-specific rules
 
+- Forms don't use Turnstile, overriding the kit convention (see Forms and integrations above).
 - Book and author content is edited in the admin (`/admin/`), not in `content/`. The Markdown in
   `content/` only seeds a new database.
 - Keep testimonials verbatim (`content/site/testimonials.json`).

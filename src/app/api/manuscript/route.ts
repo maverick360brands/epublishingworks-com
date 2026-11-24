@@ -1,4 +1,4 @@
-import { isEmail, rowsToHtml, sendFormEmail, verifyTicket } from "@/lib/forms";
+import { isEmail, isSameSite, isSpam, rowsToHtml, sendFormEmail, verifyTicket } from "@/lib/forms";
 
 // Step 3: the manuscript submission itself. Replaces the Thrive form on /submit-your-manuscript/
 // with the same fields. Emails the publishing team, with a link to the uploaded file.
@@ -24,9 +24,9 @@ const REQUIRED: Field[] = ["firstName", "lastName", "email", "phone", "genre", "
 
 export async function POST(request: Request) {
   const form = await request.formData();
-  if (String(form.get("website") ?? "")) return Response.json({ ok: true }); // honeypot
-  if (!verifyTicket(String(form.get("ticket") ?? ""))) {
-    return Response.json({ error: "Please complete the spam check and submit again." }, { status: 400 });
+  if (await isSpam(form, request)) return Response.json({ ok: true }); // dropped quietly
+  if (!isSameSite(request) || !verifyTicket(String(form.get("ticket") ?? ""))) {
+    return Response.json({ error: "Your session expired. Please submit the form again." }, { status: 400 });
   }
   const value = (f: Field) => form.getAll(f).map((v) => String(v).trim()).filter(Boolean).join(", ").slice(0, 5000);
   const data = Object.fromEntries((Object.keys(FIELDS) as Field[]).map((f) => [f, value(f)])) as Record<Field, string>;

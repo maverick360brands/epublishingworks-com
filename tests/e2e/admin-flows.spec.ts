@@ -68,6 +68,9 @@ test("renaming a post's address redirects the old one permanently", async ({ pag
     await save(page);
   }
   expect(await eventually(async () => (await page.request.get("/blog/how-to-republish-your-backlist/", { maxRedirects: 0 })).status() === 200)).toBe(true);
+  // Renaming back leaves a redirect from the test address; remove it once the rename has landed.
+  await page.request.delete(`/api/cms/redirects?where[from][equals]=${encodeURIComponent("/blog/republish-your-backlist/")}`);
+  expect(await eventually(async () => (await page.request.get("/blog/republish-your-backlist/", { maxRedirects: 0 })).status() === 404)).toBe(true);
 });
 
 test("an author with books can't be deleted", async ({ page }) => {

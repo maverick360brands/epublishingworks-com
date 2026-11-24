@@ -41,6 +41,10 @@ const getManifest = createManifestCache(
 // /xmlrpc.php, /readme.html) is a WordPress leftover or a probe and gets a real 404, not the
 // book route's "not found" page with a 200.
 const ROOT_FILES = new Set(["robots.txt", "sitemap.xml", "llms.txt", "indexnow-key.txt", "icon.png", "apple-icon.png"]);
+// Served outside the password gate: browser icons and the IndexNow key (the feeds stay inside).
+const UNGATED_FILES = new Set(["/icon.png", "/apple-icon.png", "/indexnow-key.txt"]);
+// Files the app serves under the content folders; any other dotted path there is a real 404.
+const NESTED_FILES = new Set(["/blog/rss.xml"]);
 
 function isContentPath(segments: string[]) {
   if (segments.some((s) => s.includes("."))) return false; // feeds such as /sitemap.xml
@@ -55,6 +59,7 @@ export async function proxy(request: NextRequest) {
     if (isProductionHost(request.headers.get("host"))) return NextResponse.next();
     return new NextResponse("User-agent: *\nDisallow: /\n", { headers: { "content-type": "text/plain; charset=utf-8", "x-robots-tag": "noindex, nofollow" } });
   }
+  if (UNGATED_FILES.has(pathname)) return NextResponse.next();
   // While the site is in development, every page asks for the password first.
   if (!(await isUnlocked(request.cookies.get(GATE_COOKIE)?.value, process.env.SITE_PASSWORD))) {
     return new NextResponse(gatePage({ next: pathname + search }), gateResponseInit(401));
@@ -67,7 +72,10 @@ export async function proxy(request: NextRequest) {
     if (to) return NextResponse.redirect(new URL(to, request.url), 301);
   }
   const segments = pathname.split("/").filter(Boolean);
-  if (segments.length === 1 && segments[0].includes(".") && !ROOT_FILES.has(segments[0])) {
+  const strayFile =
+    (segments.length === 1 && segments[0].includes(".") && !ROOT_FILES.has(segments[0])) ||
+    (segments.length === 2 && (segments[0] === "authors" || segments[0] === "blog") && segments[1].includes(".") && !NESTED_FILES.has(pathname));
+  if (strayFile) {
     return NextResponse.rewrite(new URL("/__not-found/__/__/", request.url));
   }
   if (!isContentPath(segments)) return NextResponse.next();
@@ -84,5 +92,5 @@ export async function proxy(request: NextRequest) {
 export const config = {
   // Pages only: skip Next.js internals, the admin, API routes, and files with an extension
   // (images, fonts), except the feeds that list the site's content, which the gate also covers.
-  matcher: ["/", "/((?!_next/|admin(?:/|$)|api/|.*\\.[a-zA-Z0-9]+$).+)", "/sitemap.xml", "/llms.txt", "/blog/rss.xml", "/robots.txt", "/:file([^/]+\\.[^/]+)"],
+  matcher: ["/", "/((?!_next/|admin(?:/|$)|api/|.*\\.[a-zA-Z0-9]+$).+)", "/sitemap.xml", "/llms.txt", "/blog/rss.xml", "/robots.txt", "/:file([^/]+\\.[^/]+)", "/:dir(authors|blog)/:file([^/]+\\.[^/]+)"],
 };

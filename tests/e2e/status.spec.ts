@@ -83,6 +83,8 @@ test("a renamed book's old address redirects permanently to the new one", async 
     expect((await status(request, "/strong-spirits-alice-duncan/")).location).toMatch(/\/strong-spirits-renamed\/$/);
   } finally {
     await request.patch(`/api/cms/books/${id}`, { data: { slug: "strong-spirits-alice-duncan" } });
+    // Renaming back leaves a redirect from the test address; remove it.
+    await request.delete(`/api/cms/redirects?where[from][equals]=${encodeURIComponent("/strong-spirits-renamed/")}`);
   }
   expect(await eventually(async () => (await status(request, "/strong-spirits-alice-duncan/")).code === 200)).toBe(true);
 });

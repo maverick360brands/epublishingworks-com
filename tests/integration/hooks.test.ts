@@ -32,7 +32,7 @@ describe("changing a book's page address", () => {
     const book = await newBook("provider");
     await api().update({ collection: "books", id: book.id, data: { slug: "providerbook" } });
     expect(await redirects()).toContainEqual({ from: "/provider/", to: "/providerbook/", reason: "address-changed" });
-    expect(revalidateTag).toHaveBeenCalledWith("content", "max");
+    expect(revalidateTag).toHaveBeenCalledWith("content", { expire: 0 });
 
     // A second rename collapses the chain: every old address points at the newest one.
     await api().update({ collection: "books", id: book.id, data: { slug: "providerthree" } });
@@ -95,7 +95,7 @@ describe("media", () => {
   it("refreshes the site when an image changes", async () => {
     revalidateTag.mockClear();
     await (payload.update as unknown as (a: object) => Promise<unknown>)({ collection: "media", id: coverId, data: { alt: "New alt" } });
-    expect(revalidateTag).toHaveBeenCalledWith("content", "max");
+    expect(revalidateTag).toHaveBeenCalledWith("content", { expire: 0 });
   });
 });
 

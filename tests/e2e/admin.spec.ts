@@ -16,6 +16,9 @@ test.afterAll(async ({ browser }) => {
     await page.request.delete(`/api/cms/books?where[slug][equals]=${slug}`);
   }
   await page.request.delete(`/api/cms/authors?where[slug][equals]=gateauthor${run}`);
+  // Deleting them leaves redirects from their addresses, and their covers stay in the media library.
+  await page.request.delete(`/api/cms/redirects?where[from][contains]=${run}`);
+  await page.request.delete(`/api/cms/media?where[alt][equals]=${encodeURIComponent("Test cover")}`);
   await page.close();
 });
 

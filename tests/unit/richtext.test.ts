@@ -100,3 +100,11 @@ describe("excerpt from several blocks", () => {
     expect(excerpt('<p><a href="/a/">Ann</a> and <a href="/b/">Bo</a></p>')).toBe("Ann and Bo");
   });
 });
+
+describe("excerpt datelines", () => {
+  it("drops the dashes or asterisks framing a dateline before ending it with a full stop", () => {
+    expect(excerpt("<p>--Montana Badlands, 2020--</p><p>Story.</p>")).toBe("Montana Badlands, 2020. Story.");
+    expect(excerpt("<p>-- Mekong River, Vietnam, 1970 --</p><p>Story.</p>")).toBe("Mekong River, Vietnam, 1970. Story.");
+    expect(excerpt("<p>** Author's Cut Edition w/Bonus Material **</p><p>Story.</p>")).toBe("Author's Cut Edition w/Bonus Material. Story.");
+  });
+});

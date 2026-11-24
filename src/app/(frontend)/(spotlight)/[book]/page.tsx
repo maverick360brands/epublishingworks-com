@@ -9,6 +9,7 @@ import { JsonLd } from "@/components/JsonLd";
 import { StickyBuyBar } from "@/components/StickyBuyBar";
 import { authorsOfBook, bookAuthorLabel, booksByAuthor, getCatalog, seriesSiblings, visibleBooks, type Book, type Catalog } from "@/lib/content";
 import { LostContent } from "../../not-found";
+import { textOf } from "@/lib/richtext";
 import { lostMetadata, resolvePage } from "@/lib/resolve";
 import { bookFacts, metaFor, pageMetadata } from "@/lib/seo";
 import { bookSchema, breadcrumbSchema, graph } from "@/lib/schema";
@@ -72,6 +73,7 @@ export default async function BookSpotlightPage({ params }: PageProps<"/[book]">
     .filter((b) => b.slug !== book.slug && !(inSeries && series.some((s) => s.slug === b.slug)))
     .slice(0, 10);
   const hasLinks = book.retailers.length > 0;
+  const hasDescription = textOf(book.descriptionHtml).trim().length > 0;
 
   return (
     <>
@@ -126,11 +128,14 @@ export default async function BookSpotlightPage({ params }: PageProps<"/[book]">
 
       {/* Description with a details sidebar. */}
       <section className="px-5 py-16 md:py-20 lg:px-8" lang={es ? "es" : undefined}>
-        <div className="mx-auto grid max-w-[1320px] gap-12 lg:grid-cols-[1fr_340px] lg:gap-16">
-          <div>
-            <h2 className="type-section !text-[28px] md:!text-[34px]">{es ? "Sobre el libro" : "About the book"}</h2>
-            <div className="rich-text book-copy mt-6 max-w-[68ch]" dangerouslySetInnerHTML={{ __html: book.descriptionHtml }} />
-          </div>
+        {/* A book without a description (TODO(dustin), see migration/catalog-report.md) shows only its details. */}
+        <div className={`mx-auto grid gap-12 lg:gap-16 ${hasDescription ? "max-w-[1320px] lg:grid-cols-[1fr_340px]" : "max-w-[560px]"}`}>
+          {hasDescription ? (
+            <div>
+              <h2 className="type-section !text-[28px] md:!text-[34px]">{es ? "Sobre el libro" : "About the book"}</h2>
+              <div className="rich-text book-copy mt-6 max-w-[68ch]" dangerouslySetInnerHTML={{ __html: book.descriptionHtml }} />
+            </div>
+          ) : null}
           <aside className="space-y-6 lg:sticky lg:top-28 lg:self-start">
             <div className="rounded-[24px] bg-mist p-6">
               <h2 className="type-card !text-[18px]">{es ? "Detalles" : "Book details"}</h2>

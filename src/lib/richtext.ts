@@ -71,7 +71,14 @@ export function excerpt(html: string, max = 155): string {
     .split(/<\/(?:p|h[1-6]|li|blockquote|td|th|div)>|<br\s*\/?>/i)
     .filter((block) => !/^\s*(?:<[^>]+>\s*)*<a\b[^>]*>(?:(?!<\/a>)[\s\S])*<\/a>\s*(?:<[^>]+>\s*)*$/i.test(block))
     // Tildes mark attributions ("~ Proverbs 18:21"); summaries drop them.
-    .map((block) => textOf(block).replace(/~\s*/g, "").replace(/\s+/g, " ").trim())
+    .map((block) =>
+      textOf(block)
+        .replace(/~\s*/g, "")
+        .replace(/\s+/g, " ")
+        .trim()
+        // Datelines and banners framed by dashes or asterisks ("--Montana Badlands, 2020--").
+        .replace(/^[-–—*\s]+|[-–—*\s]+$/g, ""),
+    )
     .filter((text) => text && !(text.length < 40 && CALL_TO_ACTION.test(text)));
   const text = blocks.reduce((out, block) => (out ? `${out}${/[.!?…:;"”’)]$/.test(out) ? "" : "."} ${block}` : block), "");
   if (text.length <= max) return text;

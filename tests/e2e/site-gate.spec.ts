@@ -15,7 +15,8 @@ test("pages, feeds, and the home page ask for the password", async ({ request })
 
 test("the admin and site images stay outside the gate", async ({ request }) => {
   expect((await request.get("/admin/", { maxRedirects: 0 })).status()).not.toBe(401);
-  expect((await request.get("/images/site/logo.png")).status()).toBe(200);
+  expect((await request.get("/images/site/logo-primary.png")).status()).toBe(200);
+  expect((await request.get("/icon.png")).status()).toBe(200);
 });
 
 test("a wrong password is refused; the right one opens the page you asked for", async ({ page }) => {

@@ -13,10 +13,11 @@ test("the books page pages its tiles and searches the whole catalog", async ({ p
 });
 
 test("root-level files that don't exist are real 404s", async ({ request }) => {
-  for (const path of ["/index.php", "/xmlrpc.php", "/readme.html", "/favicon.ico"]) {
+  for (const path of ["/index.php", "/xmlrpc.php", "/readme.html", "/favicon.ico", "/authors/foo.php", "/blog/wp-login.php"]) {
     expect((await request.get(path, { maxRedirects: 0 })).status(), path).toBe(404);
   }
   expect((await request.get("/tva_lesson-sitemap.xml", { maxRedirects: 0 })).status()).toBe(301);
+  expect((await request.get("/blog/rss.xml")).status()).toBe(200);
 });
 
 test("off the live domain, robots.txt disallows everything and pages say noindex", async ({ request }) => {

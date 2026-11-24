@@ -2,7 +2,8 @@ import Image from "next/image";
 import type { Post } from "@/lib/content";
 import { PostArt } from "./PostArt";
 
-// A post's cover: its photo when the editor added one, otherwise the category artwork.
+// A post's cover: the one uploaded in the admin, else its illustration (src/lib/post-art.ts),
+// else the category artwork.
 // The category rides on the photo as a small label, so a card reads at a glance.
 export function PostCover({
   post,
@@ -29,6 +30,7 @@ export function PostCover({
         fill
         sizes={sizes}
         priority={priority}
+        style={post.cover.focus ? { objectPosition: post.cover.focus } : undefined}
         className="object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.035]"
       />
       {chip ? (

@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
+import { existsSync, statSync } from "node:fs";
 import { docsToCatalog } from "@/lib/catalog-source";
+import { POST_ILLUSTRATIONS } from "@/lib/post-art";
 
 const text = (t: string, tag?: string) => ({
   type: tag ? "heading" : "paragraph",
@@ -96,6 +98,27 @@ describe("docsToCatalog", () => {
   it("drops the trailing slash Payload adds to local file URLs", () => {
     const local = docsToCatalog({ ...raw, books: [{ ...raw.books[0], cover: { ...cover, url: "/api/cms/media/file/provider-12.jpg/" } }] } as never);
     expect(local.books[0].cover).toBe("/api/cms/media/file/provider-12.jpg");
+  });
+
+  it("gives a post its illustration when no cover was uploaded, and the uploaded cover wins", () => {
+    const post = (slug: string, extra = {}) => docsToCatalog({ ...raw, posts: [{ ...raw.posts[0], slug, ...extra }] } as never).posts[0];
+    const art = post("book-royalties-explained");
+    expect(art.cover?.url).toBe("/images/blog/book-royalties-explained.webp");
+    expect(art.cover?.alt).toMatch(/^Cut-paper illustration/);
+    expect(art.image).toBe("/images/blog/book-royalties-explained-share.jpg");
+    const uploaded = post("book-royalties-explained", { cover });
+    expect(uploaded.cover).toEqual({ url: cover.url, width: 600, height: 899, alt: cover.alt });
+    expect(uploaded.image).toBe(cover.url);
+    expect(post("a-post-with-no-art").cover).toBeNull();
+  });
+
+  it("gives every illustration a WebP cover and a JPEG share image on disk", () => {
+    for (const [slug, a] of Object.entries(POST_ILLUSTRATIONS)) {
+      expect(existsSync(`public${a.url}`), slug).toBe(true);
+      expect(existsSync(`public${a.share}`), slug).toBe(true);
+      expect(statSync(`public${a.url}`).size).toBeLessThan(300 * 1024);
+      expect(a.alt.length).toBeGreaterThan(20);
+    }
   });
 
   it("keeps the redirects", () => {

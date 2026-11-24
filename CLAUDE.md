@@ -86,6 +86,9 @@ made in the admin create their own redirects.
   Publishing follows the kit's change loop (1.3.0: agents merge the `staging` → `main` PR themselves, no approval step).
 - Book and author content is edited in the admin (`/admin/`), not in `content/`. The Markdown in
   `content/` only seeds a new database.
+- Blog covers: one house style, a cut-paper collage in navy, logo blue, sky and gold on cream (Dustin,
+  2026-11-24). Recipe and how to add one: `docs/blog-covers.md`. An uploaded cover wins; otherwise
+  `src/lib/post-art.ts`. Category labels on covers stay small; the title leads.
 - Keep testimonials verbatim (`content/site/testimonials.json`).
 - ePublishingWorks is an Amazon Associate: some Amazon links carry its tag (`wwwebookdisco-20`), and the
   footer keeps the Amazon Associates disclosure, which the program requires. Keep retailer links verbatim.

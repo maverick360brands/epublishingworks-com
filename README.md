@@ -71,7 +71,7 @@ Admin → Users → Create New. Enter their email and a temporary password, and 
 
 | Form | Page | Endpoint | Notes |
 | --- | --- | --- | --- |
-| Manuscript submission | `/submit-your-manuscript/` | `/api/manuscript/` | Same questions as the Thrive form. The file (.pdf, .doc, .docx, .zip, up to 20 MB) uploads from the browser straight to Vercel Blob under `manuscripts/` with a random, unguessable name; the email links to it. |
+| Manuscript submission | `/submit-your-manuscript/` | `/api/manuscript/` | Same questions as the Thrive form. The file (.pdf, .doc, .docx, .zip, up to 20 MB) uploads from the browser straight to a private Vercel Blob store under `manuscripts/`. The email links to `/api/manuscript/file/`, which serves the file only to an editor signed in to the admin (others are sent to the sign-in page). |
 | Contact | `/contact/` | `/api/contact/` | |
 
 Both forms email the team through Resend (the manuscript form then sends the visitor to `/thank-you/`; the contact form thanks them in place). Spam: the controller used on bluetowerroofs.com and the Orion site, copied into `src/lib/spam/` and adapted for a publisher (no Turnstile on this site, by Dustin's decision). In order: a same-site check, a per-IP rate limit (5 a minute), bot traps (honeypot, a form sent under 2.5 s after it appeared, a junk phone number, digits in a name, a random-string message: all get a quiet "ok"), pitch rules on the free-text answers (author and reader words pull the score down), and, when `ANTHROPIC_API_KEY` is set, a Claude check of anything the rules didn't settle. Flagged submissions never reach the team; they go to `SPAM_TO_EMAIL` marked `[spam]` if it's set. Each manuscript submission gets a 30-minute signed ticket that the upload and the form both require, so the upload route only hands out Blob tokens to the site's own form. Without `RESEND_API_KEY` and `CONTACT_TO_EMAIL`, submissions are logged and still accepted (so staging works). Subjects sent off production start with `[staging]`.
@@ -99,7 +99,8 @@ Both forms email the team through Resend (the manuscript form then sends the vis
 | `DATABASE_URL` | Neon Postgres for the CMS. Set by the Neon integration. |
 | `PAYLOAD_SECRET` | Long random string that secures admin sign-ins and signs form tickets (`openssl rand -hex 32`). Required: the build fails without it. |
 | `ADMIN_SETUP_EMAIL` | The only email that can create the first admin account (before anyone is signed in). |
-| `BLOB_READ_WRITE_TOKEN` | Vercel Blob store for covers, photos, and uploaded manuscripts. Set by connecting the Blob store. Without it, the manuscript form hides the upload field. |
+| `BLOB_READ_WRITE_TOKEN` | Public Vercel Blob store for covers and photos. Set by connecting the Blob store. |
+| `MANUSCRIPTS_READ_WRITE_TOKEN` | Private Vercel Blob store for manuscript uploads. Set by connecting a private store with the env prefix `MANUSCRIPTS`. Without it, the manuscript form hides the upload field and asks for the file by email. |
 | `INDEXNOW_KEY` | Optional. 32 hex characters (`openssl rand -hex 16`), served at `/indexnow-key.txt`. Enables IndexNow pings in production. |
 | `SITE_PASSWORD` | Optional. While set, every page asks for this password first (the admin keeps its own sign-in). |
 | `ROUTE_MANIFEST_TTL_MS` | Optional. How often the proxy refreshes its address table, in milliseconds (default 30000). |

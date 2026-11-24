@@ -4,6 +4,7 @@ import { pageMetadata } from "@/lib/seo";
 import { BookTile } from "@/components/BookTile";
 import { JsonLd } from "@/components/JsonLd";
 import { ManuscriptForm } from "@/components/ManuscriptForm";
+import { manuscriptUploadsEnabled } from "@/lib/manuscript";
 import { PageBanner } from "@/components/PageBanner";
 import { CheckCircle } from "@/components/icons";
 import { bookAuthorLabel, getCatalog, heroBooks } from "@/lib/content";
@@ -85,7 +86,7 @@ export default async function SubmitManuscriptPage() {
               Fields marked <span className="text-gold-ink">*</span> are required.
             </p>
             <div className="mt-8">
-              <ManuscriptForm uploadsEnabled={Boolean(process.env.BLOB_READ_WRITE_TOKEN)} />
+              <ManuscriptForm uploadsEnabled={manuscriptUploadsEnabled()} />
             </div>
           </div>
         </div>

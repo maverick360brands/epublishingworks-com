@@ -1,17 +1,19 @@
 import { handleUpload, type HandleUploadBody } from "@vercel/blob/client";
 import { verifyTicket } from "@/lib/forms";
-import { MANUSCRIPT_MAX_BYTES, MANUSCRIPT_TYPES } from "@/lib/manuscript";
+import { MANUSCRIPT_MAX_BYTES, MANUSCRIPT_TYPES, manuscriptToken } from "@/lib/manuscript";
 
 // Step 2: the browser uploads the manuscript straight to Vercel Blob (files up to 20 MB are too
 // big for a serverless request), using a token this route issues to holders of a valid ticket.
-// Files get a random suffix, so their addresses can't be guessed; they are linked only from
-// the notification email.
+// Files go to the private manuscripts store (src/lib/manuscript.ts): no public address, and only
+// signed-in editors can open them, through /api/manuscript/file/.
 
 export async function POST(request: Request) {
-  if (!process.env.BLOB_READ_WRITE_TOKEN) return Response.json({ error: "File upload is not available right now." }, { status: 503 });
+  const token = manuscriptToken();
+  if (!token) return Response.json({ error: "File upload is not available right now." }, { status: 503 });
   const body = (await request.json()) as HandleUploadBody;
   try {
     const result = await handleUpload({
+      token,
       body,
       request,
       onBeforeGenerateToken: async (pathname, clientPayload) => {

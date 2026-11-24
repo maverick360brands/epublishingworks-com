@@ -42,10 +42,17 @@ Either:
 
 - **In the admin** (simplest): upload the image as the post's Cover. An uploaded cover always wins.
 - **In the code**:
-  1. Save a 1600×900 WebP (quality 80, under 300 KB) as `public/images/blog/<slug>.webp`.
+  1. Save the 2048×1152 original as a WebP (quality 76, under 300 KB) as
+     `public/images/blog/<slug>.webp`. The square post hero shows it about 1,000px wide, so it
+     needs the full size on sharp screens.
   2. Save a 1200×630 JPEG as `public/images/blog/<slug>-share.jpg` (the link-preview image).
   3. Add the post to `src/lib/post-art.ts`, with alt text that describes the picture.
 
   `tests/unit/catalog-source.test.ts` checks the files exist.
 
 A post with neither shows the category artwork (`src/components/PostArt.tsx`).
+
+The illustrations in `src/lib/post-art.ts` are keyed by the post's slug. If a post's address is
+changed in the admin, update its key and file names too, or upload the image as the post's Cover,
+or the post falls back to the category artwork. Each entry's last number is its crop point (how far
+right the picture's focus sits): check the post's square hero on a wide screen when adding one.

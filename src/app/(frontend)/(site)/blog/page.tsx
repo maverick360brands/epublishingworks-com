@@ -41,7 +41,7 @@ export default async function BlogIndex() {
       {featured ? (
         <section aria-label="Latest article" className="px-5 pt-14 lg:px-8 lg:pt-20">
           <Link href={`/blog/${featured.slug}/`} className="group mx-auto grid max-w-[1320px] items-center gap-8 no-underline lg:grid-cols-[1.2fr_1fr] lg:gap-14">
-            <PostCover post={featured} large priority sizes="(min-width: 1320px) 700px, (min-width: 1024px) 54vw, 100vw" />
+            <PostCover post={featured} large priority decorative sizes="(min-width: 1320px) 700px, (min-width: 1024px) 54vw, 100vw" />
             <div>
               <p className="text-[15px] text-body">
                 {featured.date ? <time dateTime={featured.date}>{fmt(featured.date)}</time> : null}

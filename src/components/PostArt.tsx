@@ -11,15 +11,17 @@ const TINTS: Record<string, string> = {
   "For Readers": "from-sky via-blue to-navy-deep",
 };
 
-export function PostArt({ category, large = false }: { category: string; large?: boolean }) {
+export function PostArt({ category, large = false, chip = true, className = "" }: { category: string; large?: boolean; chip?: boolean; className?: string }) {
   return (
-    <div aria-hidden="true" className={`brand-texture relative isolate overflow-hidden bg-gradient-to-br ${TINTS[category] ?? TINTS.Publishing} ${large ? "aspect-[16/10] rounded-[32px]" : "aspect-[16/10] rounded-[24px]"}`}>
+    <div aria-hidden="true" className={`brand-texture relative isolate overflow-hidden bg-gradient-to-br ${TINTS[category] ?? TINTS.Publishing} ${large ? "aspect-[16/10] rounded-[32px]" : "aspect-[16/10] rounded-[24px]"} ${className}`}>
       <Image src="/images/site/logo-icon-reversed.png" alt="" width={500} height={500} className={`absolute ${large ? "right-6 top-6 h-28 w-28" : "right-3 top-3 h-16 w-16"}`} />
+      {chip ? (
       <span
         className={`absolute bottom-0 left-0 rounded-tr-[18px] bg-white font-display font-bold text-navy ${large ? "px-5 pb-2 pt-3 text-[15px]" : "px-4 pb-1.5 pt-2.5 text-[13px]"}`}
       >
         {category}
       </span>
+      ) : null}
     </div>
   );
 }

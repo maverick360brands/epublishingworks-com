@@ -1,7 +1,7 @@
 import config from "@payload-config";
 import { get } from "@vercel/blob";
 import { getPayload } from "payload";
-import { isManuscriptPath, manuscriptToken } from "@/lib/manuscript";
+import { isManuscriptPath, manuscriptToken } from "@/lib/manuscript-store";
 
 // Opens a submitted manuscript from the private store: the link in the submission email. Only an
 // editor signed in to the admin gets the file; anyone else is sent to the admin sign-in first.
@@ -26,7 +26,6 @@ export async function GET(request: Request) {
   return new Response(file.stream, {
     headers: {
       "Content-Type": file.blob.contentType || "application/octet-stream",
-      "Content-Length": String(file.blob.size),
       "Content-Disposition": `attachment; filename="${name}"`,
       "Cache-Control": "private, no-store",
       "X-Robots-Tag": "noindex, nofollow",

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { isManuscriptPath, manuscriptLink, manuscriptPath } from "@/lib/manuscript";
+import { isManuscriptPath, manuscriptLink, manuscriptPath } from "@/lib/manuscript-store";
 
 describe("private manuscript store", () => {
   it("accepts only files in the private store's manuscripts folder", () => {

@@ -1,6 +1,7 @@
 import { handleUpload, type HandleUploadBody } from "@vercel/blob/client";
 import { verifyTicket } from "@/lib/forms";
-import { MANUSCRIPT_MAX_BYTES, MANUSCRIPT_TYPES, manuscriptToken } from "@/lib/manuscript";
+import { MANUSCRIPT_MAX_BYTES, MANUSCRIPT_TYPES } from "@/lib/manuscript";
+import { isManuscriptPath, manuscriptToken } from "@/lib/manuscript-store";
 
 // Step 2: the browser uploads the manuscript straight to Vercel Blob (files up to 20 MB are too
 // big for a serverless request), using a token this route issues to holders of a valid ticket.
@@ -18,7 +19,8 @@ export async function POST(request: Request) {
       request,
       onBeforeGenerateToken: async (pathname, clientPayload) => {
         if (!verifyTicket(clientPayload)) throw new Error("Your session expired. Please submit the form again.");
-        if (!pathname.startsWith("manuscripts/")) throw new Error("Unexpected upload path.");
+        // The same rule the download route applies: one file directly under manuscripts/.
+        if (!isManuscriptPath(pathname)) throw new Error("Unexpected upload path.");
         return { allowedContentTypes: MANUSCRIPT_TYPES, maximumSizeInBytes: MANUSCRIPT_MAX_BYTES, addRandomSuffix: true };
       },
     });

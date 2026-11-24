@@ -4,7 +4,7 @@ import { pageMetadata } from "@/lib/seo";
 import { BookTile } from "@/components/BookTile";
 import { JsonLd } from "@/components/JsonLd";
 import { ManuscriptForm } from "@/components/ManuscriptForm";
-import { manuscriptUploadsEnabled } from "@/lib/manuscript";
+import { manuscriptUploadsEnabled } from "@/lib/manuscript-store";
 import { PageBanner } from "@/components/PageBanner";
 import { CheckCircle } from "@/components/icons";
 import { bookAuthorLabel, getCatalog, heroBooks } from "@/lib/content";

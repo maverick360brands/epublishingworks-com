@@ -47,7 +47,7 @@ test("hiding a book sends its address to the author's page", async ({ page }) =>
   try {
     await page.locator("#field-hidden").check();
     await save(page);
-    expect(await eventually(async () => (await page.request.get("/the-protector-marliss-melton/", { maxRedirects: 0 })).status() === 307)).toBe(true);
+    expect(await eventually(async () => (await page.request.get("/the-protector-marliss-melton/", { maxRedirects: 0 })).status() === 302)).toBe(true);
   } finally {
     await page.locator("#field-hidden").uncheck();
     await save(page);
@@ -62,7 +62,7 @@ test("renaming a post's address redirects the old one permanently", async ({ pag
   try {
     await field.fill("republish-your-backlist");
     await save(page);
-    expect(await eventually(async () => (await page.request.get("/blog/how-to-republish-your-backlist/", { maxRedirects: 0 })).status() === 308)).toBe(true);
+    expect(await eventually(async () => (await page.request.get("/blog/how-to-republish-your-backlist/", { maxRedirects: 0 })).status() === 301)).toBe(true);
   } finally {
     await field.fill("how-to-republish-your-backlist");
     await save(page);

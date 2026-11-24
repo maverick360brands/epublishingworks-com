@@ -4,6 +4,7 @@
 // database, so it doesn't work in this mode; everything visitors see does.
 import data from "@/generated/content.json";
 import type { Author, Book, Catalog, Post } from "./catalog";
+import { excerpt } from "./richtext";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 type Raw = Record<string, any>;
@@ -27,7 +28,7 @@ export function filesCatalog(): Catalog {
     url: String(a.url),
     order: Number(a.order ?? 50),
     bioHtml: String(a.bioHtml ?? ""),
-    summary: String(a.summary ?? ""),
+    summary: String(a.summary || "") || excerpt(String(a.bioHtml ?? "")),
     hidden: false,
     updatedAt: iso(BASE),
     seo,
@@ -55,12 +56,12 @@ export function filesCatalog(): Catalog {
       url: String(b.url),
       retailers: (b.retailers ?? []) as Book["retailers"],
       descriptionHtml: String(b.descriptionHtml ?? ""),
-      summary: String(b.summary ?? ""),
+      summary: String(b.summary || "") || excerpt(String(b.descriptionHtml ?? "")),
       hidden: false,
       heroFeatured: r !== null,
       createdAt: stamp,
       updatedAt: stamp,
-      seo,
+      seo: { ...seo, description: String(b.seoDescription ?? "") },
     };
   });
 

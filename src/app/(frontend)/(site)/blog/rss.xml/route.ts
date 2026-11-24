@@ -6,7 +6,7 @@ const esc = (s: string) => s.replace(/[<>&'"]/g, (c) => ({ "<": "&lt;", ">": "&g
 export async function GET() {
   const items = publishedPosts(await getCatalog(), false)
     .map(
-      (p) => `<item><title>${esc(p.title)}</title><link>${site.url}/blog/${p.slug}</link><guid>${site.url}/blog/${p.slug}</guid>${
+      (p) => `<item><title>${esc(p.title)}</title><link>${site.url}/blog/${p.slug}/</link><guid>${site.url}/blog/${p.slug}/</guid>${
         p.date ? `<pubDate>${new Date(p.date).toUTCString()}</pubDate>` : ""
       }<description>${esc(p.description)}</description><category>${esc(p.category)}</category></item>`,
     )

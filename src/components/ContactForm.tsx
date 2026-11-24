@@ -59,7 +59,7 @@ export function ContactForm() {
         <span className={label}>Message</span>
         <textarea
           name="message"
-          required
+          maxLength={350}
           rows={6}
           placeholder="Tell us about your books: past titles (if any), and your genre and sub-genre."
           className={`${input} h-auto min-h-[150px] py-3 leading-[1.55]`}

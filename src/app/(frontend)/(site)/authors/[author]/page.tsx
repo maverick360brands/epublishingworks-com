@@ -7,7 +7,7 @@ import { ArrowRight } from "@/components/icons";
 import { booksByAuthor, getCatalog, visibleAuthors, type Book } from "@/lib/content";
 import { LostContent } from "../../../not-found";
 import { lostMetadata, resolvePage } from "@/lib/resolve";
-import { metaFor } from "@/lib/seo";
+import { metaFor, pageMetadata } from "@/lib/seo";
 import { breadcrumbSchema, graph, personSchema } from "@/lib/schema";
 import { site } from "@/lib/site";
 
@@ -23,21 +23,19 @@ export async function generateMetadata({ params }: PageProps<"/authors/[author]"
   const books = booksByAuthor(c, author.slug);
   const title = books.length === 1 ? `${author.name}, Author of ${books[0].title}` : `${author.name}: Books & Biography`;
   const meta = metaFor({ title, summary: author.summary, seo: author.seo }, author.photo);
-  return {
+  return pageMetadata({
     title: meta.title,
     description: meta.description,
-    alternates: { canonical: author.url },
-    openGraph: {
-      type: "profile",
-      title: author.seo.title || `${author.name} | ${site.name}`,
-      description: meta.description,
-      ...(meta.image === author.photo && author.photo
-        ? { images: [{ url: author.photo, width: author.photoWidth, height: author.photoHeight, alt: author.name }] }
-        : meta.image
-          ? { images: [{ url: meta.image }] }
-          : {}),
-    },
-  };
+    path: author.url,
+    type: "profile",
+    // The portrait, else the editor's share image, else the site image.
+    ...(meta.image === author.photo && author.photo
+      ? { images: [{ url: author.photo, width: author.photoWidth, height: author.photoHeight, alt: author.name }] }
+      : meta.image
+        ? { images: [{ url: meta.image }] }
+        : {}),
+    openGraph: { title: author.seo.title || `${author.name} | ${site.name}` },
+  });
 }
 
 export default async function AuthorPage({ params }: PageProps<"/authors/[author]">) {

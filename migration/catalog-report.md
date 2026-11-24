@@ -127,7 +127,14 @@ Kept verbatim even though they look like typos: "Marriage & Maheym" (Jeanne Glid
 - richard-bowker / 'Portal': removed 3 copied paragraph(s) (body now empty). Description is S.L. Menear's 'Dead Silent' (Jettine Jorgensen mystery).
 - richard-bowker / 'Terra': removed 4 copied paragraph(s) (body now empty). Description is S.L. Menear's 'Dropped Dead' (Jettine Jorgensen mystery).
 
-The 6 books whose body is now empty need their real description from the publisher. Paragraphs that appear in several books and are genuinely shared were kept: a series "Publisher's Note" (Marilyn Campbell, Dallas Gorham) and a Nora Roberts review quote (Eileen Dreyer).
+The 6 books whose body is now empty need their real description from the publisher.
+
+### Placeholder and link-only descriptions
+
+- jo-beverley / 'Forbidden': the WordPress author page carried "Book Description Lorem ipsum dolor sit amet…" as its description. Removed (seed, and the CMS record through migration `20261124_120000_catalog_fixes`); body now empty.
+- alicia-dean / 'Liberty Unleashed', elizabeth-grayson / 'Moon on the Water', richard-bowker / 'Barbarica', patrick-astre / 'The Devil's Caldera': the description is only "Read an excerpt" (a link to an excerpt page). Kept verbatim on the page; search descriptions skip it.
+
+TODO(dustin): real descriptions for these 11 books (the 6 above, Forbidden, and the 4 excerpt-only ones). Until then, their search description is built from the book's own record only: title, author, genre, series, and the stores it is sold at (`bookFacts` in `src/lib/seo.ts`). Paragraphs that appear in several books and are genuinely shared were kept: a series "Publisher's Note" (Marilyn Campbell, Dallas Gorham) and a Nora Roberts review quote (Eileen Dreyer).
 
 ### Buy links dropped (the URL names a different book)
 

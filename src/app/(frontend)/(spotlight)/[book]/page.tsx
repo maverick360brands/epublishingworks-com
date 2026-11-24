@@ -10,7 +10,7 @@ import { StickyBuyBar } from "@/components/StickyBuyBar";
 import { authorsOfBook, bookAuthorLabel, booksByAuthor, getCatalog, seriesSiblings, visibleBooks, type Book, type Catalog } from "@/lib/content";
 import { LostContent } from "../../not-found";
 import { lostMetadata, resolvePage } from "@/lib/resolve";
-import { metaFor } from "@/lib/seo";
+import { bookFacts, metaFor, pageMetadata } from "@/lib/seo";
 import { bookSchema, breadcrumbSchema, graph } from "@/lib/schema";
 import { site } from "@/lib/site";
 
@@ -32,20 +32,19 @@ export async function generateMetadata({ params }: PageProps<"/[book]">): Promis
   if (!book) return lostMetadata;
   const by = bookAuthorLabel(c, book);
   const byline = by ? ` by ${by}` : "";
-  const full = `${book.title}${book.subtitle && book.seriesNumber === null ? `: ${book.subtitle}` : ""}${byline}`;
-  const meta = metaFor({ title: full.length > 60 ? `${book.title}${byline}` : full, summary: book.summary, seo: book.seo }, book.cover);
+  const named = `${book.title}${book.subtitle && book.seriesNumber === null ? `: ${book.subtitle}` : ""}`;
+  // Over 60 characters the byline goes first, never the subtitle: box sets differ only by it.
+  const title = `${named}${byline}`.length > 60 && named !== book.title ? named : `${named}${byline}`;
+  const meta = metaFor({ title, summary: book.summary || bookFacts(book, by), seo: book.seo }, book.cover);
   const ownImage = meta.image === book.cover;
-  return {
+  return pageMetadata({
     title: meta.title,
     description: meta.description,
-    alternates: { canonical: book.url },
-    openGraph: {
-      type: "book",
-      title: book.seo.title || `${book.title}${byline}`,
-      description: meta.description,
-      images: [ownImage ? { url: book.cover, width: book.coverWidth, height: book.coverHeight, alt: `Cover of ${book.title}` } : { url: meta.image }],
-    },
-  };
+    path: book.url,
+    type: "book",
+    images: [ownImage ? { url: book.cover, width: book.coverWidth, height: book.coverHeight, alt: `Cover of ${book.title}` } : { url: meta.image }],
+    openGraph: { title: book.seo.title || `${named}${byline}` },
+  });
 }
 
 const tile = (c: Catalog, b: Book) => ({

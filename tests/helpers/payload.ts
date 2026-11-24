@@ -3,7 +3,7 @@ import os from "node:os";
 import path from "node:path";
 import pg from "pg";
 
-export const TEST_DATABASE_URL = process.env.TEST_DATABASE_URL || "postgres://postgres:postgres@localhost:5432/rup_test";
+export const TEST_DATABASE_URL = process.env.TEST_DATABASE_URL || "postgres://postgres:postgres@localhost:5432/epw_test";
 
 /**
  * A Payload instance on an empty test database. The schema is dropped first, then Payload
@@ -12,7 +12,7 @@ export const TEST_DATABASE_URL = process.env.TEST_DATABASE_URL || "postgres://po
 export async function getTestPayload(): Promise<Payload> {
   process.env.DATABASE_URL = TEST_DATABASE_URL;
   process.env.PAYLOAD_SECRET ||= "test-secret";
-  process.env.PAYLOAD_MEDIA_DIR = path.join(os.tmpdir(), "rup-test-media");
+  process.env.PAYLOAD_MEDIA_DIR = path.join(os.tmpdir(), "epw-test-media");
   const client = new pg.Client({ connectionString: TEST_DATABASE_URL });
   await client.connect();
   await client.query("DROP SCHEMA IF EXISTS public CASCADE; CREATE SCHEMA public;");

@@ -14,6 +14,7 @@ cover: "/images/books/dancing-angels-alice-duncan.jpg"
 coverWidth: 600
 coverHeight: 901
 url: "/dancing-angels-alice-duncan/"
+seoDescription: "New Release from Alice Duncan! Intrigue and danger dance hand in hand in Dancing Angels, a Historical Cozy Mystery from Alice Duncan"
 featured: 9
 retailers:
   - name: "Buy Direct"

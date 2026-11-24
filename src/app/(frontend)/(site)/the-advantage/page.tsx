@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import { CheckList, ClosingCta, TestimonialsPair } from "@/components/Sections";
 import { JsonLd } from "@/components/JsonLd";
 import { PageBanner } from "@/components/PageBanner";
@@ -8,11 +9,11 @@ import { ArrowRight } from "@/components/icons";
 import { breadcrumbSchema, graph } from "@/lib/schema";
 import { site } from "@/lib/site";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: { absolute: site.seo.advantage.title },
   description: site.seo.advantage.description,
-  alternates: { canonical: "/the-advantage/" },
-};
+  path: "/the-advantage/",
+});
 
 // Copy is the WordPress page's, verbatim.
 const help = [

@@ -74,6 +74,8 @@ export function toBookData(f: ContentFile, authorIds: number[], coverId: number)
     seriesNumber: f.data.seriesNumber ?? null,
     retailers: ((f.data.retailers || []) as { name: string; url: string }[]).map((r) => ({ name: r.name, url: r.url })),
     summary: f.data.summary || "",
+    // The WordPress page's own search description (Yoast), where it had one.
+    seo: { title: "", description: String(f.data.seoDescription || ""), image: null },
     heroFeatured: Boolean(f.data.featured),
     hidden: false,
   };

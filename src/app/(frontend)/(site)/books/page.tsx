@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import { BooksBrowser, type CatalogBook } from "@/components/BooksBrowser";
 import { JsonLd } from "@/components/JsonLd";
 import { PageBanner } from "@/components/PageBanner";
@@ -8,12 +9,11 @@ import { authorsOfBook, bookAuthorLabel, booksPageOrder, directoryAuthors, getCa
 import { breadcrumbSchema, graph, ids } from "@/lib/schema";
 import { site } from "@/lib/site";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Books: Mystery, Cozy Mystery & Historical Romance",
-  description:
-    "Browse every ePublishingWorks book: cozy and historical mysteries, crime fiction, historical and contemporary romance, and more, with links to buy at major retailers.",
-  alternates: { canonical: "/books/" },
-};
+  description: "Browse every ePublishingWorks book: cozy and historical mysteries, crime fiction, historical and contemporary romance, and more, with links to buy at major retailers.",
+  path: "/books/",
+});
 
 /** "Alice Duncan" → "duncan alice", so Author A–Z sorts by last name. */
 const lastFirst = (name: string) => {

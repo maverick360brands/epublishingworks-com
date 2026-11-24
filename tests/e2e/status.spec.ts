@@ -64,7 +64,7 @@ test("a hidden book redirects to its author's page, temporarily", async ({ reque
   const id = await bookId(request, "spirits-adopted-alice-duncan");
   try {
     await request.patch(`/api/cms/books/${id}`, { data: { hidden: true } });
-    expect(await eventually(async () => (await status(request, "/spirits-adopted-alice-duncan/")).code === 307)).toBe(true);
+    expect(await eventually(async () => (await status(request, "/spirits-adopted-alice-duncan/")).code === 302)).toBe(true);
     expect((await status(request, "/spirits-adopted-alice-duncan/")).location).toMatch(/\/authors\/[a-z0-9_-]+\/$/);
     // Meanwhile the page itself never caches a redirect: its own HTML is the noindex fallback.
   } finally {
@@ -78,8 +78,8 @@ test("a renamed book's old address redirects permanently to the new one", async 
   const id = await bookId(request, "strong-spirits-alice-duncan");
   try {
     await request.patch(`/api/cms/books/${id}`, { data: { slug: "strong-spirits-renamed" } });
-    expect(await eventually(async () => (await status(request, "/strong-spirits-alice-duncan/")).code === 308)).toBe(true);
-    // Every 308 along the way must carry the new address.
+    expect(await eventually(async () => (await status(request, "/strong-spirits-alice-duncan/")).code === 301)).toBe(true);
+    // Every 301 along the way must carry the new address.
     expect((await status(request, "/strong-spirits-alice-duncan/")).location).toMatch(/\/strong-spirits-renamed\/$/);
   } finally {
     await request.patch(`/api/cms/books/${id}`, { data: { slug: "strong-spirits-alice-duncan" } });

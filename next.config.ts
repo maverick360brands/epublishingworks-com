@@ -63,4 +63,15 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default withPayload(nextConfig);
+const config = withPayload(nextConfig);
+
+// withPayload asks every browser for its colour-scheme client hint (Accept-CH, Critical-CH) on
+// every path. Only the admin uses it, and on the public pages Chrome restarts the first page
+// load to send it (about 0.6 s in Lighthouse). Keep that rule to the admin.
+const payloadHeaders = config.headers;
+if (payloadHeaders) {
+  config.headers = async () =>
+    (await payloadHeaders()).map((rule) => (rule.headers.some((h) => h.key === "Critical-CH") ? { ...rule, source: "/admin/:path*" } : rule));
+}
+
+export default config;

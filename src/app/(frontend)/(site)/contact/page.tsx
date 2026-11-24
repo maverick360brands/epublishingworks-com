@@ -1,16 +1,17 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import { ContactForm } from "@/components/ContactForm";
 import { JsonLd } from "@/components/JsonLd";
 import { ArrowRight, Mail, Phone } from "@/components/icons";
 import { breadcrumbSchema, graph, ids } from "@/lib/schema";
 import { site } from "@/lib/site";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: { absolute: site.seo.contact.title },
   description: site.seo.contact.description,
-  alternates: { canonical: "/contact/" },
-};
+  path: "/contact/",
+});
 
 // Copy is the WordPress page's, verbatim. The form's heading ("Quick Contact") was the page's
 // H1 there; here the page leads with its own H1 and the form keeps that name.

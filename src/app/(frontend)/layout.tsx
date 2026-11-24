@@ -44,7 +44,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         </a>
         {children}
         <JsonLd data={graph(organizationSchema(), websiteSchema())} />
-        {site.ga4Id ? (
+        {/* Production only: staging and previews never load analytics. */}
+        {site.ga4Id && process.env.VERCEL_ENV === "production" ? (
           <>
             <Script src={`https://www.googletagmanager.com/gtag/js?id=${site.ga4Id}`} strategy="afterInteractive" />
             <Script id="ga4" strategy="afterInteractive">

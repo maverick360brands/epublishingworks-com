@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import { BookTile } from "@/components/BookTile";
 import { JsonLd } from "@/components/JsonLd";
 import { ManuscriptForm } from "@/components/ManuscriptForm";
@@ -9,11 +10,11 @@ import { bookAuthorLabel, getCatalog, heroBooks } from "@/lib/content";
 import { breadcrumbSchema, graph } from "@/lib/schema";
 import { site } from "@/lib/site";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: { absolute: site.seo.submit.title },
   description: site.seo.submit.description,
-  alternates: { canonical: "/submit-your-manuscript/" },
-};
+  path: "/submit-your-manuscript/",
+});
 
 export default async function SubmitManuscriptPage() {
   const c = await getCatalog();

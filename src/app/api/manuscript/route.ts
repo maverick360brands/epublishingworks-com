@@ -1,5 +1,5 @@
 import { deliverSpam, formObject, isEmail, isSameSite, rowsToHtml, sendFormEmail, verifyTicket } from "@/lib/forms";
-import { botCheck, checkSpam } from "@/lib/spam/spam";
+import { botCheck, checkSpam, isFormTest } from "@/lib/spam/spam";
 
 // Step 3: the manuscript submission itself. Replaces the Thrive form on /submit-your-manuscript/
 // with the same fields. Emails the publishing team, with a link to the uploaded file. Spam
@@ -44,6 +44,10 @@ export async function POST(request: Request) {
     return Response.json({ error: `Please fill in: ${missing.map((f) => FIELDS[f].toLowerCase()).join(", ") || "a valid email address"}.` }, { status: 400 });
   }
   if (data.fileUrl && !/^https:\/\/[a-z0-9-]+\.public\.blob\.vercel-storage\.com\/manuscripts\//.test(data.fileUrl)) data.fileUrl = "";
+  // The manuscript file is required, as on the Thrive form, whenever uploads are switched on.
+  if (process.env.BLOB_READ_WRITE_TOKEN && !data.fileUrl && !isFormTest(data)) {
+    return Response.json({ error: "Please upload your manuscript (.pdf, .doc, .docx, or .zip)." }, { status: 400 });
+  }
 
   const rows = (Object.keys(FIELDS) as Field[]).map((f): [string, string] => [FIELDS[f], data[f]]);
   const subject = `Manuscript submission: ${data.title} (${data.firstName} ${data.lastName})`;

@@ -85,3 +85,18 @@ describe("internal links", () => {
     expect(lexicalToHtml(link({ relationTo: "posts", value: { id: 9, slug: "how-to" } }) as never)).toContain('href="/blog/how-to/"');
   });
 });
+
+describe("excerpt from several blocks", () => {
+  it("ends a block without punctuation with a full stop instead of running on", () => {
+    expect(excerpt("<h2>Los Angeles, California, 1927</h2><p>Mercy Allcutt is bored.</p>")).toBe("Los Angeles, California, 1927. Mercy Allcutt is bored.");
+    expect(excerpt("<p>A cozy mystery!</p><p>Book two.</p>")).toBe("A cozy mystery! Book two.");
+  });
+  it("skips link labels that say nothing about the book", () => {
+    expect(excerpt('<p>Read an <a href="https://example.com/x">excerpt</a></p>')).toBe("");
+    expect(excerpt("<p>Read the Excerpt</p><p>The real description.</p>")).toBe("The real description.");
+    expect(excerpt('<p><a href="https://example.com/x">Buy now</a></p><p>Story.</p>')).toBe("Story.");
+  });
+  it("keeps paragraphs that merely start and end with links", () => {
+    expect(excerpt('<p><a href="/a/">Ann</a> and <a href="/b/">Bo</a></p>')).toBe("Ann and Bo");
+  });
+});

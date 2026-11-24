@@ -1,5 +1,8 @@
 {
-  "productionHosts": ["epublishingworks.com", "www.epublishingworks.com"],
+  "productionHosts": [
+    "epublishingworks.com",
+    "www.epublishingworks.com"
+  ],
   "forms": [
     {
       "name": "manuscript-submission",
@@ -9,13 +12,21 @@
         "input[name=lastName]": "Staging",
         "input[name=email]": "reviewer-test@example.com",
         "input[name=phone]": "555-555-0100",
-        "select[name=genre]": { "select": "Cozy Mystery" },
+        "select[name=genre]": {
+          "select": "Cozy Mystery"
+        },
         "input[name=title]": "TEST – reviewer submission",
         "textarea[name=about]": "TEST – reviewer submission from staging. Ignore.",
-        "input[name=edited][value='No, not edited.']": { "check": true },
+        "input[name=edited][value='No, not edited.']": {
+          "check": true
+        },
         "textarea[name=problem]": "TEST – reviewer submission from staging. Ignore.",
-        "input[name=interests][value='Higher Royalties']": { "check": true },
-        "input[name=heardFrom][value='Other']": { "check": true }
+        "input[name=interests][value='Higher Royalties']": {
+          "check": true
+        },
+        "input[name=heardFrom][value='Other']": {
+          "check": true
+        }
       },
       "submit": "form button[type=submit]",
       "successText": "Thank you for your submission",
@@ -33,5 +44,9 @@
       "successText": "Your message is on its way",
       "endpoint": "/api/contact/"
     }
-  ]
+  ],
+  "notTested": {
+    "404 search box (src/app/(frontend)/not-found.tsx)": "Not a submission: a GET form that opens /books/?q=… (the books page search).",
+    "Site password (src/lib/site-gate.ts)": "Off unless SITE_PASSWORD is set; covered by tests/e2e/site-gate.spec.ts."
+  }
 }

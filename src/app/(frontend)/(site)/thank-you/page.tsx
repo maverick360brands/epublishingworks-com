@@ -1,14 +1,16 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import { ArrowRight, CheckCircle } from "@/components/icons";
 
 // Where the manuscript form sends authors after a successful submission. A confirmation page,
 // so it stays out of search results and the sitemap (it was indexable on WordPress).
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Thank You for Your Submission",
-  robots: { index: false, follow: true },
-  alternates: { canonical: "/thank-you/" },
-};
+  description: "Thank you for your submission to ePublishingWorks! Our team will review your information and reach out within 48 hours.",
+  noindex: true,
+  path: "/thank-you/",
+});
 
 const next = [
   { href: "/the-advantage/", t: "The ePublishingWorks advantage", d: "80% to 85% royalties, and what we take off your plate." },

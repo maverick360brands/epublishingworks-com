@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import { JsonLd } from "@/components/JsonLd";
 import { PageBanner } from "@/components/PageBanner";
 import { ThreeSteps } from "@/components/Sections";
@@ -8,11 +9,11 @@ import { ArrowRight } from "@/components/icons";
 import { breadcrumbSchema, graph, ids } from "@/lib/schema";
 import { site, testimonial } from "@/lib/site";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: { absolute: site.seo.about.title },
   description: site.seo.about.description,
-  alternates: { canonical: "/about/" },
-};
+  path: "/about/",
+});
 
 // Copy is the WordPress page's, verbatim; the milestones it mentions in passing are set out as figures.
 const milestones = [

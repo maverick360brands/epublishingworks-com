@@ -5,6 +5,12 @@ from,to,code,reason
 /comments/feed/,/blog/rss.xml,301,WordPress comments feed (empty) linked from every page head; closest feed on the new site
 /sitemap_index.xml,/sitemap.xml,301,Yoast sitemap index (listed in robots.txt and likely submitted in Search Console)
 /page-sitemap.xml,/sitemap.xml,301,Yoast page sitemap
+/tva_lesson-sitemap.xml,/sitemap.xml,301,"Yoast sitemap for the dropped Thrive Apprentice course (tva_lesson), still listed in the live sitemap_index.xml"
+/tva_chapter-sitemap.xml,/sitemap.xml,301,"Yoast sitemap for the dropped Thrive Apprentice course (tva_chapter), still listed in the live sitemap_index.xml"
+/tva_module-sitemap.xml,/sitemap.xml,301,"Yoast sitemap for the dropped Thrive Apprentice course (tva_module), still listed in the live sitemap_index.xml"
+/tva_assessment-sitemap.xml,/sitemap.xml,301,"Yoast sitemap for the dropped Thrive Apprentice course (tva_assessment), still listed in the live sitemap_index.xml"
+/tva_course_completed-sitemap.xml,/sitemap.xml,301,"Yoast sitemap for the dropped Thrive Apprentice course (tva_course_completed), still listed in the live sitemap_index.xml"
+/tva_courses-sitemap.xml,/sitemap.xml,301,"Yoast sitemap for the dropped Thrive Apprentice course (tva_courses), still listed in the live sitemap_index.xml"
 /wp-sitemap.xml,/sitemap.xml,301,WordPress core sitemap (already 301s to /sitemap_index.xml on the old site)
 /category/affiliates/,/blog/,301,"Empty WordPress category archive ""Affiliates"" (0 posts; leftover taxonomy unrelated to the current site); returns 200 index,follow on the old site"
 /category/affirmations-quotes-lifetips-centering-thoughts/,/blog/,301,"Empty WordPress category archive ""Affirmations Quotes LifeTips Centering Thoughts"" (0 posts; leftover taxonomy unrelated to the current site); returns 200 index,follow on the old site"

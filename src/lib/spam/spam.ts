@@ -96,13 +96,19 @@ export function phoneProblem(phone: string): string {
   return digits < 7 || digits > 15 ? `${digits} digits` : "";
 }
 
+/**
+ * The automated form tests (forms.json, "TEST – reviewer"), off production only. They type
+ * faster than a person and can't attach a file, so they skip those two checks.
+ */
+export function isFormTest(raw: Record<string, unknown>) {
+  return process.env.VERCEL_ENV !== "production" && /^TEST\b/.test(str(raw.firstName) || str(raw.name));
+}
+
 /** Layer 1: bot traps. Run on every form, before anything is delivered. */
 export function botCheck(raw: Record<string, unknown>): Verdict | null {
   if (str(raw.website).trim()) return { kind: "bot", score: 99, reasons: ["honeypot filled"], via: "trap" };
   const t = Number(str(raw._t));
-  // The automated form tests (forms.json, "TEST – reviewer") type faster than a person; off production
-  // only, they skip this one check so test submissions still go through.
-  const formTest = process.env.VERCEL_ENV !== "production" && /^TEST\b/.test(str(raw.firstName) || str(raw.name));
+  const formTest = isFormTest(raw);
   // People need a few seconds even for a short form; no _t (no JS, an old cached page) skips this check.
   if (!formTest && Number.isFinite(t) && t > 0 && t < 2500) return { kind: "bot", score: 99, reasons: [`submitted ${t} ms after the form appeared`], via: "trap" };
   const phone = str(raw.phone);

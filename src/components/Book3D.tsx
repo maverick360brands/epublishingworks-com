@@ -32,7 +32,7 @@ export function Book3D({ src, alt, width, height, priority = false }: { src: str
 
         {/* Front cover */}
         <div className="absolute inset-0 overflow-hidden rounded-r-[4px] rounded-l-[2px] [backface-visibility:hidden]" style={{ transform: `translateZ(${DEPTH / 2}px)` }}>
-          <Image src={src} alt={alt} width={width} height={height} sizes="(min-width: 1024px) 320px, 280px" priority={priority} className="block h-full w-full object-cover" />
+          <Image src={src} alt={alt} width={width} height={height} sizes="(min-width: 1024px) 320px, 280px" priority={priority} fetchPriority={priority ? "high" : undefined} className="block h-full w-full object-cover" />
           <span aria-hidden="true" className="absolute inset-y-0 left-0 w-[5%] bg-gradient-to-r from-black/40 via-white/20 to-transparent" />
           <span aria-hidden="true" className="absolute inset-0 bg-gradient-to-tr from-transparent via-transparent to-white/20" />
         </div>

@@ -130,7 +130,7 @@ Confirmation page: `/thank-you/` (H1 "Success!", "Thank you for your submission 
 | none | No Google Tag Manager container (no `GTM-`), no Meta/Facebook pixel, no LinkedIn/TikTok/Pinterest/Bing/Hotjar/Clarity, no AdSense | checked all 74 pages |
 | Thrive Leads impressions/conversions | internal WordPress AJAX analytics | page JS |
 
-Affiliate IDs (on author/book pages only, not core pages; for the author/book migration): Barnes & Noble via CJ (`anrdoezrs.net/links/7960781/…`, 10 links), Google Play `PAffiliateID=1100lcQHW`, Kobo `utm_source=linkshare_us` / `walmarthybrid`, `bwlnk.com` redirect links (11), `amzn.to` and `bit.ly` short links (24). **No Amazon Associates `tag=` appears on any Amazon link**, although the footer carries the Amazon Associates disclosure.
+Affiliate IDs (on author/book pages only, not core pages; for the author/book migration): Barnes & Noble via CJ (`anrdoezrs.net/links/7960781/…`, 10 links), Google Play `PAffiliateID=1100lcQHW`, Kobo `utm_source=linkshare_us` / `walmarthybrid`, `bwlnk.com` redirect links (11), `amzn.to` and `bit.ly` short links (24). Amazon Associates tags on Amazon links in the book listings (counted in `content/books/` after the catalog extraction; the core pages carry none): `wwwebookdisco-20` (148 links), `epubworkforre-20` (4, Sharon Ihle and Phoebe Conn), `wwwbookwirede-21` (4: Death of a Crooked Cat, In Want of a Wife, The Last Renegade, True to the Law), and one malformed `wwwebookdisco-20-20` (Scoundrel for Hire). Links are kept verbatim. TODO(dustin): confirm which tags are ePublishingWorks' own; `wwwbookwirede-21` may belong to someone else.
 
 ## 6. Email and CRM integrations
 
@@ -235,7 +235,15 @@ Because `/apprentice-registration-page/` is indexable and in the sitemap, Google
 - **`/thank-you/`** is `noindex` and left out of the sitemap. Its "within 48 hours" line is kept verbatim (it conflicts with "2 to 4 business days" elsewhere; see section 11).
 - **Reviews heading typo** ("some our authors") reads "some of our authors".
 - **Navigation:** Books, Authors, About, The Advantage, Submissions, Blog, Contact (the WordPress menu had About as "Why Choose Us?", The Advantage, Submission Guidelines, and FAQ). FAQ and Reviews are in the footer.
-- **Forms:** same fields as Thrive; fields whose labels carried `*` are now actually required. Manuscript files upload to Vercel Blob (instead of the Dropbox folder "EPW Manuscript Submissions") and the notification email links to them. No Turnstile: the spam controller used on bluetowerroofs.com and the Orion site (Dustin's choice), copied into `src/lib/spam/`.
+- **Forms:** same fields as Thrive and the same required fields: on the manuscript form everything marked `*`, including the file (when uploads are on); on the contact form name and email, with the message optional and up to 350 characters, as on Thrive. Manuscript files upload to Vercel Blob (instead of the Dropbox folder "EPW Manuscript Submissions") and the notification email links to them. No Turnstile: the spam controller used on bluetowerroofs.com and the Orion site (Dustin's choice), copied into `src/lib/spam/`.
+- **Search titles and headings that differ from WordPress:**
+  - `/privacy-policy/`: title "Privacy Policy & Terms of Use | ePublishingWorks" (was "Privacy Policy - ePublishingWorks"), H1 "Privacy Policy & Terms of Use", and a description (it had none).
+  - `/thank-you/`: title "Thank You for Your Submission | ePublishingWorks" (was "Thank you - ePublishingWorks"), with a description taken from the page's own copy.
+  - Author pages: the H1 is the author's name (every WordPress author page had the same H1, "One of our esteemed Authors."), and each has a description from the start of the bio.
+  - Book pages: a description from the start of the book's description. Dancing Angels keeps its Yoast description verbatim.
+- **Redirects and status codes:** address changes made in the admin answer with a 301 (hidden items with a 302), as the conventions ask. The six Thrive Apprentice sitemaps still listed in the live `sitemap_index.xml` 301 to `/sitemap.xml`. Root paths with a file extension the site doesn't serve (`/index.php`, `/xmlrpc.php`, `/readme.html`) are real 404s. Old addresses typed without the trailing slash take one extra hop (Next.js adds the slash, then the 301), e.g. `/feed` → `/feed/` → `/blog/rss.xml`.
+- **Indexing:** only epublishingworks.com and www are indexable. Every other host (the `*.vercel.app` addresses, previews) sends `X-Robots-Tag: noindex, nofollow` and a disallow-all `robots.txt`.
+- **`/books/`** shows 60 books at a time with a "Show More Books" button; search and the genre filter cover all 510.
 - **Fonts:** one self-hosted variable font (Manrope) replaces Manrope, Muli, and Lato from Google Fonts.
 - **Home page:** the carousel's books are featured (in its order) on the cover wall and a new "Featured books" row; "Eternal Beloved" by Mary Ellen Johnson appears only in that carousel, not on her author page, so it isn't in the catalog yet.
 

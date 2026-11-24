@@ -17,3 +17,4 @@
 /author/dustinadmin/ /blog/
 /author/marieadmin/ /blog/
 /author/rebekah/ /blog/
+/tva_lesson-sitemap.xml /sitemap.xml

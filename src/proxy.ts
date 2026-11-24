@@ -12,8 +12,8 @@ import shortlinks from "@/generated/shortlinks.json";
 // /blog/<slug>/, matching the WordPress URLs. Under Cache Components a page streams before it
 // can decide, so redirects and 404s from the page itself would arrive with a 200 status. The
 // proxy decides first, from a small address table read from the CMS database:
-//   visible item → the page renders; hidden item → 307 to its author (or listing) page;
-//   old address → 308 to the new one; unknown → a real 404.
+//   visible item → the page renders; hidden item → 302 to its author (or listing) page;
+//   old address → 301 to the new one (single-hop 301s, as the site conventions ask); unknown → a real 404.
 // If the database can't be reached, requests pass through and pages apply the same rules.
 
 const includeDrafts = process.env.NODE_ENV !== "production" || process.env.VERCEL_ENV === "preview";
@@ -36,6 +36,11 @@ const getManifest = createManifestCache(
   },
   { ttlMs: Number(process.env.ROUTE_MANIFEST_TTL_MS) || 30_000 },
 );
+
+// Files the app itself serves at the root. Any other root path with a dot (/index.php,
+// /xmlrpc.php, /readme.html) is a WordPress leftover or a probe and gets a real 404, not the
+// book route's "not found" page with a 200.
+const ROOT_FILES = new Set(["robots.txt", "sitemap.xml", "llms.txt", "indexnow-key.txt", "icon.png", "apple-icon.png"]);
 
 function isContentPath(segments: string[]) {
   if (segments.some((s) => s.includes("."))) return false; // feeds such as /sitemap.xml
@@ -61,13 +66,17 @@ export async function proxy(request: NextRequest) {
     const to = key ? (shortlinks as Record<string, string>)[key] : undefined;
     if (to) return NextResponse.redirect(new URL(to, request.url), 301);
   }
-  if (!isContentPath(pathname.split("/").filter(Boolean))) return NextResponse.next();
+  const segments = pathname.split("/").filter(Boolean);
+  if (segments.length === 1 && segments[0].includes(".") && !ROOT_FILES.has(segments[0])) {
+    return NextResponse.rewrite(new URL("/__not-found/__/__/", request.url));
+  }
+  if (!isContentPath(segments)) return NextResponse.next();
   // A preview without a database (CONTENT_SOURCE=files) has no address table; pages decide.
   if (process.env.CONTENT_SOURCE === "files") return NextResponse.next();
   const manifest = await getManifest();
   if (!manifest) return NextResponse.next();
   const result = resolveSlug(manifestToCatalog(manifest, { includeDrafts }), pathname);
-  if (result.kind === "redirect") return NextResponse.redirect(new URL(result.to, request.url), result.permanent ? 308 : 307);
+  if (result.kind === "redirect") return NextResponse.redirect(new URL(result.to, request.url), result.permanent ? 301 : 302);
   if (result.kind === "not-found") return NextResponse.rewrite(new URL("/__not-found/__/__/", request.url));
   return NextResponse.next();
 }
@@ -75,5 +84,5 @@ export async function proxy(request: NextRequest) {
 export const config = {
   // Pages only: skip Next.js internals, the admin, API routes, and files with an extension
   // (images, fonts), except the feeds that list the site's content, which the gate also covers.
-  matcher: ["/", "/((?!_next/|admin(?:/|$)|api/|.*\\.[a-zA-Z0-9]+$).+)", "/sitemap.xml", "/llms.txt", "/blog/rss.xml", "/robots.txt"],
+  matcher: ["/", "/((?!_next/|admin(?:/|$)|api/|.*\\.[a-zA-Z0-9]+$).+)", "/sitemap.xml", "/llms.txt", "/blog/rss.xml", "/robots.txt", "/:file([^/]+\\.[^/]+)"],
 };

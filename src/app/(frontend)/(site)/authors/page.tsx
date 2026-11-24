@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import { JsonLd } from "@/components/JsonLd";
 import { PageBanner } from "@/components/PageBanner";
 import { StarsHeading, Testimonial } from "@/components/Testimonial";
@@ -10,11 +11,11 @@ import { AuthorsBrowser, type DirectoryAuthor } from "@/components/AuthorsBrowse
 import { breadcrumbSchema, graph, ids } from "@/lib/schema";
 import { authorsPageIntro, homeTestimonials, site } from "@/lib/site";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: { absolute: site.seo.authors.title },
   description: site.seo.authors.description,
-  alternates: { canonical: "/authors/" },
-};
+  path: "/authors/",
+});
 
 /** "Alice Duncan" → "Duncan"; used for the A–Z index. */
 const lastName = (name: string) => name.trim().split(/\s+/).at(-1) ?? name;

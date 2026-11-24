@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import type { ReactNode } from "react";
 import { BookTile } from "@/components/BookTile";
 import { HeroBookWall, type WallBook } from "@/components/HeroBookWall";
@@ -12,11 +13,11 @@ import { bookAuthorLabel, getCatalog, heroBooks, publishedPosts, showDrafts } fr
 import { wallColumns } from "@/lib/hero";
 import { homeTestimonials, site } from "@/lib/site";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: { absolute: site.homeTitle },
   description: site.description,
-  alternates: { canonical: "/" },
-};
+  path: "/",
+});
 
 // Copy is the WordPress home page's, section for section; the featured-books row and the
 // latest articles are new.

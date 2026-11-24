@@ -29,7 +29,10 @@ function initialState(genres: string[]) {
 }
 
 // The full catalog: genre chips (with counts), search by title, author, or series, and a sort.
-// The filter state is mirrored into the address bar.
+// The filter state is mirrored into the address bar. Tiles come PAGE at a time ("Show more"):
+// all 510 at once made the page heavy to render; search and filters still cover every book.
+const PAGE = 60;
+
 export function BooksBrowser({ books }: { books: CatalogBook[] }) {
   const genres = useMemo(() => {
     const counts = new Map<string, number>();
@@ -39,6 +42,10 @@ export function BooksBrowser({ books }: { books: CatalogBook[] }) {
   const [genre, setGenre] = useState("all");
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<Sort>("featured");
+  const [limit, setLimit] = useState(PAGE);
+  // A new filter, search, or sort starts again from the first page.
+  const pick = (g: string) => (setGenre(g), setLimit(PAGE));
+  const search = (q: string) => (setQuery(q), setLimit(PAGE));
 
   useEffect(() => {
     const s = initialState(genres.map(([g]) => g));
@@ -68,7 +75,7 @@ export function BooksBrowser({ books }: { books: CatalogBook[] }) {
       <button
         type="button"
         aria-pressed={genre === id}
-        onClick={() => setGenre(id)}
+        onClick={() => pick(id)}
         className={`flex items-center gap-2 rounded-full border px-4 py-2 text-[15px] font-semibold transition-colors ${
           genre === id ? "border-blue bg-blue text-white" : "border-line bg-white text-navy hover:border-blue hover:text-blue"
         }`}
@@ -91,7 +98,7 @@ export function BooksBrowser({ books }: { books: CatalogBook[] }) {
           <input
             type="search"
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={(e) => search(e.target.value)}
             placeholder="Search title, author, or series"
             className="h-[54px] w-full rounded-full border-2 border-line bg-white pl-12 pr-5 text-[16px] text-navy placeholder:text-body/70 focus:border-blue focus:outline-none"
           />
@@ -100,7 +107,7 @@ export function BooksBrowser({ books }: { books: CatalogBook[] }) {
           Sort
           <select
             value={sort}
-            onChange={(e) => setSort(e.target.value as Sort)}
+            onChange={(e) => (setSort(e.target.value as Sort), setLimit(PAGE))}
             className="h-[46px] rounded-full border-2 border-line bg-white px-4 text-[15px] font-semibold text-navy focus:border-blue focus:outline-none"
           >
             {SORTS.map((s) => (
@@ -124,13 +131,25 @@ export function BooksBrowser({ books }: { books: CatalogBook[] }) {
       </p>
 
       {shown.length ? (
-        <ul className="mt-6 grid grid-cols-2 gap-x-6 gap-y-12 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-          {shown.map((b, i) => (
-            <li key={b.slug}>
-              <BookTile book={b} priority={i < 5} headingLevel="h2" />
-            </li>
-          ))}
-        </ul>
+        <>
+          <ul className="mt-6 grid grid-cols-2 gap-x-6 gap-y-12 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+            {shown.slice(0, limit).map((b, i) => (
+              <li key={b.slug}>
+                <BookTile book={b} priority={i < 5} headingLevel="h2" />
+              </li>
+            ))}
+          </ul>
+          {shown.length > limit ? (
+            <div className="mt-14 text-center">
+              <button type="button" onClick={() => setLimit((n) => n + PAGE)} className="btn btn-blue">
+                Show More Books
+              </button>
+              <p className="mt-3 text-[14px] text-body">
+                Showing {limit} of {shown.length}
+              </p>
+            </div>
+          ) : null}
+        </>
       ) : (
         <div className="mt-6 rounded-3xl bg-mist px-6 py-12 text-center">
           <p className="font-display text-[20px] font-bold text-navy">No books match{query.trim() ? <> &ldquo;{query.trim()}&rdquo;</> : null}</p>
@@ -138,8 +157,8 @@ export function BooksBrowser({ books }: { books: CatalogBook[] }) {
           <button
             type="button"
             onClick={() => {
-              setQuery("");
-              setGenre("all");
+              search("");
+              pick("all");
             }}
             className="btn btn-blue mt-5"
           >

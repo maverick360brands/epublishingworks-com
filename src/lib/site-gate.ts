@@ -4,11 +4,11 @@
 // a hash of the password, never the password, and changing the password signs everyone out.
 // The admin keeps its own sign-in and is not behind this gate.
 
-export const GATE_COOKIE = "rup_site_gate";
+export const GATE_COOKIE = "epw_site_gate";
 export const GATE_MAX_AGE = 60 * 60 * 24 * 30; // 30 days
 
 export async function gateToken(password: string): Promise<string> {
-  const bytes = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(`rup-site-gate:${password}`));
+  const bytes = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(`epw-site-gate:${password}`));
   return Array.from(new Uint8Array(bytes), (b) => b.toString(16).padStart(2, "0")).join("");
 }
 

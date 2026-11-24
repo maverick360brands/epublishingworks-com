@@ -56,7 +56,8 @@ const authors = readCollection("authors")
     order: data.order ?? 50,
     bookSlugs: data.books || [],
     bioHtml: toHtml(body),
-    summary: data.summary || excerpt(body),
+    // Blank: the site takes the start of the bio, as it does for CMS records (src/lib/richtext.ts).
+    summary: data.summary || "",
   }))
   .sort((a, b) => a.order - b.order || a.name.localeCompare(b.name));
 
@@ -82,7 +83,8 @@ const books = readCollection("books")
     featured: Boolean(data.featured),
     retailers: data.retailers || [],
     descriptionHtml: toHtml(body),
-    summary: data.summary || excerpt(body),
+    summary: data.summary || "",
+    seoDescription: data.seoDescription || "",
   }))
   .sort((a, b) => a.title.localeCompare(b.title));
 

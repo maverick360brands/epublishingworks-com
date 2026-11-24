@@ -8,6 +8,17 @@ const run = Date.now().toString(36);
 const authorName = `Gate Author ${run}`;
 const bookTwo = `Gate Book Two ${run}`;
 
+// Remove what the tests created, so test books never linger in the catalog, sitemap, or llms.txt.
+test.afterAll(async ({ browser }) => {
+  const page = await browser.newPage();
+  await login(page);
+  for (const slug of [`gatebookone${run}`, `gatebooktwo${run}`]) {
+    await page.request.delete(`/api/cms/books?where[slug][equals]=${slug}`);
+  }
+  await page.request.delete(`/api/cms/authors?where[slug][equals]=gateauthor${run}`);
+  await page.close();
+});
+
 test("+ New author from a book keeps the book form and selects the new author", async ({ page }) => {
   await login(page);
   await page.goto("/admin/collections/books/create/");

@@ -29,6 +29,6 @@ describe("site gate", () => {
     expect(html).toContain('action="/api/site-gate/"');
     expect(html).toContain('value="/a/?q=&quot;x&quot;"');
     expect(html).toContain("That password isn");
-    expect(GATE_COOKIE).toBe("rup_site_gate");
+    expect(GATE_COOKIE).toBe("epw_site_gate");
   });
 });

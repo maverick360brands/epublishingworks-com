@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import { JsonLd } from "@/components/JsonLd";
 import { PageBanner } from "@/components/PageBanner";
 import { ClosingCta } from "@/components/Sections";
@@ -8,11 +9,11 @@ import { ArrowRight, Star } from "@/components/icons";
 import { breadcrumbSchema, graph, ids } from "@/lib/schema";
 import { site, testimonials } from "@/lib/site";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: { absolute: site.seo.reviews.title },
   description: site.seo.reviews.description,
-  alternates: { canonical: "/reviews/" },
-};
+  path: "/reviews/",
+});
 
 // Every author testimonial from the WordPress site, verbatim, in the Reviews page's order.
 export default function ReviewsPage() {

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import { JsonLd } from "@/components/JsonLd";
 import { PageBanner } from "@/components/PageBanner";
 import { PostCard } from "@/components/PostCard";
@@ -9,12 +10,11 @@ import { getCatalog, publishedPosts, showDrafts } from "@/lib/content";
 import { breadcrumbSchema, graph, ids } from "@/lib/schema";
 import { site } from "@/lib/site";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Publishing Blog: Advice for Authors & Readers",
-  description:
-    "Practical advice for authors on publishing, royalties, backlist rights, submissions, and book marketing, plus reading guides for mystery and romance readers.",
-  alternates: { canonical: "/blog/" },
-};
+  description: "Practical advice for authors on publishing, royalties, backlist rights, submissions, and book marketing, plus reading guides for mystery and romance readers.",
+  path: "/blog/",
+});
 
 const fmt = (iso: string) => new Date(iso).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric", timeZone: "UTC" });
 

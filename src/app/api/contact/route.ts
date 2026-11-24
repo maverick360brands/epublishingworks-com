@@ -20,14 +20,15 @@ export async function POST(request: Request) {
     return Response.json({ ok: true });
   }
   const value = (k: string) => (raw[k] ?? "").trim().slice(0, 5000);
-  const data = { name: value("name"), email: value("email"), message: value("message") };
-  if (!data.name || !data.message || !isEmail(data.email)) {
-    return Response.json({ error: "Please fill in your name, a valid email address, and a message." }, { status: 400 });
+  // As on the Thrive form: name and email required, the message optional and up to 350 characters.
+  const data = { name: value("name"), email: value("email"), message: value("message").slice(0, 350) };
+  if (!data.name || !isEmail(data.email)) {
+    return Response.json({ error: "Please fill in your name and a valid email address." }, { status: 400 });
   }
   const rows: [string, string][] = [
     ["Name", data.name],
     ["Email", data.email],
-    ["Message", data.message],
+    ["Message", data.message || "(no message)"],
   ];
   const subject = `Website message from ${data.name}`;
   const verdict = await checkSpam("contact", data);

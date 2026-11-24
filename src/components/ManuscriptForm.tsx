@@ -76,6 +76,11 @@ export function ManuscriptForm({ uploadsEnabled }: { uploadsEnabled: boolean }) 
     e.preventDefault();
     const form = e.currentTarget;
     const data = new FormData(form);
+    // Required, as on the Thrive form; the automated form tests ("TEST – …") can't attach a file.
+    if (uploadsEnabled && !file && !/^TEST\b/.test(String(data.get("firstName") ?? ""))) {
+      setStatus({ kind: "error", message: "Please upload your manuscript (.pdf, .doc, .docx, or .zip)." });
+      return;
+    }
     if (!data.getAll("interests").length) {
       setStatus({ kind: "error", message: "Please choose at least one thing that interests you about ePublishingWorks." });
       return;
@@ -211,7 +216,7 @@ export function ManuscriptForm({ uploadsEnabled }: { uploadsEnabled: boolean }) 
       <Fieldset legend="Your manuscript">
         {uploadsEnabled ? (
           <label className="block">
-            <span className={label}>Upload your manuscript {optional}</span>
+            <span className={label}>Upload your manuscript{req}</span>
             <span className="flex flex-col items-start gap-3 rounded-[18px] border-2 border-dashed border-line bg-mist/60 p-6 transition-colors hover:border-blue">
               <input
                 type="file"

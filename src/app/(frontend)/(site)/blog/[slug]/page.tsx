@@ -13,7 +13,7 @@ import { ReadingProgress } from "@/components/ReadingProgress";
 import { getCatalog, postModified, publishedPosts, showDrafts } from "@/lib/content";
 import { LostContent } from "../../../not-found";
 import { lostMetadata, resolvePage } from "@/lib/resolve";
-import { metaFor } from "@/lib/seo";
+import { metaFor, pageMetadata } from "@/lib/seo";
 import { inlineCtaFor, splitAfterSection } from "@/lib/inline-cta";
 import { articleSchema, breadcrumbSchema, faqSchema, graph } from "@/lib/schema";
 import { site, testimonials } from "@/lib/site";
@@ -30,18 +30,16 @@ export async function generateMetadata({ params }: PageProps<"/blog/[slug]">): P
   if (!post) return lostMetadata;
   const meta = metaFor({ title: post.title, summary: post.description, seo: post.seo }, post.image);
   return {
-    title: meta.title,
-    description: meta.description,
-    alternates: { canonical: `/blog/${post.slug}/` },
-    robots: post.status === "draft" ? { index: false, follow: false } : undefined,
-    openGraph: {
-      type: "article",
+    ...pageMetadata({
       title: meta.title,
       description: meta.description,
-      publishedTime: post.date ?? undefined,
-      modifiedTime: postModified(post) ?? undefined,
+      path: `/blog/${post.slug}/`,
+      type: "article",
+      // Posts without their own image share the site image.
       ...(meta.image ? { images: [meta.image] } : {}),
-    },
+      openGraph: { publishedTime: post.date ?? undefined, modifiedTime: postModified(post) ?? undefined },
+    }),
+    robots: post.status === "draft" ? { index: false, follow: false } : undefined,
   };
 }
 

@@ -59,10 +59,21 @@ export function withToc(html: string): { html: string; toc: TocEntry[] } {
   return { html: out, toc };
 }
 
+// Short link labels that say nothing about the book ("Read an Excerpt", "Read more").
+const CALL_TO_ACTION = /^(?:read|see|view|download)\b.*\b(?:excerpt|sample|chapter|more)\b|^click here|^buy (?:it )?now/i;
+
 /** A plain-text excerpt of about `max` characters, cut at a word boundary. */
 export function excerpt(html: string, max = 155): string {
-  // Tildes mark Scripture attributions ("~ Proverbs 18:21"); summaries drop them, as before.
-  const text = textOf(html).replace(/~\s*/g, "").replace(/\s+/g, " ").trim();
+  // Paragraphs, headings, and list items become sentences: a block without closing punctuation
+  // ("Los Angeles, California, 1927") gets a full stop instead of running into the next one.
+  // Blocks that are only a link ("Read an excerpt") say nothing about the book and are skipped.
+  const blocks = html
+    .split(/<\/(?:p|h[1-6]|li|blockquote|td|th|div)>|<br\s*\/?>/i)
+    .filter((block) => !/^\s*(?:<[^>]+>\s*)*<a\b[^>]*>(?:(?!<\/a>)[\s\S])*<\/a>\s*(?:<[^>]+>\s*)*$/i.test(block))
+    // Tildes mark attributions ("~ Proverbs 18:21"); summaries drop them.
+    .map((block) => textOf(block).replace(/~\s*/g, "").replace(/\s+/g, " ").trim())
+    .filter((text) => text && !(text.length < 40 && CALL_TO_ACTION.test(text)));
+  const text = blocks.reduce((out, block) => (out ? `${out}${/[.!?…:;"”’)]$/.test(out) ? "" : "."} ${block}` : block), "");
   if (text.length <= max) return text;
   const cut = text.slice(0, max);
   return cut.slice(0, cut.lastIndexOf(" ")).replace(/[,;:.\s]+$/, "") + "…";

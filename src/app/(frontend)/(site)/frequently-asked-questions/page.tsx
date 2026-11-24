@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import { FaqAccordion } from "@/components/FaqAccordion";
 import { JsonLd } from "@/components/JsonLd";
 import { PageBanner } from "@/components/PageBanner";
@@ -8,11 +9,11 @@ import { ArrowRight } from "@/components/icons";
 import { breadcrumbSchema, faqSchema, graph } from "@/lib/schema";
 import { faqs, site } from "@/lib/site";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: { absolute: site.seo.faq.title },
   description: site.seo.faq.description,
-  alternates: { canonical: "/frequently-asked-questions/" },
-};
+  path: "/frequently-asked-questions/",
+});
 
 // The canonical home of the FAQ and its FAQPage schema (Home and Submission Guidelines show the
 // same questions without the schema).

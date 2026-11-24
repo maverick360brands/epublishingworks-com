@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import { FaqSection, TestimonialsPair, ThreeSteps } from "@/components/Sections";
 import { JsonLd } from "@/components/JsonLd";
 import { PageBanner } from "@/components/PageBanner";
@@ -8,11 +9,11 @@ import { ArrowRight } from "@/components/icons";
 import { breadcrumbSchema, graph } from "@/lib/schema";
 import { site, wantedGenres } from "@/lib/site";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: { absolute: site.seo.guidelines.title },
   description: site.seo.guidelines.description,
-  alternates: { canonical: "/submission-guidelines/" },
-};
+  path: "/submission-guidelines/",
+});
 
 // Copy is the WordPress page's, verbatim. Its second H1 ("Getting Started Is Simple") is an H2 here.
 export default function SubmissionGuidelinesPage() {

@@ -26,8 +26,8 @@ test("a wrong password is refused; the right one opens the page you asked for", 
   await page.getByLabel("Password").fill(PASSWORD!);
   await page.getByRole("button", { name: "View the site" }).click();
   await expect(page).toHaveURL(/\/spirits-adopted-alice-duncan\/$/);
-  await expect(page.locator("h1")).toContainText("Provider");
+  await expect(page.locator("h1")).toContainText("Spirits Adopted");
   // Unlocked for the rest of the visit, and redirects work again.
-  const res = await page.request.get("/authors/johnfmosacto/", { maxRedirects: 0 });
-  expect(res.status()).toBe(308);
+  const res = await page.request.get("/authors/phoebe-conn/", { maxRedirects: 0 });
+  expect(res.status()).toBe(301);
 });

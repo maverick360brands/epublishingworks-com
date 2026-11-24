@@ -5,6 +5,7 @@
 import data from "@/generated/content.json";
 import type { Author, Book, Catalog, Post } from "./catalog";
 import { excerpt } from "./richtext";
+import { POST_ILLUSTRATIONS, illustrationCover } from "./post-art";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 type Raw = Record<string, any>;
@@ -74,8 +75,8 @@ export function filesCatalog(): Catalog {
     authorName: String(p.authorName ?? "ePublishingWorks"),
     category: String(p.category ?? "Publishing"),
     tags: (p.tags ?? []) as string[],
-    image: String(p.image ?? ""),
-    cover: null,
+    image: String(p.image ?? "") || POST_ILLUSTRATIONS[String(p.slug)]?.share || "",
+    cover: illustrationCover(String(p.slug)),
     faqs: (p.faqs ?? []) as Post["faqs"],
     summary: String(p.summary ?? ""),
     readingMinutes: Number(p.readingMinutes ?? 1),

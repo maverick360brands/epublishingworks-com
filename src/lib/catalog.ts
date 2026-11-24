@@ -62,9 +62,10 @@ export type Post = {
   authorName: string;
   category: string;
   tags: string[];
-  /** Social and schema image: the SEO override, else the cover photo. */
+  /** Social and schema image: the SEO override, else the cover photo, else the illustration's share image. */
   image: string;
-  cover: { url: string; width: number; height: number; alt: string } | null;
+  /** The cover uploaded in the admin, else the post's illustration (src/lib/post-art.ts). `focus` is a CSS object-position. */
+  cover: { url: string; width: number; height: number; alt: string; focus?: string } | null;
   faqs: { q: string; a: string }[];
   summary: string;
   readingMinutes: number;

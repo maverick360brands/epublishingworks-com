@@ -8,7 +8,7 @@ export function PostCard({ post, headingLevel = "h3" }: { post: Post; headingLev
   const H = headingLevel;
   return (
     <Link href={`/blog/${post.slug}/`} className="group block no-underline">
-      <PostCover post={post} sizes="(min-width: 1024px) 400px, (min-width: 640px) 50vw, 100vw" />
+      <PostCover post={post} decorative sizes="(min-width: 1024px) 400px, (min-width: 640px) 50vw, 100vw" />
       <p className="mt-5 text-[14px] text-body">
         {post.date ? <time dateTime={post.date}>{fmt(post.date)}</time> : null}
         <span aria-hidden="true"> &nbsp;/&nbsp; </span>

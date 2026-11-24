@@ -1,6 +1,7 @@
 // Maps CMS documents (Payload, depth 1) to the site's content model in src/lib/catalog.ts.
 // Pure: no database access here, so it can be tested on its own.
 import type { Author, Book, Catalog, Post, Seo } from "./catalog";
+import { POST_ILLUSTRATIONS, illustrationCover } from "./post-art";
 import { excerpt, lexicalToHtml, textOf, withToc } from "./richtext";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -77,9 +78,11 @@ function toPost(doc: Doc): Post {
   const words = textOf(html).split(/\s+/).filter(Boolean).length;
   const seo = seoOf(doc);
   const coverDoc = media(doc.cover);
-  const cover = coverDoc && fileUrl(coverDoc)
+  const uploaded = coverDoc && fileUrl(coverDoc)
     ? { url: fileUrl(coverDoc), width: Number(coverDoc.width ?? 0), height: Number(coverDoc.height ?? 0), alt: str(coverDoc.alt) }
     : null;
+  const art = POST_ILLUSTRATIONS[str(doc.slug)];
+  const cover = uploaded ?? illustrationCover(str(doc.slug));
   return {
     slug: str(doc.slug),
     title: str(doc.title),
@@ -89,7 +92,7 @@ function toPost(doc: Doc): Post {
     authorName: str(doc.authorName) || "ePublishingWorks",
     category: str(doc.category) || "Publishing",
     tags: (doc.tags ?? []) as string[],
-    image: seo.image || cover?.url || "",
+    image: seo.image || uploaded?.url || art?.share || "",
     cover,
     faqs: ((doc.faqs ?? []) as Doc[]).map((f) => ({ q: str(f.q), a: str(f.a) })),
     summary: str(doc.summary),

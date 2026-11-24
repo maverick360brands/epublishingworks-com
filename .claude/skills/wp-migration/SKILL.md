@@ -50,8 +50,9 @@ Deploy to staging and run the `site-reviewer` agent. Fix every blocker. Re-run u
 Then promote `staging` to `main` (the change loop, step 2): before go-live, `main` serves only the
 private `*.vercel.app` production URL.
 
-**STOP**: send Dustin what changed, the staging URL, the reviewer result, the production URL, and
-any `TODO(dustin):` items. Phase 5 waits for his go-live.
+**STOP**: send Dustin what changed, the staging URL, the reviewer result and the production URL,
+and ask for any open `TODO(dustin):` items as clickable questions (conventions, "Working with
+Dustin"). Phase 5 waits for his go-live.
 
 ## Phase 5: Cutover: domain and DNS (with Dustin, only when he says go)
 

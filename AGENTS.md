@@ -4,13 +4,14 @@ Claude Code, Cursor, Codex, Grok, or any other agent working in this repo: read 
 follow them. They apply to you exactly as written.
 
 1. `.claude/rules/m360-site-conventions.md`: shared rules, including the change loop (how a
-   change goes from request → private staging preview → an approver's OK → live).
+   change goes from request → private staging preview → live).
 2. `CLAUDE.md`: what is specific to this site.
 
-Short version: work on a branch, PR into `staging`, send Dustin the staging preview link. Publish
-(merge `staging` into `main`) only after an approver for this site (listed in `CLAUDE.md` →
-People) approves that preview in chat. Never push to `main` directly. Approvers don't use
-GitHub; never ask them to.
+Short version: work on a branch, PR into `staging`, merge once `site-reviewer` passes, then publish
+yourself: open the PR from `staging` into `main` and merge it, without asking anyone first. Do that
+only in a session run by an approver for this site (listed in `CLAUDE.md` → People). Never push to
+`main` directly. Send what changed, the staging link, the site-reviewer result, and the live URL.
+Approvers don't use GitHub; never ask them to.
 
 <!-- BEGIN:nextjs-agent-rules -->
 

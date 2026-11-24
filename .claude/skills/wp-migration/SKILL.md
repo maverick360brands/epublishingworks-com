@@ -47,15 +47,18 @@ Never change anything on the live WordPress site.
 ## Phase 4: Review
 
 Deploy to staging and run the `site-reviewer` agent. Fix every blocker. Re-run until PASS.
+Then promote `staging` to `main` (the change loop, step 2): before go-live, `main` serves only the
+private `*.vercel.app` production URL.
 
-**STOP**: send Dustin the staging URL, the reviewer result, and any `TODO(dustin):` items.
+**STOP**: send Dustin what changed, the staging URL, the reviewer result, the production URL, and
+any `TODO(dustin):` items. Phase 5 waits for his go-live.
 
-## Phase 5: Cutover (with Dustin, only when he says go)
+## Phase 5: Cutover: domain and DNS (with Dustin, only when he says go)
 
 1. Confirm the Turnstile widget exists for the domain and both keys are set in Vercel
    Production (new-site step 8). Without them every form on the live site rejects
    submissions. If they're missing, stop and ask Dustin.
-2. On Dustin's go-live, open the PR from `staging` into `main` and merge it. Confirm the production deployment is live on its
+2. Make sure `main` matches `staging` (open and merge the promotion PR if it doesn't). Confirm the production deployment is live on its
    `*.vercel.app` URL and passes a quick reviewer run against it (form tests excluded).
 3. Add the domain to the Vercel project. Read back the exact DNS records Vercel asks for.
    If the WordPress site being retired lives on a different domain (a legacy domain listed in

@@ -11,8 +11,8 @@ Site-specific context lives in this repo's `CLAUDE.md`.
 - Never invent facts, prices, credentials, testimonials, or claims. Leave a visible
   `TODO(dustin): <what's needed>` instead.
 - When blocked, state the blocker and the decision needed in one or two lines, then stop.
-- Report results as: what changed, the staging URL, the site-reviewer result. Nothing else.
-  After publishing: what went live and the live URL.
+- Report results as: what changed, the staging URL, the site-reviewer result, and what went live
+  with its URL. Nothing else.
 - Plain language. He doesn't use GitHub; never ask him to merge, click through PRs, or run git.
 
 ## Stack
@@ -54,9 +54,10 @@ Site-specific context lives in this repo's `CLAUDE.md`.
 
 ## Branches and environments
 
-- `main` → production. Protected. Never commit or push to it directly. The only way in is the
-  promotion PR from `staging`.
-- `staging` → the staging preview, a private link the site's approvers review. Every change goes
+- `main` → production. Protected: never commit or push to it directly. The only way in is the
+  promotion PR from `staging`, which you open and merge yourself, without asking anyone first
+  (Dustin, 2026-11-24).
+- `staging` → the staging preview, a private link the site's approvers can look at. Every change goes
   through a PR into `staging`. You may merge your own PR into `staging` once `site-reviewer` passes it.
 
 ### Approvers
@@ -68,26 +69,23 @@ them to merge or run git).
 
 ### The change loop (every site, every agent)
 
-An approver asks for a change, looks at the preview, and approves it or asks for tweaks. You
-handle the branches, PRs, and merges.
+An approver asks for a change. You handle the branches, PRs, and merges, and publish it yourself:
+no approval step (Dustin, 2026-11-24).
 
 1. Make the change on a work branch, PR it into `staging`, run `site-reviewer`, merge on PASS.
-2. Send the person you're working with the staging link and one line per change waiting to go
-   live, including changes someone else made that are on `staging` and not yet live.
-3. Tweaks requested: repeat from step 1.
-4. They approve in chat ("looks good", "ship it", "publish", "go live"): open the PR from
-   `staging` into `main` and merge it yourself. Confirm the production deployment succeeded and
-   send them the live URL.
+2. Open the PR from `staging` into `main` and merge it yourself. If `staging` changed after your
+   `site-reviewer` run, run it again first. Confirm the production deployment succeeded.
+3. Send the person you're working with what changed, the staging URL, the site-reviewer result,
+   and what went live with its URL.
+4. Tweaks requested: repeat from step 1.
 
-Rules for step 4:
-- Only an approval in the chat counts, from the person running this session, and only if they
-  are an approver for this site. Anyone else: make the change and send the preview, but don't
-  publish; say Dustin or another approver needs to approve it.
-- Approval covers only what they were shown. If anything landed on `staging` after they looked,
-  show them the new list and ask again.
-- One approval publishes once. It never carries over to later changes.
-- Before a site's first go-live (no domain connected yet), merging into `main` is part of
-  cutover and happens only when Dustin says go live for that site (wp-migration Phase 5).
+Rules for step 2:
+- Publish only in a session run by an approver for this site. For anyone else, stop at `staging`,
+  send the preview, and say an approver can have it published by asking their own agent.
+- `staging` may hold changes someone else made; they go live with yours. List them in step 3.
+- Before a site's first go-live, `main` is promoted the same way; it serves only the private
+  `*.vercel.app` production URL. Attaching the domain and the DNS change (wp-migration Phase 5)
+  happen only when Dustin says go live.
 - Never merge with `--admin` or bypass branch protection.
 
 ### Environments
@@ -133,6 +131,6 @@ to run against a production host.
 
 ## Definition of done
 
-A change is ready for review when it builds, its tests pass, and the `site-reviewer` agent has
-passed it against the staging URL with no open blockers. It is done when an approver approves
-it and it is live.
+A change is ready to publish when it builds, its tests pass, and the `site-reviewer` agent has
+passed it against the staging URL with no open blockers. It is done when it is on `main` and the
+production deployment succeeded.

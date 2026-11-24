@@ -8,3 +8,4 @@ export const MANUSCRIPT_TYPES = [
 ];
 export const MANUSCRIPT_EXTENSIONS = ".pdf,.doc,.docx,.zip";
 export const MANUSCRIPT_MAX_BYTES = 20 * 1024 * 1024;
+

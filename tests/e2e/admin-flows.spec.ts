@@ -80,3 +80,10 @@ test("an author with books can't be deleted", async ({ page }) => {
   expect(res.status()).toBe(400);
   expect(JSON.stringify(await res.json())).toContain("This author still has books. Reassign or delete their books first.");
 });
+
+test("a signed-in editor gets past the manuscript download check", async ({ page }) => {
+  await login(page);
+  // No private store locally, so the route answers 503 once the editor is recognised (not the sign-in redirect).
+  const res = await page.request.get("/api/manuscript/file/?path=manuscripts/test-file.pdf", { maxRedirects: 0 });
+  expect(process.env.MANUSCRIPTS_READ_WRITE_TOKEN ? [200, 404] : [503]).toContain(res.status());
+});

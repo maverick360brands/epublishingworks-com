@@ -54,3 +54,10 @@ test("the manuscript form insists on at least one interest", async ({ page }) =>
   await page.getByRole("button", { name: "Submit Manuscript" }).click();
   await expect(page.getByRole("alert").filter({ hasText: /\S/ })).toContainText("at least one"); // skip Next.js's empty route announcer
 });
+
+test("manuscript files open only for signed-in editors", async ({ request }) => {
+  const res = await request.get("/api/manuscript/file/?path=manuscripts/test-file.pdf", { maxRedirects: 0 });
+  expect(res.status()).toBe(302);
+  expect(res.headers().location).toContain("/admin/login/?redirect=");
+  expect((await request.get("/api/manuscript/file/?path=../secrets", { maxRedirects: 0 })).status()).toBe(404);
+});

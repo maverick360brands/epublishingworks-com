@@ -1,4 +1,7 @@
-import { deliverSpam, formObject, isEmail, isSameSite, rowsToHtml, sendFormEmail, verifyTicket } from "@/lib/forms";
+import { clientIp, deliverSpam, formObject, isEmail, isSameSite, rowsToHtml, sendFormEmail, verifyTicket } from "@/lib/forms";
+import { rateLimited } from "@/lib/spam/rateLimit";
+import { head } from "@vercel/blob";
+import { manuscriptLink, manuscriptPath, manuscriptToken, manuscriptUploadsEnabled } from "@/lib/manuscript-store";
 import { botCheck, checkSpam, isFormTest } from "@/lib/spam/spam";
 
 // Step 3: the manuscript submission itself. Replaces the Thrive form on /submit-your-manuscript/
@@ -20,13 +23,17 @@ const FIELDS = {
   interests: "Most interested in",
   heardFrom: "Heard about us from",
   fileName: "Manuscript file",
-  fileUrl: "Manuscript link",
+  fileUrl: "Manuscript link (sign in to the admin to open it)",
 } as const;
 type Field = keyof typeof FIELDS;
 const REQUIRED: Field[] = ["firstName", "lastName", "email", "phone", "genre", "title", "about", "edited", "problem", "interests", "heardFrom"];
 
 export async function POST(request: Request) {
   if (!isSameSite(request)) return Response.json({ error: "Please submit the form from our website." }, { status: 403 });
+  // A ticket is valid for 30 minutes, so the submission has its own per-IP limit (5 a minute).
+  if (rateLimited(`manuscript:${clientIp(request)}`)) {
+    return Response.json({ error: "Too many submissions. Please wait a few minutes and try again." }, { status: 429 });
+  }
   const form = await request.formData();
   if (!verifyTicket(String(form.get("ticket") ?? ""))) {
     return Response.json({ error: "Your session expired. Please submit the form again." }, { status: 400 });
@@ -43,9 +50,14 @@ export async function POST(request: Request) {
   if (missing.length || !isEmail(data.email)) {
     return Response.json({ error: `Please fill in: ${missing.map((f) => FIELDS[f].toLowerCase()).join(", ") || "a valid email address"}.` }, { status: 400 });
   }
-  if (data.fileUrl && !/^https:\/\/[a-z0-9-]+\.public\.blob\.vercel-storage\.com\/manuscripts\//.test(data.fileUrl)) data.fileUrl = "";
+  // Only a file that is really in the private manuscripts store; the email links to the
+  // editor-only download route, never to the file itself.
+  const path = manuscriptPath(data.fileUrl);
+  const stored = path && manuscriptUploadsEnabled() ? await head(data.fileUrl, { token: manuscriptToken() }).then(() => true, () => false) : false;
+  data.fileUrl = stored ? manuscriptLink(new URL(request.url).origin, path) : "";
+  if (!stored) data.fileName = "";
   // The manuscript file is required, as on the Thrive form, whenever uploads are switched on.
-  if (process.env.BLOB_READ_WRITE_TOKEN && !data.fileUrl && !isFormTest(data)) {
+  if (manuscriptUploadsEnabled() && !data.fileUrl && !isFormTest(data)) {
     return Response.json({ error: "Please upload your manuscript (.pdf, .doc, .docx, or .zip)." }, { status: 400 });
   }
 

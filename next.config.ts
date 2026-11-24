@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { withPayload } from "@payloadcms/next/withPayload";
 import type { NextConfig } from "next";
+import { PRODUCTION_HOST_PATTERN } from "./src/lib/hosts";
 import { readRedirectRows, shortlinkKey } from "./src/lib/redirects-csv";
 
 // Old-URL redirects from the migration map (single-hop 301s, as the site conventions ask;
@@ -50,6 +51,13 @@ const nextConfig: NextConfig = {
           // Previews built from files (CONTENT_SOURCE=files) are never indexed.
           ...(process.env.CONTENT_SOURCE === "files" ? [{ key: "X-Robots-Tag", value: "noindex, nofollow" }] : []),
         ],
+      },
+      {
+        // Only the live domain is indexed. Every other host (*.vercel.app, previews, localhost)
+        // gets noindex, whatever Vercel calls the deployment.
+        source: "/:path*",
+        missing: [{ type: "host", value: PRODUCTION_HOST_PATTERN }],
+        headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }],
       },
     ];
   },

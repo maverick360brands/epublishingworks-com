@@ -3,6 +3,7 @@ import type { NextRequest } from "next/server";
 import pg from "pg";
 import { RESERVED_ROOT_SEGMENTS } from "@/cms/slugs";
 import { resolveSlug } from "@/lib/catalog";
+import { isProductionHost } from "@/lib/hosts";
 import { createManifestCache, loadManifest, manifestToCatalog } from "@/lib/route-manifest";
 import { GATE_COOKIE, gatePage, gateResponseInit, isUnlocked } from "@/lib/site-gate";
 import shortlinks from "@/generated/shortlinks.json";
@@ -44,6 +45,11 @@ function isContentPath(segments: string[]) {
 
 export async function proxy(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
+  // Only the live domain may be crawled; robots.txt on any other host disallows everything.
+  if (pathname === "/robots.txt") {
+    if (isProductionHost(request.headers.get("host"))) return NextResponse.next();
+    return new NextResponse("User-agent: *\nDisallow: /\n", { headers: { "content-type": "text/plain; charset=utf-8", "x-robots-tag": "noindex, nofollow" } });
+  }
   // While the site is in development, every page asks for the password first.
   if (!(await isUnlocked(request.cookies.get(GATE_COOKIE)?.value, process.env.SITE_PASSWORD))) {
     return new NextResponse(gatePage({ next: pathname + search }), gateResponseInit(401));
@@ -69,5 +75,5 @@ export async function proxy(request: NextRequest) {
 export const config = {
   // Pages only: skip Next.js internals, the admin, API routes, and files with an extension
   // (images, fonts), except the feeds that list the site's content, which the gate also covers.
-  matcher: ["/", "/((?!_next/|admin(?:/|$)|api/|.*\\.[a-zA-Z0-9]+$).+)", "/sitemap.xml", "/llms.txt", "/blog/rss.xml"],
+  matcher: ["/", "/((?!_next/|admin(?:/|$)|api/|.*\\.[a-zA-Z0-9]+$).+)", "/sitemap.xml", "/llms.txt", "/blog/rss.xml", "/robots.txt"],
 };

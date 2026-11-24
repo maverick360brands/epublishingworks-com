@@ -9,7 +9,7 @@ test("pages, feeds, and the home page ask for the password", async ({ request })
   for (const path of ["/", "/spirits-adopted-alice-duncan/", "/authors/", "/blog/", "/sitemap.xml", "/llms.txt", "/zzzz/"]) {
     const res = await request.get(path, { maxRedirects: 0 });
     expect(res.status(), path).toBe(401);
-    expect(res.headers()["x-robots-tag"], path).toBe("noindex");
+    expect(res.headers()["x-robots-tag"], path).toContain("noindex");
   }
 });
 

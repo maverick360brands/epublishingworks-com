@@ -104,10 +104,11 @@ Both forms use Cloudflare Turnstile and a honeypot, then email the team through 
 | `INDEXNOW_KEY` | Optional. 32 hex characters (`openssl rand -hex 16`), served at `/indexnow-key.txt`. Enables IndexNow pings in production. |
 | `SITE_PASSWORD` | Optional. While set, every page asks for this password first (the admin keeps its own sign-in). |
 | `ROUTE_MANIFEST_TTL_MS` | Optional. How often the proxy refreshes its address table, in milliseconds (default 30000). |
+| `CONTENT_SOURCE` | Previews only: `files` serves the compiled Markdown instead of the CMS (no database; the admin doesn't work; pages send `noindex`). Remove it once the database is connected. |
 
 ## Launch checklist
 
-- **Vercel project** `epublishingworks-com`: production branch `main`, Standard Protection, Neon and Blob integrations connected, the variables above set.
+- **Vercel project** `epublishingworks-com` (created, Maverick360 team, Vercel Authentication on): connect the Neon and Blob stores, set `PAYLOAD_SECRET` and `ADMIN_SETUP_EMAIL`, then **delete `CONTENT_SOURCE`** (the preview runs without a database until then; the build refuses files mode once a real domain is attached). Make `main` the repo's default and production branch.
 - **Resend:** verify the sending domain and set `RESEND_API_KEY`, `CONTACT_TO_EMAIL`, `CONTACT_FROM_EMAIL`.
 - **Turnstile:** create the widget for `epublishingworks.com` and `www.epublishingworks.com` and set both keys in Production.
 - **Admin:** after the first production deploy, create the first user at `/admin/` with the `ADMIN_SETUP_EMAIL` address, then add the editors.

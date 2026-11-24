@@ -223,8 +223,21 @@ Because `/apprentice-registration-page/` is indexable and in the sitemap, Google
 - `/authors/sl_menear/` keeps its address (no redirect). `/authors/phoebe-conn/` (attachment URL today) → `/authors/phoebe-conn-2/`.
 - `/author-name-book-or-series-title/` (placeholder book template, indexable, in the sitemap; copy is all filler: "Full Book Title", "by Author Name", "Here you want to write a short introductory paragraph…", retailer buttons linking to `#`) is not migrated → 301 to `/books/`.
 - `/thank-you/` should be `noindex` and out of the sitemap on the new site.
-- Assumed, as on RiseUP: the 3 book landing pages keep their root paths (`/<book-slug>/`) and author pages keep `/authors/<slug>/` (with the `_`→`-` rule), core pages keep their paths, so none of them get redirect rows. If the book pages move under `/books/`, add 3 rows (plus their `/?p=` rows) to `redirects.csv`.
+- The 3 book landing pages keep their root paths (`/<book-slug>/`), author pages keep `/authors/<slug>/` exactly (including `sl_menear` and `phoebe-conn-2`), and core pages keep their paths, so none of them get redirect rows.
 - Terms of Use live inside the privacy page (anchor `#TERMS`); footer link "Terms & Conditions" points to `/privacy-policy#TERMS`. They are kept verbatim at the end of `content/pages/privacy-policy.md`. If the new site gets a separate `/terms/` page (as RiseUP has), keep an anchor or link at `/privacy-policy/#TERMS`, because a URL fragment cannot be redirected server-side.
+
+### Decisions made during the build (2026-11-24)
+
+- **A page for every book (approved by Dustin).** On WordPress, 507 of the 510 books existed only inside their author's page. Each now also has its own page at `/<title>-<author>/` (the pattern of the 3 existing landing pages), with Book schema, buy links, and the series in reading order. Author pages still list every book.
+- **New pages:** `/books/` (full catalog with search and genre filter) and the blog. Nothing else is added at the root.
+- **Titles and descriptions:** core pages keep their live Yoast title and description verbatim, except the FAQ description, which promised answers about royalties and distribution the page doesn't give; it now describes what the page answers. Author, book, and blog pages that had only WordPress default titles ("Name - ePublishingWorks") get descriptive titles ("Name: Books & Biography", "Title by Author").
+- **Headings:** one H1 per page. Submission Guidelines' second H1 ("Getting Started Is Simple") is an H2; Contact's H1 is "We'd love to hear from you." and the form keeps its "Quick Contact" heading.
+- **`/thank-you/`** is `noindex` and left out of the sitemap. Its "within 48 hours" line is kept verbatim (it conflicts with "2 to 4 business days" elsewhere; see section 11).
+- **Reviews heading typo** ("some our authors") reads "some of our authors".
+- **Navigation:** Books, Authors, About, The Advantage, Submissions, Blog, Contact (the WordPress menu had About as "Why Choose Us?", The Advantage, Submission Guidelines, and FAQ). FAQ and Reviews are in the footer.
+- **Forms:** same fields as Thrive; fields whose labels carried `*` are now actually required. Manuscript files upload to Vercel Blob (instead of the Dropbox folder "EPW Manuscript Submissions") and the notification email links to them. Both forms add Cloudflare Turnstile.
+- **Fonts:** one self-hosted variable font (Manrope) replaces Manrope, Muli, and Lato from Google Fonts.
+- **Home page:** the carousel's books are featured (in its order) on the cover wall and a new "Featured books" row; "Eternal Beloved" by Mary Ellen Johnson appears only in that carousel, not on her author page, so it isn't in the catalog yet.
 
 ## 11. Copy issues spotted (not fixed in the page files; copy is verbatim)
 

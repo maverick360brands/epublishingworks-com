@@ -4,7 +4,9 @@ import { pageMetadata } from "@/lib/seo";
 import { BookTile } from "@/components/BookTile";
 import { JsonLd } from "@/components/JsonLd";
 import { ManuscriptForm } from "@/components/ManuscriptForm";
+import { SAMPLE_HREF } from "@/lib/manuscript";
 import { manuscriptUploadsEnabled } from "@/lib/manuscript-store";
+import { SecureNotice } from "@/components/SecureBadge";
 import { PageBanner } from "@/components/PageBanner";
 import { CheckCircle } from "@/components/icons";
 import { bookAuthorLabel, getCatalog, heroBooks } from "@/lib/content";
@@ -44,6 +46,13 @@ export default async function SubmitManuscriptPage() {
                 </Link>
                 .
               </p>
+              <p>
+                Or{" "}
+                <Link href={SAMPLE_HREF} className="font-semibold underline decoration-gold decoration-2 underline-offset-4">
+                  start with a sample
+                </Link>
+                : a few chapters, a synopsis, or an outline.
+              </p>
             </div>
             <ul className="mt-8 space-y-3 text-[16px] text-navy">
               {[
@@ -80,11 +89,12 @@ export default async function SubmitManuscriptPage() {
               </div>
             ) : null}
           </div>
-          <div className="rounded-[32px] border border-line bg-white p-6 shadow-[0_30px_60px_-40px_rgba(12,47,90,0.45)] sm:p-9 lg:p-11">
-            <h2 className="font-display text-[26px] font-extrabold tracking-[-0.02em] text-navy">Submit your manuscript</h2>
+          <div id="submit" className="scroll-mt-28 rounded-[32px] border border-line bg-white p-6 shadow-[0_30px_60px_-40px_rgba(12,47,90,0.45)] sm:p-9 lg:p-11">
+            <h2 className="font-display text-[26px] font-extrabold tracking-[-0.02em] text-navy">Submit your manuscript or a sample</h2>
             <p className="mt-2 text-[15px] text-body">
               Fields marked <span className="text-gold-ink">*</span> are required.
             </p>
+            <SecureNotice uploads={manuscriptUploadsEnabled()} className="mt-6" />
             <div className="mt-8">
               <ManuscriptForm uploadsEnabled={manuscriptUploadsEnabled()} />
             </div>

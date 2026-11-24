@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState, type FormEvent } from "react";
+import { SecureLine } from "./SecureBadge";
 
 // Replaces the Thrive "Quick Contact" form: name, email, and message, with an inline success
 // message (as on WordPress). Spam: a honeypot and the time on screen (`_t`) go to the server's
@@ -81,13 +82,16 @@ export function ContactForm() {
       ) : null}
 
       <div className="flex flex-col gap-4 pt-2 sm:flex-row sm:items-center sm:justify-between">
-        <p className="max-w-[300px] text-[14px] leading-[1.5] text-body">
-          We never sell your information (see our{" "}
-          <Link href="/privacy-policy/" className="underline">
-            privacy policy
-          </Link>
-          ).
-        </p>
+        <div className="max-w-[300px] space-y-2">
+          <SecureLine text="Sent over an encrypted connection" />
+          <p className="text-[14px] leading-[1.5] text-body">
+            We never sell your information (see our{" "}
+            <Link href="/privacy-policy/" className="underline">
+              privacy policy
+            </Link>
+            ).
+          </p>
+        </div>
         <button type="submit" disabled={status.kind === "sending"} className="btn btn-gold btn-lg shrink-0 disabled:opacity-60">
           {status.kind === "sending" ? "Sending…" : "Send Message"}
         </button>

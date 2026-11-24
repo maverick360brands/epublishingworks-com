@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { site } from "@/lib/site";
+import { SampleButton } from "./SampleCta";
 import { ArrowRight, Bars, Close } from "./icons";
 
 type Pill = { x: number; w: number; visible: boolean; hover: boolean };
@@ -132,7 +133,15 @@ export function Header() {
         </div>
       </div>
 
-      <nav id="mobile-nav" aria-label="Main" hidden={!open} className="border-t border-blue/10 lg:hidden">
+      <nav
+        id="mobile-nav"
+        aria-label="Main"
+        hidden={!open}
+        onClick={(e) => {
+          if ((e.target as HTMLElement).closest("a")) setOpenOn(null);
+        }}
+        className="border-t border-blue/10 lg:hidden"
+      >
         <ul className="mx-auto max-w-[1320px] px-5 py-3">
           {site.nav.map((item) => (
             <li key={item.href}>
@@ -151,6 +160,9 @@ export function Header() {
             <Link href="/submit-your-manuscript/" className="btn btn-gold btn-lg w-full">
               Submit Your Manuscript <ArrowRight />
             </Link>
+          </li>
+          <li className="mt-2">
+            <SampleButton className="w-full" />
           </li>
         </ul>
       </nav>

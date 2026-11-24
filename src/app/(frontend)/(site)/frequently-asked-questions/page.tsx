@@ -8,6 +8,7 @@ import { ClosingCta, ThreeSteps } from "@/components/Sections";
 import { ArrowRight } from "@/components/icons";
 import { breadcrumbSchema, faqSchema, graph } from "@/lib/schema";
 import { faqs, site } from "@/lib/site";
+import { SampleNote } from "@/components/SampleCta";
 
 export const metadata: Metadata = pageMetadata({
   title: { absolute: site.seo.faq.title },
@@ -41,6 +42,7 @@ export default function FaqPage() {
               <Link href="/submit-your-manuscript/" className="btn btn-gold mt-6">
                 Submit Your Manuscript <ArrowRight />
               </Link>
+              <SampleNote tone="dark" className="mt-4 !text-[14px]" />
             </div>
             <div className="rounded-[28px] bg-mist p-7">
               <p className="font-display text-[18px] font-bold text-navy">Prefer to talk?</p>

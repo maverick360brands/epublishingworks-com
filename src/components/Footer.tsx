@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { buildYear } from "@/lib/content";
 import { site } from "@/lib/site";
+import { SampleNote } from "./SampleCta";
 import { ArrowRight, Mail, Phone } from "./icons";
 
 const linkCls = "text-white/80 no-underline transition-colors hover:text-white";
@@ -24,6 +25,7 @@ export function Footer() {
           <Link href="/submit-your-manuscript/" className="btn btn-gold mt-7">
             Submit Your Manuscript <ArrowRight />
           </Link>
+          <SampleNote tone="dark" className="mt-4 !text-[14px]" />
         </div>
         <nav aria-label="For authors">
           <h2 className="type-kicker !text-gold">For authors</h2>

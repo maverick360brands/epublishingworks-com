@@ -26,6 +26,9 @@
         },
         "input[name=heardFrom][value='Other']": {
           "check": true
+        },
+        "input[name=sending][value='A synopsis or outline']": {
+          "check": true
         }
       },
       "submit": "form button[type=submit]",

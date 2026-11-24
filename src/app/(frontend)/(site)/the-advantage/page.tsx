@@ -8,6 +8,7 @@ import { PageBanner } from "@/components/PageBanner";
 import { ArrowRight } from "@/components/icons";
 import { breadcrumbSchema, graph } from "@/lib/schema";
 import { site } from "@/lib/site";
+import { SampleButton } from "@/components/SampleCta";
 
 export const metadata: Metadata = pageMetadata({
   title: { absolute: site.seo.advantage.title },
@@ -85,9 +86,12 @@ export default function AdvantagePage() {
           <div>
             <h2 className="type-section">Here&rsquo;s how you can have more time to write. Let us help with the rest.</h2>
             <CheckList className="mt-8" items={help} />
-            <Link href="/submit-your-manuscript/" className="btn btn-gold btn-lg mt-10">
-              Get Started Here <ArrowRight />
-            </Link>
+            <div className="mt-10 flex flex-wrap gap-3">
+              <Link href="/submit-your-manuscript/" className="btn btn-gold btn-lg">
+                Get Started Here <ArrowRight />
+              </Link>
+              <SampleButton />
+            </div>
           </div>
         </div>
       </section>
@@ -107,9 +111,12 @@ export default function AdvantagePage() {
                 partner. Let us handle the publishing details so you can focus on writing&mdash;and earning.
               </p>
             </div>
-            <Link href="/submit-your-manuscript/" className="btn btn-blue btn-lg mt-9">
-              Submit Your Manuscript to Start <ArrowRight />
-            </Link>
+            <div className="mt-9 flex flex-wrap gap-3">
+              <Link href="/submit-your-manuscript/" className="btn btn-blue btn-lg">
+                Submit Your Manuscript to Start <ArrowRight />
+              </Link>
+              <SampleButton />
+            </div>
           </div>
           <div className="relative mx-auto w-full max-w-[520px]">
             <span aria-hidden="true" className="absolute inset-0 translate-x-4 translate-y-4 rounded-[32px] bg-gold" />
@@ -129,9 +136,12 @@ export default function AdvantagePage() {
         <h2 className="mx-auto max-w-[760px] font-display text-[32px] font-extrabold leading-[1.08] tracking-[-0.03em] text-white md:text-[44px]">
           Ready to earn what your writing is worth?
         </h2>
-        <Link href="/submit-your-manuscript/" className="btn btn-gold btn-lg mt-8">
-          Step 1: Submit Your Manuscript <ArrowRight />
-        </Link>
+        <div className="mt-8 flex flex-wrap justify-center gap-3">
+          <Link href="/submit-your-manuscript/" className="btn btn-gold btn-lg">
+            Step 1: Submit Your Manuscript <ArrowRight />
+          </Link>
+          <SampleButton tone="dark" />
+        </div>
       </section>
 
       <TestimonialsPair />

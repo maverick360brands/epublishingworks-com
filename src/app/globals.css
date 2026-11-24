@@ -71,6 +71,11 @@
     outline: 2px solid var(--color-blue);
     outline-offset: 2px;
   }
+  /* On the dark bands the blue ring disappears into the background: white there. */
+  :is(.bg-brand, .bg-navy, .bg-navy-deep) :focus-visible,
+  .btn-ghost-light:focus-visible {
+    outline-color: #fff;
+  }
   @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
@@ -164,6 +169,16 @@
     border-color: #fff;
     background: rgba(255, 255, 255, 0.1);
     color: #fff;
+  }
+  /* The secondary CTA on light backgrounds (the outline twin of btn-ghost-light). */
+  .btn-ghost {
+    border: 2px solid color-mix(in srgb, var(--color-navy) 30%, transparent);
+    color: var(--color-navy);
+  }
+  .btn-ghost:hover {
+    border-color: var(--color-navy);
+    background: color-mix(in srgb, var(--color-navy) 6%, transparent);
+    color: var(--color-navy);
   }
   .btn-white {
     background: #fff;

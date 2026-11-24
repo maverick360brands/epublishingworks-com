@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { upload } from "@vercel/blob/client";
-import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
-import { MANUSCRIPT_EXTENSIONS, MANUSCRIPT_MAX_BYTES } from "@/lib/manuscript";
+import { Suspense, useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
+import { MANUSCRIPT_EXTENSIONS, MANUSCRIPT_MAX_BYTES, NEEDS_FILE, SAMPLE_CHOICE, SENDING } from "@/lib/manuscript";
+import { SecureLine } from "./SecureBadge";
 
 // Replaces the Thrive manuscript form, with the same questions and choices. On submit: a
 // short-lived ticket (/api/manuscript/ticket/), the file straight to Vercel Blob
@@ -28,10 +29,31 @@ const req = (
   </span>
 );
 
-function Choice({ type, name, value, required }: { type: "radio" | "checkbox"; name: string; value: string; required?: boolean }) {
+function Choice({
+  type,
+  name,
+  value,
+  required,
+  checked,
+  onChange,
+}: {
+  type: "radio" | "checkbox";
+  name: string;
+  value: string;
+  required?: boolean;
+  checked?: boolean;
+  onChange?: (value: string) => void;
+}) {
   return (
     <label className="group flex cursor-pointer items-center gap-3 rounded-[14px] border border-line bg-white px-4 py-3 text-[15px] font-medium text-navy transition-colors hover:border-blue has-[:checked]:border-blue has-[:checked]:bg-mist">
-      <input type={type} name={name} value={value} required={required} className="h-4 w-4 shrink-0 accent-[var(--color-blue)]" />
+      <input
+        type={type}
+        name={name}
+        value={value}
+        required={required}
+        {...(onChange ? { checked, onChange: () => onChange(value) } : {})}
+        className="h-4 w-4 shrink-0 accent-[var(--color-blue)]"
+      />
       {value}
     </label>
   );
@@ -46,6 +68,16 @@ const Fieldset = ({ legend, children }: { legend: string; children: ReactNode })
 
 type Status = { kind: "idle" } | { kind: "working"; step: string; progress?: number } | { kind: "error"; message: string };
 
+/** Picks "Sample chapters" whenever the address carries ?send=sample, including a link to this same page. */
+function SendFromQuery({ onSample }: { onSample: () => void }) {
+  const send = useSearchParams().get("send");
+  useEffect(() => {
+    if (send === "sample") onSample();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [send]);
+  return null;
+}
+
 export function ManuscriptForm({ uploadsEnabled }: { uploadsEnabled: boolean }) {
   const router = useRouter();
   const ticket = useRef<{ value: string; at: number } | null>(null);
@@ -57,6 +89,9 @@ export function ManuscriptForm({ uploadsEnabled }: { uploadsEnabled: boolean }) 
   const [status, setStatus] = useState<Status>({ kind: "idle" });
   const [about, setAbout] = useState("");
   const [file, setFile] = useState<File | null>(null);
+  // What the author is sending; "Start With a Sample" links open the form with sample chapters chosen.
+  const [sending, setSending] = useState("");
+  const fileRequired = uploadsEnabled && NEEDS_FILE.has(sending);
   const working = status.kind === "working";
 
   async function getTicket(data: FormData) {
@@ -76,9 +111,13 @@ export function ManuscriptForm({ uploadsEnabled }: { uploadsEnabled: boolean }) 
     e.preventDefault();
     const form = e.currentTarget;
     const data = new FormData(form);
-    // Required, as on the Thrive form; the automated form tests ("TEST – …") can't attach a file.
-    if (uploadsEnabled && !file && !/^TEST\b/.test(String(data.get("firstName") ?? ""))) {
-      setStatus({ kind: "error", message: "Please upload your manuscript (.pdf, .doc, .docx, or .zip)." });
+    if (!sending) {
+      setStatus({ kind: "error", message: "Please tell us what you're sending: the full manuscript, sample chapters, a synopsis or outline, or a published book." });
+      return;
+    }
+    // A full manuscript or sample chapters come as a file; the automated form tests ("TEST – …") can't attach one.
+    if (fileRequired && !file && !/^TEST\b/.test(String(data.get("firstName") ?? ""))) {
+      setStatus({ kind: "error", message: `Please upload your ${sending === SAMPLE_CHOICE ? "sample chapters" : "manuscript"} (.pdf, .doc, .docx, or .zip).` });
       return;
     }
     if (!data.getAll("interests").length) {
@@ -175,7 +214,7 @@ export function ManuscriptForm({ uploadsEnabled }: { uploadsEnabled: boolean }) 
           <p className={label} id="edited-label">
             Has your book already been edited?{req}
           </p>
-          <div role="radiogroup" aria-labelledby="edited-label" className="grid gap-3 sm:grid-cols-2">
+          <div role="radiogroup" aria-labelledby="edited-label" aria-required="true" className="grid gap-3 sm:grid-cols-2">
             <Choice type="radio" name="edited" value="Yes, already edited." required />
             <Choice type="radio" name="edited" value="No, not edited." />
           </div>
@@ -205,7 +244,7 @@ export function ManuscriptForm({ uploadsEnabled }: { uploadsEnabled: boolean }) 
           <p className={label} id="heard-label">
             How did you hear about ePublishingWorks?{req}
           </p>
-          <div role="radiogroup" aria-labelledby="heard-label" className="grid gap-3 sm:grid-cols-3">
+          <div role="radiogroup" aria-labelledby="heard-label" aria-required="true" className="grid gap-3 sm:grid-cols-3">
             {SOURCES.map((v, i) => (
               <Choice key={v} type="radio" name="heardFrom" value={v} required={i === 0} />
             ))}
@@ -214,13 +253,31 @@ export function ManuscriptForm({ uploadsEnabled }: { uploadsEnabled: boolean }) 
       </Fieldset>
 
       <Fieldset legend="Your manuscript">
+        <Suspense fallback={null}>
+          <SendFromQuery onSample={() => setSending(SAMPLE_CHOICE)} />
+        </Suspense>
+        <div>
+          <p className={label} id="sending-label">
+            What are you sending?{req}
+          </p>
+          <div role="radiogroup" aria-labelledby="sending-label" aria-required="true" className="grid gap-3 sm:grid-cols-2">
+            {SENDING.map((v, i) => (
+              <Choice key={v} type="radio" name="sending" value={v} required={i === 0} checked={sending === v} onChange={setSending} />
+            ))}
+          </div>
+          <p className="mt-2 text-[14px] leading-[1.5] text-body">Not ready to send the whole book? A few chapters, a synopsis, or an outline is a fine place to start.</p>
+        </div>
         {uploadsEnabled ? (
           <label className="block">
-            <span className={label}>Upload your manuscript{req}</span>
+            <span className={label}>
+              {sending === SAMPLE_CHOICE ? "Upload your sample chapters" : sending && !NEEDS_FILE.has(sending) ? "Upload a file, if you have one" : "Upload your manuscript"}
+              {fileRequired || !sending ? req : <> {optional}</>}
+            </span>
             <span className="flex flex-col items-start gap-3 rounded-[18px] border-2 border-dashed border-line bg-mist/60 p-6 transition-colors hover:border-blue">
               <input
                 type="file"
                 name="manuscript"
+                aria-required={fileRequired}
                 accept={MANUSCRIPT_EXTENSIONS}
                 onChange={(e) => {
                   const f = e.target.files?.[0] ?? null;
@@ -270,9 +327,12 @@ export function ManuscriptForm({ uploadsEnabled }: { uploadsEnabled: boolean }) 
           </Link>
           ).
         </p>
-        <button type="submit" disabled={working} className="btn btn-gold btn-lg shrink-0 disabled:opacity-60">
-          {working ? "Submitting…" : "Submit Manuscript"}
-        </button>
+        <div className="flex shrink-0 flex-col items-start gap-3 sm:items-end">
+          <button type="submit" disabled={working} className="btn btn-gold btn-lg disabled:opacity-60">
+            {working ? "Submitting…" : sending && sending !== SENDING[0] ? "Send for Review" : "Submit Manuscript"}
+          </button>
+          <SecureLine />
+        </div>
       </div>
     </form>
   );

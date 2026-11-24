@@ -10,6 +10,7 @@ import { lostMetadata, resolvePage } from "@/lib/resolve";
 import { metaFor, pageMetadata } from "@/lib/seo";
 import { breadcrumbSchema, graph, personSchema } from "@/lib/schema";
 import { site } from "@/lib/site";
+import { SampleButton } from "@/components/SampleCta";
 
 export async function generateStaticParams() {
   const authors = visibleAuthors(await getCatalog());
@@ -176,9 +177,12 @@ export default async function AuthorPage({ params }: PageProps<"/authors/[author
           <h2 className="max-w-[640px] font-display text-[28px] font-extrabold uppercase leading-[1.05] tracking-[-0.5px] text-gold md:text-[36px]">
             Join {author.name} as an {site.name} author
           </h2>
-          <Link href="/submit-your-manuscript/" className="btn btn-gold btn-lg shrink-0">
-            Submit Your Manuscript <ArrowRight />
-          </Link>
+          <div className="flex shrink-0 flex-wrap gap-3">
+            <Link href="/submit-your-manuscript/" className="btn btn-gold btn-lg">
+              Submit Your Manuscript <ArrowRight />
+            </Link>
+            <SampleButton tone="dark" />
+          </div>
         </div>
       </section>
 

@@ -6,6 +6,7 @@ import { JsonLd } from "@/components/JsonLd";
 import { ArrowRight, Mail, Phone } from "@/components/icons";
 import { breadcrumbSchema, graph, ids } from "@/lib/schema";
 import { site } from "@/lib/site";
+import { SampleNote } from "@/components/SampleCta";
 
 export const metadata: Metadata = pageMetadata({
   title: { absolute: site.seo.contact.title },
@@ -67,6 +68,7 @@ export default function ContactPage() {
               <Link href="/submit-your-manuscript/" className="btn btn-blue mt-5">
                 Submit Your Manuscript <ArrowRight />
               </Link>
+              <SampleNote className="mt-4 !text-[14px]" />
             </div>
           </aside>
         </div>

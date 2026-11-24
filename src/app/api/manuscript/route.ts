@@ -1,6 +1,7 @@
 import { clientIp, deliverSpam, formObject, isEmail, isSameSite, rowsToHtml, sendFormEmail, verifyTicket } from "@/lib/forms";
 import { rateLimited } from "@/lib/spam/rateLimit";
 import { head } from "@vercel/blob";
+import { NEEDS_FILE, SENDING } from "@/lib/manuscript";
 import { manuscriptLink, manuscriptPath, manuscriptToken, manuscriptUploadsEnabled } from "@/lib/manuscript-store";
 import { botCheck, checkSpam, isFormTest } from "@/lib/spam/spam";
 
@@ -22,11 +23,14 @@ const FIELDS = {
   problem: "Problem to solve with a new publisher",
   interests: "Most interested in",
   heardFrom: "Heard about us from",
+  sending: "What you're sending",
   fileName: "Manuscript file",
   fileUrl: "Manuscript link (sign in to the admin to open it)",
 } as const;
 type Field = keyof typeof FIELDS;
-const REQUIRED: Field[] = ["firstName", "lastName", "email", "phone", "genre", "title", "about", "edited", "problem", "interests", "heardFrom"];
+// Added to the email subject; the full manuscript needs no note.
+const SUBJECT_KIND: Record<string, string> = { "Sample chapters": "sample chapters", "A synopsis or outline": "synopsis or outline", "A published (backlist) book": "backlist book" };
+const REQUIRED: Field[] = ["firstName", "lastName", "email", "phone", "genre", "title", "about", "edited", "problem", "interests", "heardFrom", "sending"];
 
 export async function POST(request: Request) {
   if (!isSameSite(request)) return Response.json({ error: "Please submit the form from our website." }, { status: 403 });
@@ -45,6 +49,7 @@ export async function POST(request: Request) {
   }
   const value = (f: Field) => form.getAll(f).map((v) => String(v).trim()).filter(Boolean).join(", ").slice(0, 5000);
   const data = Object.fromEntries((Object.keys(FIELDS) as Field[]).map((f) => [f, value(f)])) as Record<Field, string>;
+  if (!(SENDING as readonly string[]).includes(data.sending)) data.sending = "";
   data.about = data.about.slice(0, 350);
   const missing = REQUIRED.filter((f) => !data[f]);
   if (missing.length || !isEmail(data.email)) {
@@ -56,13 +61,15 @@ export async function POST(request: Request) {
   const stored = path && manuscriptUploadsEnabled() ? await head(data.fileUrl, { token: manuscriptToken() }).then(() => true, () => false) : false;
   data.fileUrl = stored ? manuscriptLink(new URL(request.url).origin, path) : "";
   if (!stored) data.fileName = "";
-  // The manuscript file is required, as on the Thrive form, whenever uploads are switched on.
-  if (manuscriptUploadsEnabled() && !data.fileUrl && !isFormTest(data)) {
-    return Response.json({ error: "Please upload your manuscript (.pdf, .doc, .docx, or .zip)." }, { status: 400 });
+  // A full manuscript or sample chapters come as a file whenever uploads are switched on; a synopsis,
+  // an outline, or a published book may be described in the form instead.
+  if (manuscriptUploadsEnabled() && NEEDS_FILE.has(data.sending) && !data.fileUrl && !isFormTest(data)) {
+    return Response.json({ error: `Please upload your ${data.sending === "Sample chapters" ? "sample chapters" : "manuscript"} (.pdf, .doc, .docx, or .zip).` }, { status: 400 });
   }
 
   const rows = (Object.keys(FIELDS) as Field[]).map((f): [string, string] => [FIELDS[f], data[f]]);
-  const subject = `Manuscript submission: ${data.title} (${data.firstName} ${data.lastName})`;
+  const kind = SUBJECT_KIND[data.sending] ? ` (${SUBJECT_KIND[data.sending]})` : "";
+  const subject = `Manuscript submission${kind}: ${data.title} (${data.firstName} ${data.lastName})`;
   const verdict = await checkSpam("manuscript", data);
   if (verdict.kind !== "ok") {
     await deliverSpam("manuscript", subject, rows, verdict.reasons);

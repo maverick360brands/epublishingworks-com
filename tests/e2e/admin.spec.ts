@@ -1,0 +1,42 @@
+import { expect, test } from "@playwright/test";
+import { login, uploadCover } from "./helpers";
+
+test.describe.configure({ mode: "serial" });
+
+// Unique names per run, so the tests can run against a database that already has data.
+const run = Date.now().toString(36);
+const authorName = `Gate Author ${run}`;
+const bookTwo = `Gate Book Two ${run}`;
+
+test("+ New author from a book keeps the book form and selects the new author", async ({ page }) => {
+  await login(page);
+  await page.goto("/admin/collections/books/create/");
+  await page.locator("#field-title").fill("Gate Book One");
+  await page.locator("#field-slug").fill(`gatebookone${run}`);
+  await page.getByRole("button", { name: "Add new Author" }).click();
+  const drawer = page.locator(".drawer--is-open").last();
+  await drawer.locator("#field-name").fill(authorName);
+  await drawer.locator("#field-slug").fill(`gateauthor${run}`);
+  await drawer.getByRole("button", { name: /^save$/i }).click();
+  await expect(page.locator(".drawer--is-open")).toHaveCount(0, { timeout: 15_000 });
+  await expect(page.locator("#field-authors")).toContainText(authorName);
+  await expect(page.locator("#field-title")).toHaveValue("Gate Book One");
+  await uploadCover(page, page);
+  await page.getByRole("button", { name: /^save$/i }).click();
+  await page.waitForURL(/\/admin\/collections\/books\/\d+\/?$/, { timeout: 20_000 });
+});
+
+test("+ New book from an author creates a book linked to that author", async ({ page }) => {
+  await login(page);
+  await page.goto("/admin/collections/authors/");
+  await page.getByRole("link", { name: authorName }).first().click();
+  await page.getByRole("button", { name: "Add new", exact: true }).click();
+  const drawer = page.locator(".drawer--is-open").last();
+  await drawer.locator("#field-title").fill(bookTwo);
+  await drawer.locator("#field-slug").fill(`gatebooktwo${run}`);
+  await expect(drawer.locator("#field-authors")).toContainText(authorName);
+  await uploadCover(drawer, page);
+  await drawer.getByRole("button", { name: /^save$/i }).click();
+  await expect(page.locator(".drawer--is-open")).toHaveCount(0, { timeout: 15_000 });
+  await expect(page.locator("main").getByText(bookTwo, { exact: true })).toBeVisible({ timeout: 15_000 });
+});

@@ -1,0 +1,27 @@
+# Kit manifest for maverick360brands/site-template
+#
+# [synced]: copied into every site repo by the kit-sync skill, replacing what's there.
+# [template-only]: removed from a site repo when new-site creates it.
+# Anything not listed belongs to the site and is never touched by kit-sync
+# (CLAUDE.md, forms.json, migration/, site source, package files).
+
+[synced]
+kit/VERSION
+kit/manifest.txt
+AGENTS.md
+.claude/rules/m360-site-conventions.md
+.claude/agents/site-reviewer.md
+.claude/skills/wp-migration/
+.claude/settings.json
+.github/pull_request_template.md
+playwright.config.ts
+tests/forms.spec.ts
+
+[template-only]
+.claude/skills/new-site/
+.claude/skills/kit-sync/
+kit/CLAUDE.site.md
+SITES.md
+
+# CLAUDE.md is neither: new-site replaces the template's CLAUDE.md with kit/CLAUDE.site.md
+# in each new repo, and kit-sync never touches it afterwards.

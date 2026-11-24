@@ -1,0 +1,76 @@
+# ePublishingWorks — epublishingworks.com
+
+Shared rules: `.claude/rules/m360-site-conventions.md` (synced from site-template; don't edit here).
+This file holds only what's specific to this site. Fill every `TODO(dustin):` from Dustin's input,
+never from guesses.
+
+## Site
+
+- Domain: epublishingworks.com
+- Repo / Vercel project: `epublishingworks-com`
+- Owner entity: same owner as Rise UP Publications (riseuppublications.com). TODO(dustin): legal entity name.
+- Status: migrate from WordPress (Thrive Theme Builder + Thrive Architect, Yoast). The WordPress export
+  used for the migration is in the team Dropbox: `_CLIENTS/ePublishing Works/epublishingworks.WordPress.2026-11-24.xml`.
+- Purpose and audience: an author-first independent publisher (80% to 85% royalties) of mostly crime fiction,
+  mystery, cozy mystery, and historical romance, including reverted backlist titles. Two audiences: authors
+  deciding where to publish, and readers browsing the catalog.
+- Language and spelling: US English.
+
+## Stack (differs from the kit default)
+
+At Dustin's request this site runs the same stack as riseuppublications.com, not the kit's
+Markdown-only default: Next.js 16 (Cache Components), Payload CMS 3 in the app (admin at `/admin/`),
+Neon Postgres, Vercel Blob for uploads, Tailwind CSS 4. The code was copied from
+`riseuppublications-com` (commit `ecd2f94`) and then made this site's own; nothing is imported from or
+shared with that repo at runtime, and it can diverge freely. See `README.md` for how it works.
+
+## People
+
+Approvers (may approve a staging preview to go live; see the change loop in the conventions):
+- Dustin
+- Marie
+
+## Related sites
+
+- riseuppublications.com: sister brand. The FAQ sends Christian fiction and nonfiction there.
+  TODO(dustin): confirm whether any other cross-links are wanted.
+
+## Design
+
+Brand carried over from the WordPress site (logo, palette, fonts: see `migration/brand.md`), laid out
+with the riseuppublications.com component system. Designs come from Dustin. Don't change type, color,
+spacing, or layout decisions without his direction.
+
+## Pages
+
+Every WordPress URL keeps its address (see `migration/urls.csv`). Book pages live at the site root as
+`/<title>-<author>/`, the pattern the three existing book landing pages used; every book now has one.
+Author pages stay at `/authors/<slug>/`, including the legacy forms `/authors/phoebe-conn-2/` and
+`/authors/sl_menear/`. New: `/books/` (full catalog with genre filter) and the blog at `/blog/`.
+Thrive Apprentice course URLs were dropped on purpose (no course); see `migration/notes.md`.
+
+## Forms and integrations
+
+- Forms: manuscript submission (`/submit-your-manuscript/`, with file upload to Vercel Blob) and contact
+  (`/contact/`). Both email the team through Resend. TODO(dustin): recipient addresses (`CONTACT_TO_EMAIL`).
+- Turnstile widget and Production keys in Vercel: TODO(dustin) (see new-site step 8).
+- Email platform / CRM: none found on the WordPress site.
+- Analytics IDs (production only): the WordPress site loads Google tag `GT-K4VMCWDN`. TODO(dustin): confirm
+  it should carry over (set `NEXT_PUBLIC_GA_ID` in Vercel Production).
+
+## Data
+
+Database: Neon Postgres, for the CMS (books, authors, blog posts, redirects, editors). Uploads in Vercel Blob.
+
+## Legacy domains and redirects
+
+No other domains. Old-URL redirects are in `migration/redirects.csv` and `next.config.ts`; address changes
+made in the admin create their own redirects.
+
+## Site-specific rules
+
+- Book and author content is edited in the admin (`/admin/`), not in `content/`. The Markdown in
+  `content/` only seeds a new database.
+- Keep testimonials verbatim (`content/site/testimonials.json`).
+- Some Amazon links carry an Amazon Associates tag (`wwwebookdisco-20`), copied as-is from the WordPress
+  site. Keep retailer links verbatim unless Dustin says otherwise. TODO(dustin): confirm whose tag it is.

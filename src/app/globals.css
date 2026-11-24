@@ -1,0 +1,631 @@
+@import "tailwindcss";
+
+/*
+ * Design tokens copied from the WordPress site (Astra global palette + Beaver Builder
+ * layout CSS), so the rebuild matches the existing brand exactly.
+ */
+@theme {
+  --color-blue: #0b4c9e; /* Astra color 0: headings, buttons */
+  --color-navy: #152d52; /* Astra color 1: prefixes, names */
+  --color-gold: #fcb813; /* Astra color 2: hero headline, accents */
+  --color-orange: #e98c23; /* Astra color 3: mobile menu button */
+  --color-link-orange: #fd8d3b; /* coaching price links */
+  --color-sky: #4eb3e2; /* Astra color 4: section backgrounds, nav */
+  --color-blue-mid: #3089c9; /* Astra color 5: coaching, team names */
+  --color-gray-line: #cccecf; /* Astra color 7 */
+  --color-gray-dark: #545455; /* Astra color 8 */
+  --color-body: #545455; /* body text: Astra color 8, 7.6:1 on white (was #686a6e) */
+  --color-gold-ink: #8a6100; /* gold for small text on white, 5.5:1 */
+  --color-navy-deep: #0d1f3c; /* deepest navy for hero and footer */
+  --color-ink: #212121; /* book descriptions */
+  --color-cream: #f7f4f4; /* testimonial and spotlight backgrounds */
+  --color-sky-pale: #dbf1ff; /* "how to make your book a reality" band */
+  --color-buy: #ffd46b; /* retailer buttons */
+
+  --font-sans: var(--font-work-sans), "Work Sans", sans-serif;
+  --font-display: var(--font-montserrat), Montserrat, sans-serif;
+  --font-poppins: var(--font-poppins), Poppins, sans-serif;
+  --font-alice: var(--font-alice), Alice, serif;
+}
+
+@layer base {
+  html,
+  body {
+    /* 3D-transformed decoration (the hero book wall) must never widen the page. */
+    overflow-x: clip;
+  }
+  html {
+    font-size: 106.25%; /* 17px, as on the Astra theme */
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    background: #fff;
+    color: var(--color-body);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.6;
+    letter-spacing: -0.005em;
+    font-kerning: normal;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+  p,
+  li,
+  blockquote {
+    text-wrap: pretty;
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-display);
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+  }
+  a {
+    color: var(--color-blue);
+  }
+  a:hover {
+    color: var(--color-navy);
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-blue);
+    outline-offset: 2px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  /* Pill buttons (UABB creative button): Work Sans 15px bold, capitalized. */
+  .btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6em;
+    border-radius: 100px;
+    padding: 10px 15px;
+    font-family: var(--font-sans);
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 18px;
+    text-decoration: none;
+    transition:
+      background-color 0.2s,
+      color 0.2s,
+      box-shadow 0.2s,
+      transform 0.15s ease-out;
+  }
+  .btn:active {
+    transform: scale(0.97);
+  }
+  .btn svg {
+    transition: transform 0.2s ease-out;
+  }
+  .btn:hover svg {
+    transform: translateX(3px);
+  }
+  .btn-blue {
+    background: var(--color-blue);
+    color: #fff;
+  }
+  .btn-blue:hover {
+    background: var(--color-navy);
+    color: #fff;
+  }
+  /* Gold buttons carry navy text (7.9:1); white on gold was 1.8:1. */
+  /* Gold buttons are tactile: a darker gold "base" sits under the face, and the face
+     presses down onto it on hover and press. */
+  .btn-gold {
+    background: linear-gradient(180deg, #ffc42e 0%, var(--color-gold) 100%);
+    border: 1px solid #f0aa00;
+    color: var(--color-navy);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.55),
+      0 4px 0 #c78c00,
+      0 10px 18px -8px rgba(13, 31, 60, 0.45);
+    transform: translateY(0);
+    transition:
+      transform 0.12s ease-out,
+      box-shadow 0.12s ease-out,
+      background 0.2s;
+  }
+  .btn-gold:hover {
+    color: var(--color-navy);
+    transform: translateY(2px);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.55),
+      0 2px 0 #c78c00,
+      0 6px 12px -8px rgba(13, 31, 60, 0.45);
+  }
+  .btn-gold:active {
+    transform: translateY(4px);
+    box-shadow:
+      inset 0 2px 4px rgba(150, 100, 0, 0.35),
+      0 0 0 #c78c00;
+  }
+  .btn-lg {
+    padding: 15px 26px;
+    font-size: 16px;
+  }
+  .btn-ghost-light {
+    border: 2px solid rgba(255, 255, 255, 0.55);
+    color: #fff;
+  }
+  .btn-ghost-light:hover {
+    border-color: #fff;
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+  }
+  .btn-white {
+    background: #fff;
+    color: var(--color-blue);
+    padding: 10px 20px;
+  }
+  .btn-white:hover {
+    background: var(--color-navy);
+    color: #fff;
+  }
+
+  /* Retailer buttons on book cards. */
+  .buy-btn {
+    display: inline-block;
+    margin: 5px 15px 5px 5px;
+    border-radius: 30px;
+    background: var(--color-buy);
+    padding: 10.8px 28.8px;
+    font-size: 18px;
+    line-height: 23.8px;
+    color: #333;
+    text-decoration: none;
+  }
+  .buy-btn:hover {
+    background: var(--color-gold);
+    color: #333;
+  }
+
+  /* Rich text inside book descriptions (Beaver Builder rich-text module). */
+  .rich-text {
+    color: var(--color-ink);
+    font-size: 17px;
+    line-height: 23.8px;
+  }
+  .rich-text p,
+  .rich-text ul,
+  .rich-text ol {
+    margin: 0 0 8.5px;
+  }
+  .rich-text ul {
+    list-style: disc;
+    padding-left: 1.5em;
+  }
+  .rich-text ol {
+    list-style: decimal;
+    padding-left: 1.5em;
+  }
+  .rich-text strong {
+    font-weight: 700;
+  }
+  .rich-text em {
+    font-style: italic;
+  }
+  .rich-text a {
+    text-decoration: underline;
+  }
+  .rich-text blockquote {
+    margin: 28px 0;
+    border-left: 5px solid rgba(0, 0, 0, 0.05);
+    padding: 20px;
+    font-size: 1.1em;
+    font-style: italic;
+  }
+  .rich-text h2,
+  .rich-text h3,
+  .rich-text h4 {
+    margin: 1em 0 0.5em;
+    color: var(--color-navy);
+    font-weight: 700;
+  }
+
+  /* Long-form pages (privacy policy, blog). */
+  .prose-rup {
+    font-size: 17px;
+    line-height: 23.8px;
+  }
+  .prose-rup > * + * {
+    margin-top: 1em;
+  }
+  .prose-rup h2 {
+    margin-top: 0.6em;
+    color: var(--color-navy);
+    font-size: 54px;
+    font-weight: 700;
+    line-height: 1.1;
+    text-transform: uppercase;
+  }
+  .prose-rup h3 {
+    margin-top: 1em;
+    color: var(--color-navy);
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1.1;
+    text-transform: uppercase;
+  }
+  .prose-rup ul {
+    list-style: disc;
+    padding-left: 1.5em;
+  }
+  .prose-rup ol {
+    list-style: decimal;
+    padding-left: 1.5em;
+  }
+  .prose-rup li + li {
+    margin-top: 0.25em;
+  }
+  .prose-rup strong {
+    font-weight: 700;
+  }
+  .prose-rup a {
+    text-decoration: underline;
+  }
+  .prose-rup blockquote {
+    border-left: 5px solid rgba(0, 0, 0, 0.05);
+    padding: 20px;
+    font-style: italic;
+  }
+  @media (max-width: 767px) {
+    .prose-rup h2 {
+      font-size: 34px;
+    }
+    .prose-rup h3 {
+      font-size: 26px;
+    }
+  }
+
+  /* The Rise UP letter-and-cross pattern on deep blue: the brand's signature surface. */
+  .bg-brand {
+    background-color: var(--color-navy-deep);
+    background-image:
+      linear-gradient(120deg, rgba(13, 31, 60, 0.92) 0%, rgba(11, 76, 158, 0.78) 55%, rgba(11, 76, 158, 0.55) 100%),
+      url("/images/site/pattern-blue-fade.png");
+    background-size: cover, 760px auto;
+    background-repeat: no-repeat, repeat;
+  }
+
+  /* Backgrounds from the WordPress rows. */
+  .bg-banner {
+    background-color: var(--color-blue);
+    background-image: url("/images/site/pattern-blue-fade.png");
+    background-position: left top;
+    background-size: cover;
+    background-repeat: no-repeat;
+  }
+  .bg-fixed-md {
+    background-attachment: scroll;
+  }
+  @media (min-width: 1025px) {
+    .bg-fixed-md {
+      background-attachment: fixed;
+    }
+  }
+}
+
+@layer utilities {
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+  .preserve-3d {
+    transform-style: preserve-3d;
+  }
+  .backface-hidden {
+    backface-visibility: hidden;
+  }
+}
+
+/* Book descriptions: a larger opening paragraph and pull-quote styling for endorsements. */
+@layer components {
+  .book-copy {
+    color: #2f3640;
+    font-size: 18px;
+    line-height: 1.7;
+  }
+  .book-copy p {
+    margin-bottom: 1em;
+  }
+  .book-copy > p:first-child {
+    color: var(--color-navy);
+    font-size: 20px;
+    line-height: 1.55;
+  }
+  .book-copy h3 {
+    margin: 2em 0 0.6em;
+    border-top: 1px solid #e2e8f1;
+    padding-top: 1.4em;
+    font-family: var(--font-display);
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--color-navy);
+  }
+  .book-copy blockquote {
+    position: relative;
+    margin: 2em 0;
+    border: 0;
+    border-radius: 0 20px 20px 0;
+    background: #f3f6fb;
+    padding: 24px 28px 24px 32px;
+    font-style: normal;
+    color: var(--color-navy);
+    box-shadow: inset 4px 0 0 var(--color-gold);
+  }
+  .book-copy blockquote p {
+    margin: 0;
+    font-size: 18px;
+    font-style: italic;
+  }
+}
+
+/* Type scale. Montserrat for display and headings, Work Sans for reading. */
+@layer components {
+  .type-display {
+    font-family: var(--font-display);
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: -0.03em;
+    line-height: 0.98;
+  }
+  .type-section {
+    font-family: var(--font-display);
+    font-size: clamp(32px, 2.2vw + 22px, 48px);
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: -0.025em;
+    line-height: 1.02;
+    color: var(--color-navy);
+  }
+  .type-card {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    line-height: 1.2;
+    color: var(--color-navy);
+  }
+  /* Short label above a heading: sentence case, not tracked capitals. */
+  .type-kicker {
+    font-family: var(--font-display);
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: -0.005em;
+    color: var(--color-gold-ink);
+  }
+  .type-lead {
+    font-size: clamp(18px, 0.4vw + 16.5px, 20px);
+    line-height: 1.6;
+  }
+}
+
+/* Long-form reading: blog articles, legal pages, the roadmap guide. */
+@layer components {
+  .article-body {
+    color: #2f3640;
+    font-size: clamp(17px, 0.3vw + 16px, 19px);
+    line-height: 1.75;
+  }
+  .article-body > * + * {
+    margin-top: 1.15em;
+  }
+  .article-body:not(.article-body-cont) > p:first-child {
+    color: var(--color-navy);
+    font-size: 1.15em;
+    line-height: 1.6;
+  }
+  /* An initial on the opening paragraph: the article's one editorial flourish. */
+  .article-body:not(.article-body-cont) > p:first-child::first-letter {
+    float: left;
+    margin: 0.07em 0.12em 0 0;
+    font-family: var(--font-display);
+    font-size: 3.55em;
+    font-weight: 800;
+    line-height: 0.8;
+    color: var(--color-blue);
+  }
+  .article-body ::selection {
+    background: #ffe39a;
+    color: var(--color-navy);
+  }
+  .article-body-cont > h2:first-child {
+    margin-top: 0;
+  }
+  .article-body h2 {
+    margin-top: 2.2em;
+    scroll-margin-top: 110px;
+    font-family: var(--font-display);
+    font-size: clamp(26px, 1vw + 20px, 32px);
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    color: var(--color-navy);
+  }
+  .article-body h3 {
+    margin-top: 1.8em;
+    scroll-margin-top: 110px;
+    font-family: var(--font-display);
+    font-size: 21px;
+    font-weight: 700;
+    line-height: 1.3;
+    letter-spacing: -0.015em;
+    color: var(--color-navy);
+  }
+  .article-body h2 + *,
+  .article-body h3 + * {
+    margin-top: 0.6em;
+  }
+  .article-body a {
+    color: var(--color-blue);
+    text-decoration: underline;
+    text-decoration-color: rgba(11, 76, 158, 0.35);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 4px;
+    transition: text-decoration-color 0.2s;
+  }
+  .article-body a:hover {
+    text-decoration-color: var(--color-gold);
+  }
+  .article-body strong {
+    font-weight: 700;
+    color: var(--color-navy);
+  }
+  .article-body ul,
+  .article-body ol {
+    padding-left: 1.4em;
+  }
+  .article-body ul {
+    list-style: none;
+  }
+  .article-body ul > li {
+    position: relative;
+  }
+  .article-body ul > li::before {
+    content: "";
+    position: absolute;
+    left: -1.1em;
+    top: 0.72em;
+    height: 7px;
+    width: 7px;
+    border-radius: 2px;
+    background: var(--color-gold);
+    transform: rotate(45deg);
+  }
+  .article-body ol {
+    list-style: decimal;
+  }
+  .article-body ol > li::marker {
+    font-family: var(--font-display);
+    font-weight: 800;
+    color: var(--color-blue);
+  }
+  .article-body li + li {
+    margin-top: 0.45em;
+  }
+  /* Pull quotes and Scripture: the Alice serif the About page uses for quotations, under a gold mark. */
+  .article-body blockquote {
+    margin: 2.4em 0;
+    font-family: var(--font-alice);
+    font-size: 1.32em;
+    line-height: 1.45;
+    color: var(--color-navy);
+  }
+  .article-body blockquote::before {
+    content: "\201C";
+    display: block;
+    height: 0.5em;
+    font-family: var(--font-alice);
+    font-size: 3.4em;
+    line-height: 1;
+    color: var(--color-gold);
+  }
+  .article-body blockquote strong {
+    font-weight: 400;
+  }
+  .article-body blockquote p + p {
+    margin-top: 0.6em;
+  }
+  .article-body table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    border-collapse: collapse;
+    font-size: 0.92em;
+  }
+  .article-body th,
+  .article-body td {
+    border-bottom: 1px solid #e2e8f1;
+    padding: 12px 16px;
+    text-align: left;
+    vertical-align: top;
+  }
+  /* Tables from the CMS editor carry inline cell styles; keep the site's row-rule look. */
+  .article-body .lexical-table-cell {
+    border: 0 !important;
+    border-bottom: 1px solid #e2e8f1 !important;
+    padding: 12px 16px !important;
+  }
+  .article-body .lexical-table-cell p {
+    margin: 0;
+  }
+  .article-body th {
+    background: #f3f6fb;
+    font-family: var(--font-display);
+    font-weight: 700;
+    color: var(--color-navy);
+  }
+  .article-body hr {
+    margin: 2.5em 0;
+    border: 0;
+    border-top: 1px solid #e2e8f1;
+  }
+  .article-body em {
+    font-style: italic;
+  }
+}
+
+/* 404: the lost one bobs gently, and the shepherd's path draws toward it. */
+@keyframes lost-bob {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-6px) rotate(-6deg);
+  }
+}
+@keyframes path-draw {
+  from {
+    stroke-dashoffset: 120;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+.lost-one {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: lost-bob 3.2s ease-in-out infinite;
+}
+.lost-path {
+  animation: path-draw 6s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .lost-one,
+  .lost-path {
+    animation: none;
+  }
+}
+
+/* Contact form: the questions for the chosen project slide in when it's picked. */
+@keyframes contact-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+.contact-reveal {
+  animation: contact-reveal 220ms ease-out;
+}
+@media (prefers-reduced-motion: reduce) {
+  .contact-reveal {
+    animation: none;
+  }
+}

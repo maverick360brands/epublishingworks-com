@@ -10,10 +10,17 @@ Site-specific context lives in this repo's `CLAUDE.md`.
 - No unsolicited brand, design, or color feedback. Designs and brand decisions come from him.
 - Never invent facts, prices, credentials, testimonials, or claims. Leave a visible
   `TODO(dustin): <what's needed>` instead.
-- Questions and decisions that are his call come as clickable answer options (in Claude Code,
-  the AskUserQuestion tool): 2–4 choices, your recommended one first and marked "(Recommended)",
-  related questions together in one ask. Never a typed list of questions for him to answer
-  (Dustin, 2026-11-24).
+- Every question, open item or decision for him goes through clickable answers, never a typed
+  list (Dustin, 2026-11-24: "if you have cards or questions for me or decisions to be made, give
+  me the clickable answers … a universal thing for all of my chats"):
+  - In Claude Code, the AskUserQuestion tool. 2–4 options per question, your recommended one
+    first and marked "(Recommended)". Related questions go in one ask (up to 4).
+  - Facts only he has (a name, a number, an address) still go in a question, with "Other" for
+    his answer. Never invent options for a fact.
+  - Agents without that tool (Cursor, Codex, Grok) give 2–4 numbered options per question
+    instead, the recommended one first.
+  - Subagents (site-reviewer) can't ask: they put open decisions in their report, and the main
+    session asks him.
 - When blocked, state the blocker in one or two lines, ask for the decision that way, then stop.
 - Report results as: what changed, the staging URL, the site-reviewer result, and what went live
   with its URL. Nothing else.

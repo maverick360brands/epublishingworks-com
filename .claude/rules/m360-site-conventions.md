@@ -73,15 +73,15 @@ An approver asks for a change. You handle the branches, PRs, and merges, and pub
 no approval step (Dustin, 2026-11-24).
 
 1. Make the change on a work branch, PR it into `staging`, run `site-reviewer`, merge on PASS.
-2. Open the PR from `staging` into `main` and merge it yourself. Confirm the production
-   deployment succeeded.
+2. Open the PR from `staging` into `main` and merge it yourself. If `staging` changed after your
+   `site-reviewer` run, run it again first. Confirm the production deployment succeeded.
 3. Send the person you're working with what changed, the staging URL, the site-reviewer result,
    and what went live with its URL.
 4. Tweaks requested: repeat from step 1.
 
 Rules for step 2:
 - Publish only in a session run by an approver for this site. For anyone else, stop at `staging`,
-  send the preview, and say Dustin or another approver needs to publish it.
+  send the preview, and say an approver can have it published by asking their own agent.
 - `staging` may hold changes someone else made; they go live with yours. List them in step 3.
 - Before a site's first go-live, `main` is promoted the same way; it serves only the private
   `*.vercel.app` production URL. Attaching the domain and the DNS change (wp-migration Phase 5)
@@ -131,6 +131,6 @@ to run against a production host.
 
 ## Definition of done
 
-A change is ready for review when it builds, its tests pass, and the `site-reviewer` agent has
+A change is ready to publish when it builds, its tests pass, and the `site-reviewer` agent has
 passed it against the staging URL with no open blockers. It is done when it is on `main` and the
 production deployment succeeded.

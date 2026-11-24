@@ -10,8 +10,8 @@ follow them. They apply to you exactly as written.
 Short version: work on a branch, PR into `staging`, merge once `site-reviewer` passes, then publish
 yourself: open the PR from `staging` into `main` and merge it, without asking anyone first. Do that
 only in a session run by an approver for this site (listed in `CLAUDE.md` → People). Never push to
-`main` directly. Send what changed, the staging link, and the live URL. Approvers don't use GitHub;
-never ask them to.
+`main` directly. Send what changed, the staging link, the site-reviewer result, and the live URL.
+Approvers don't use GitHub; never ask them to.
 
 <!-- BEGIN:nextjs-agent-rules -->
 

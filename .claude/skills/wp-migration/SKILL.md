@@ -47,10 +47,13 @@ Never change anything on the live WordPress site.
 ## Phase 4: Review
 
 Deploy to staging and run the `site-reviewer` agent. Fix every blocker. Re-run until PASS.
+Then promote `staging` to `main` (the change loop, step 2): before go-live, `main` serves only the
+private `*.vercel.app` production URL.
 
-**STOP**: send Dustin the staging URL, the reviewer result, and any `TODO(dustin):` items.
+**STOP**: send Dustin what changed, the staging URL, the reviewer result, the production URL, and
+any `TODO(dustin):` items. Phase 5 waits for his go-live.
 
-## Phase 5: Cutover (with Dustin, only when he says go)
+## Phase 5: Cutover: domain and DNS (with Dustin, only when he says go)
 
 1. Confirm the Turnstile widget exists for the domain and both keys are set in Vercel
    Production (new-site step 8). Without them every form on the live site rejects

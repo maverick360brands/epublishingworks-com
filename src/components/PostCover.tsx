@@ -2,7 +2,8 @@ import Image from "next/image";
 import type { Post } from "@/lib/content";
 import { PostArt } from "./PostArt";
 
-// A post's cover: its photo when the editor added one, otherwise the category artwork.
+// A post's cover: the one uploaded in the admin, else its illustration (src/lib/post-art.ts),
+// else the category artwork.
 // The category rides on the photo as a small label, so a card reads at a glance.
 export function PostCover({
   post,
@@ -10,6 +11,7 @@ export function PostCover({
   priority = false,
   large = false,
   chip = true,
+  decorative = false,
   className = "",
 }: {
   post: Pick<Post, "cover" | "category">;
@@ -17,18 +19,21 @@ export function PostCover({
   priority?: boolean;
   large?: boolean;
   chip?: boolean;
+  /** In a card link, where the title already names the link: empty alt. */
+  decorative?: boolean;
   className?: string;
 }) {
   const radius = large ? "rounded-[32px]" : "rounded-[24px]";
-  if (!post.cover) return <PostArt category={post.category} large={large} />;
+  if (!post.cover) return <PostArt category={post.category} large={large} chip={chip} className={className} />;
   return (
     <div className={`relative isolate aspect-[16/10] overflow-hidden bg-navy-deep ${radius} ${className}`}>
       <Image
         src={post.cover.url}
-        alt={post.cover.alt}
+        alt={decorative ? "" : post.cover.alt}
         fill
         sizes={sizes}
         priority={priority}
+        style={post.cover.focus ? { objectPosition: post.cover.focus } : undefined}
         className="object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.035]"
       />
       {chip ? (

@@ -1,7 +1,8 @@
 import Image from "next/image";
 
-// Article thumbnail in the brand's language: the blues of the logo, a category tint, the
-// reversed logo mark, and the category name set large. No stock photography required.
+// Fallback thumbnail for a post with no cover or illustration: the blues of the logo, a category
+// tint, the reversed logo mark, and the category as a small label (set large, it outweighed the
+// post titles beside it; Dustin, 2026-11-24).
 const TINTS: Record<string, string> = {
   Publishing: "from-navy-deep via-blue to-blue",
   Writing: "from-blue via-[#1f63b8] to-sky",
@@ -10,13 +11,17 @@ const TINTS: Record<string, string> = {
   "For Readers": "from-sky via-blue to-navy-deep",
 };
 
-export function PostArt({ category, large = false }: { category: string; large?: boolean }) {
+export function PostArt({ category, large = false, chip = true, className = "" }: { category: string; large?: boolean; chip?: boolean; className?: string }) {
   return (
-    <div aria-hidden="true" className={`brand-texture relative isolate overflow-hidden bg-gradient-to-br ${TINTS[category] ?? TINTS.Publishing} ${large ? "aspect-[16/10] rounded-[32px]" : "aspect-[16/10] rounded-[24px]"}`}>
+    <div aria-hidden="true" className={`brand-texture relative isolate overflow-hidden bg-gradient-to-br ${TINTS[category] ?? TINTS.Publishing} ${large ? "aspect-[16/10] rounded-[32px]" : "aspect-[16/10] rounded-[24px]"} ${className}`}>
       <Image src="/images/site/logo-icon-reversed.png" alt="" width={500} height={500} className={`absolute ${large ? "right-6 top-6 h-28 w-28" : "right-3 top-3 h-16 w-16"}`} />
-      <div className={`absolute inset-x-0 bottom-0 ${large ? "p-10" : "p-6"}`}>
-        <span className={`font-display font-extrabold leading-none tracking-[-0.03em] text-white/90 ${large ? "text-[52px] md:text-[68px]" : "text-[32px]"}`}>{category}</span>
-      </div>
+      {chip ? (
+      <span
+        className={`absolute bottom-0 left-0 rounded-tr-[18px] bg-white font-display font-bold text-navy ${large ? "px-5 pb-2 pt-3 text-[15px]" : "px-4 pb-1.5 pt-2.5 text-[13px]"}`}
+      >
+        {category}
+      </span>
+      ) : null}
     </div>
   );
 }

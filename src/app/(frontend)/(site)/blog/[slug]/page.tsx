@@ -18,6 +18,7 @@ import { inlineCtaFor, splitAfterSection } from "@/lib/inline-cta";
 import { articleSchema, breadcrumbSchema, faqSchema, graph } from "@/lib/schema";
 import { site, testimonials } from "@/lib/site";
 import { SampleButton, SampleNote } from "@/components/SampleCta";
+import { POST_ILLUSTRATIONS } from "@/lib/post-art";
 
 export async function generateStaticParams() {
   const posts = publishedPosts(await getCatalog(), showDrafts);
@@ -36,8 +37,10 @@ export async function generateMetadata({ params }: PageProps<"/blog/[slug]">): P
       description: meta.description,
       path: `/blog/${post.slug}/`,
       type: "article",
-      // Posts without their own image share the site image.
-      ...(meta.image ? { images: [meta.image] } : {}),
+      // Posts without their own image share the site image. The illustration's share JPG has a known size.
+      ...(meta.image
+        ? { images: [meta.image === POST_ILLUSTRATIONS[post.slug]?.share ? { url: meta.image, width: 1200, height: 630, alt: POST_ILLUSTRATIONS[post.slug].alt } : meta.image] }
+        : {}),
       openGraph: { publishedTime: post.date ?? undefined, modifiedTime: postModified(post) ?? undefined },
     }),
     robots: post.status === "draft" ? { index: false, follow: false } : undefined,
@@ -120,7 +123,7 @@ export default async function PostPage({ params }: PageProps<"/blog/[slug]">) {
           </div>
           {/* The cover sits on the band and drops past its edge into the page below. */}
           <div className="relative -mb-24 lg:-mb-32 lg:self-end">
-            <PostCover post={post} large priority chip={false} sizes="(min-width: 1280px) 560px, (min-width: 1024px) 45vw, 100vw" className="shadow-[0_30px_60px_-30px_rgba(5,15,35,0.65)] lg:aspect-[1/1.02] xl:aspect-square" />
+            <PostCover post={post} large priority chip={false} sizes="(min-width: 1280px) 1000px, (min-width: 1024px) 86vw, 100vw" className="shadow-[0_30px_60px_-30px_rgba(5,15,35,0.65)] lg:aspect-[1/1.02] xl:aspect-square" />
           </div>
         </div>
       </section>

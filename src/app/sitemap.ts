@@ -50,6 +50,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: postModified(p) ?? undefined,
       changeFrequency: "monthly" as const,
       priority: 0.7,
+      images: p.cover ? [u(p.cover.url)] : [],
     })),
   ];
 }

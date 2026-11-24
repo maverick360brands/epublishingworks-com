@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { SampleNote } from "./SampleCta";
 import { ArrowRight } from "./icons";
 import type { InlineCta as Cta } from "@/lib/inline-cta";
 import { site } from "@/lib/site";
@@ -19,6 +20,7 @@ export function InlineCta({ cta }: { cta: Cta }) {
             </Link>
             <span className="text-[14px] text-white/70">{cta.note}</span>
           </div>
+          {cta.sample ? <SampleNote tone="dark" className="mt-4 !text-[14px]" /> : null}
         </div>
       </div>
     </aside>

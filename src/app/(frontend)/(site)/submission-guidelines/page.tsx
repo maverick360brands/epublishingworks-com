@@ -8,6 +8,7 @@ import { PageBanner } from "@/components/PageBanner";
 import { ArrowRight } from "@/components/icons";
 import { breadcrumbSchema, graph } from "@/lib/schema";
 import { site, wantedGenres } from "@/lib/site";
+import { SampleButton, SampleNote } from "@/components/SampleCta";
 
 export const metadata: Metadata = pageMetadata({
   title: { absolute: site.seo.guidelines.title },
@@ -67,10 +68,11 @@ export default function SubmissionGuidelinesPage() {
                 <p className="mt-2 text-[16px] leading-[1.6]">{g.text}</p>
               </li>
             ))}
-            <li className="flex items-center justify-center rounded-[24px] bg-navy-deep p-7">
+            <li className="flex flex-col items-center justify-center gap-4 rounded-[24px] bg-navy-deep p-7 text-center">
               <Link href="/submit-your-manuscript/" className="btn btn-gold btn-lg text-center">
                 Submit Your Manuscript to Get Started
               </Link>
+              <SampleNote tone="dark" className="!text-[14px]" />
             </li>
           </ul>
         </div>
@@ -83,9 +85,12 @@ export default function SubmissionGuidelinesPage() {
             If you meet the above criteria and are ready to take the next step in your publishing journey, click the button below. Once we receive your submission, our team
             will carefully review it and respond with clear &ldquo;<strong className="italic text-white">Next Steps</strong>&rdquo; within 2 to 4 business days.
           </p>
-          <Link href="/submit-your-manuscript/" className="btn btn-gold btn-lg mt-8">
-            Start Your Publishing Journey <ArrowRight />
-          </Link>
+          <div className="mt-8 flex flex-wrap gap-3">
+            <Link href="/submit-your-manuscript/" className="btn btn-gold btn-lg">
+              Start Your Publishing Journey <ArrowRight />
+            </Link>
+            <SampleButton tone="dark" />
+          </div>
         </div>
       </section>
 
@@ -98,9 +103,12 @@ export default function SubmissionGuidelinesPage() {
               be the publishing partner you can rely on.
             </p>
             <p className="type-lead mt-4 max-w-[600px] font-bold text-navy">Your stories deserve a wider audience. Let&rsquo;s make that happen&mdash;together.</p>
-            <Link href="/submit-your-manuscript/" className="btn btn-blue btn-lg mt-9">
-              Submit Your Manuscript to Start <ArrowRight />
-            </Link>
+            <div className="mt-9 flex flex-wrap gap-3">
+              <Link href="/submit-your-manuscript/" className="btn btn-blue btn-lg">
+                Submit Your Manuscript to Start <ArrowRight />
+              </Link>
+              <SampleButton />
+            </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <Image

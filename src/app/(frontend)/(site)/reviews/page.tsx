@@ -8,6 +8,7 @@ import { Testimonial } from "@/components/Testimonial";
 import { ArrowRight, Star } from "@/components/icons";
 import { breadcrumbSchema, graph, ids } from "@/lib/schema";
 import { site, testimonials } from "@/lib/site";
+import { SampleNote } from "@/components/SampleCta";
 
 export const metadata: Metadata = pageMetadata({
   title: { absolute: site.seo.reviews.title },
@@ -54,6 +55,7 @@ export default function ReviewsPage() {
             Meet Every Author
           </Link>
         </div>
+        <SampleNote className="mt-5 text-center" />
       </section>
 
       <ClosingCta />

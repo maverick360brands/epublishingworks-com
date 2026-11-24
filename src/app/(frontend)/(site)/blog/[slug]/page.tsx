@@ -17,6 +17,7 @@ import { metaFor, pageMetadata } from "@/lib/seo";
 import { inlineCtaFor, splitAfterSection } from "@/lib/inline-cta";
 import { articleSchema, breadcrumbSchema, faqSchema, graph } from "@/lib/schema";
 import { site, testimonials } from "@/lib/site";
+import { SampleNote } from "@/components/SampleCta";
 
 export async function generateStaticParams() {
   const posts = publishedPosts(await getCatalog(), showDrafts);
@@ -235,6 +236,7 @@ export default async function PostPage({ params }: PageProps<"/blog/[slug]">) {
                   <Link href="/submit-your-manuscript/" className="btn btn-gold mt-5 !px-5 !py-3 !text-[15px]">
                     Submit Your Manuscript
                   </Link>
+                  <SampleNote tone="dark" className="mt-4 !text-[14px]" />
                 </div>
               </div>
             </aside>
@@ -274,13 +276,16 @@ export default async function PostPage({ params }: PageProps<"/blog/[slug]">) {
               We handle the business of publishing (covers, sales copy, distribution, and promotion) so you can focus on your next book.
             </p>
           </div>
-          <div className="flex flex-wrap items-center gap-x-6 gap-y-4">
-            <Link href="/submit-your-manuscript/" className="btn btn-gold">
-              Submit Your Manuscript <ArrowRight className="h-[0.9em] w-[1em]" />
-            </Link>
-            <Link href="/the-advantage/" className="inline-flex items-center gap-2 text-[16px] font-semibold text-white no-underline hover:text-gold">
-              See the ePublishingWorks advantage
-            </Link>
+          <div>
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-4">
+              <Link href="/submit-your-manuscript/" className="btn btn-gold">
+                Submit Your Manuscript <ArrowRight className="h-[0.9em] w-[1em]" />
+              </Link>
+              <Link href="/the-advantage/" className="inline-flex items-center gap-2 text-[16px] font-semibold text-white no-underline hover:text-gold">
+                See the ePublishingWorks advantage
+              </Link>
+            </div>
+            <SampleNote tone="dark" className="mt-4" />
           </div>
         </div>
       </section>

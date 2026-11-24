@@ -10,6 +10,7 @@ import { toAuthorCard } from "@/components/AuthorCard";
 import { AuthorsBrowser, type DirectoryAuthor } from "@/components/AuthorsBrowser";
 import { breadcrumbSchema, graph, ids } from "@/lib/schema";
 import { authorsPageIntro, homeTestimonials, site } from "@/lib/site";
+import { SampleButton } from "@/components/SampleCta";
 
 export const metadata: Metadata = pageMetadata({
   title: { absolute: site.seo.authors.title },
@@ -89,9 +90,12 @@ export default async function AuthorsPage() {
             <h2 className="font-display text-[30px] font-extrabold uppercase leading-[1.05] tracking-[-0.5px] text-gold md:text-[40px]">Become one of our authors</h2>
             <p className="mt-3 max-w-[560px] text-[18px] text-white/80">New manuscripts and reverted backlist titles are welcome. Our authors earn 80% to 85% royalties.</p>
           </div>
-          <Link href="/submit-your-manuscript/" className="btn btn-gold btn-lg shrink-0">
-            Submit Your Manuscript <ArrowRight />
-          </Link>
+          <div className="flex shrink-0 flex-wrap gap-3">
+            <Link href="/submit-your-manuscript/" className="btn btn-gold btn-lg">
+              Submit Your Manuscript <ArrowRight />
+            </Link>
+            <SampleButton tone="dark" />
+          </div>
         </div>
       </section>
 

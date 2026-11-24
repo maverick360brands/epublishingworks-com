@@ -12,6 +12,7 @@ import { ArrowRight, CheckCircle, Coins, Diamond, Globe, Hourglass, Megaphone, P
 import { bookAuthorLabel, getCatalog, heroBooks, publishedPosts, showDrafts } from "@/lib/content";
 import { wallColumns } from "@/lib/hero";
 import { homeTestimonials, site } from "@/lib/site";
+import { SampleNote } from "@/components/SampleCta";
 
 export const metadata: Metadata = pageMetadata({
   title: { absolute: site.homeTitle },
@@ -80,6 +81,7 @@ export default async function HomePage() {
                 Browse Our Books
               </Link>
             </div>
+            <SampleNote tone="dark" className="mt-5" />
             <ul className="mt-10 flex flex-wrap gap-x-7 gap-y-2 text-[15px] text-white/75">
               {["80% to 85% royalties", "Backlist titles welcome", "Kindle Unlimited without exclusivity"].map((t) => (
                 <li key={t} className="flex items-center gap-2">
@@ -211,6 +213,7 @@ export default async function HomePage() {
                 Read More Author Reviews
               </Link>
             </p>
+            <SampleNote className="mt-5 text-center" />
           </div>
         </section>
       ) : null}
@@ -220,9 +223,15 @@ export default async function HomePage() {
       {/* Signature advantage. */}
       <section className="bg-brand px-5 py-20 lg:px-8 lg:py-24">
         <div className="mx-auto grid max-w-[1320px] items-center gap-10 lg:grid-cols-[auto_1fr] lg:gap-20">
-          <p className="font-display text-[88px] font-extrabold leading-none tracking-[-0.04em] text-gold sm:text-[120px] lg:text-[150px]">
-            80<span className="text-white/90">–</span>85<span className="text-[0.5em] align-top">%</span>
-          </p>
+          {/* The big number says what it is (Dustin, 2026-11-24). */}
+          <figure className="m-0">
+            <p aria-hidden="true" className="font-display text-[88px] font-extrabold leading-none tracking-[-0.04em] text-gold sm:text-[120px] lg:text-[150px]">
+              80<span className="text-white/90">–</span>85<span className="text-[0.5em] align-top">%</span>
+            </p>
+            <figcaption className="mt-5 max-w-[360px] border-l-4 border-gold pl-4 font-display text-[22px] font-extrabold leading-[1.2] tracking-[-0.01em] text-white sm:text-[26px]">
+              Our authors earn <span className="whitespace-nowrap">80% to 85% royalties</span>
+            </figcaption>
+          </figure>
           <div>
             <p className="type-kicker !text-gold">Our Signature Advantage</p>
             <h2 className="mt-3 font-display text-[30px] font-extrabold leading-[1.1] tracking-[-0.02em] text-white md:text-[40px]">

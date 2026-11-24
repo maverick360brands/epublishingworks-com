@@ -8,6 +8,8 @@ export type InlineCta = {
   text: string;
   cta: { label: string; href: string };
   note: string;
+  /** Adds "Start with a sample" under the button (the manuscript CTA). */
+  sample?: boolean;
 };
 
 const forAuthors: Omit<InlineCta, "after"> = {
@@ -15,6 +17,7 @@ const forAuthors: Omit<InlineCta, "after"> = {
   text: "Send it to us for review. We handle covers, sales copy, distribution, and promotion, so you can keep writing.",
   cta: { label: "Submit Your Manuscript", href: "/submit-your-manuscript/" },
   note: "80% to 85% royalties for our authors",
+  sample: true,
 };
 
 const byCategory: Record<string, Omit<InlineCta, "after">> = {

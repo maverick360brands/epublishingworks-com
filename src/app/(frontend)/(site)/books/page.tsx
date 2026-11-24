@@ -8,6 +8,7 @@ import { ArrowRight } from "@/components/icons";
 import { authorsOfBook, bookAuthorLabel, booksPageOrder, directoryAuthors, getCatalog } from "@/lib/content";
 import { breadcrumbSchema, graph, ids } from "@/lib/schema";
 import { site } from "@/lib/site";
+import { SampleButton } from "@/components/SampleCta";
 
 export const metadata: Metadata = pageMetadata({
   title: "Books: Mystery, Cozy Mystery & Historical Romance",
@@ -71,9 +72,12 @@ export default async function BooksPage() {
               Earn 80% to 85% royalties while we handle covers, sales copy, distribution, and promotion.
             </p>
           </div>
-          <Link href="/submit-your-manuscript/" className="btn btn-gold btn-lg shrink-0">
-            Submit Your Manuscript <ArrowRight />
-          </Link>
+          <div className="flex shrink-0 flex-wrap gap-3">
+            <Link href="/submit-your-manuscript/" className="btn btn-gold btn-lg">
+              Submit Your Manuscript <ArrowRight />
+            </Link>
+            <SampleButton tone="dark" />
+          </div>
         </div>
       </section>
 

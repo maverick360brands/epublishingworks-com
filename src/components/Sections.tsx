@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { FaqAccordion } from "./FaqAccordion";
 import { JsonLd } from "./JsonLd";
 import { StarsHeading, Testimonial } from "./Testimonial";
+import { SampleButton, SampleNote } from "./SampleCta";
 import { ArrowRight, CheckCircle } from "./icons";
 import { faqSchema, graph } from "@/lib/schema";
 import { faqs, testimonial, type Testimonial as T } from "@/lib/site";
@@ -11,7 +12,7 @@ import { faqs, testimonial, type Testimonial as T } from "@/lib/site";
 // About, FAQ), kept in one place so they stay identical everywhere.
 
 const STEPS = [
-  { title: "Submit your manuscript", text: "Send us your manuscript for review.", href: "/submit-your-manuscript/" },
+  { title: "Submit your manuscript", text: "Send us your manuscript, or a few sample chapters, for review.", href: "/submit-your-manuscript/" },
   { title: "Get published", text: "We handle the details. You watch your book come to life." },
   { title: "Earn more royalties", text: "See higher royalties and your book in more hands." },
 ];
@@ -24,9 +25,12 @@ export function ThreeSteps({ kicker = "Three easy steps to", heading = "Your roa
         <div>
           <p className="type-kicker">{kicker}</p>
           <h2 className="type-section mt-3">{heading}</h2>
-          <Link href="/submit-your-manuscript/" className="btn btn-gold btn-lg mt-9">
-            Submit Your Manuscript <ArrowRight />
-          </Link>
+          <div className="mt-9 flex flex-wrap gap-3">
+            <Link href="/submit-your-manuscript/" className="btn btn-gold btn-lg">
+              Submit Your Manuscript <ArrowRight />
+            </Link>
+            <SampleButton />
+          </div>
         </div>
         <ol className="space-y-6">
           {STEPS.map((s, i) => (
@@ -99,6 +103,7 @@ export function TestimonialsPair({ ids = ["jillian-david", "jeanne-glidewell"], 
             Submit Your Manuscript
           </Link>
         </div>
+        <SampleNote className="mt-5 text-center" />
       </div>
     </section>
   );
@@ -110,9 +115,12 @@ export function ClosingCta({ heading = "Transform your writing into profit", lab
     <section className="bg-gold px-5 py-16 lg:px-8 lg:py-20">
       <div className="mx-auto flex max-w-[1320px] flex-col items-start gap-6 md:flex-row md:items-center md:justify-between">
         <h2 className="max-w-[720px] font-display text-[34px] font-extrabold leading-[1.04] tracking-[-0.03em] text-navy md:text-[48px]">{heading}</h2>
-        <Link href={href} className="btn btn-blue btn-lg shrink-0">
-          {label} <ArrowRight />
-        </Link>
+        <div className="flex shrink-0 flex-wrap gap-3">
+          <Link href={href} className="btn btn-blue btn-lg">
+            {label} <ArrowRight />
+          </Link>
+          {href === "/submit-your-manuscript/" ? <SampleButton className="!border-navy/55" /> : null}
+        </div>
       </div>
     </section>
   );

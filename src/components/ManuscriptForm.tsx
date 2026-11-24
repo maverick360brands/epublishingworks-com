@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { upload } from "@vercel/blob/client";
-import { useRef, useState, type FormEvent, type ReactNode } from "react";
+import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { MANUSCRIPT_EXTENSIONS, MANUSCRIPT_MAX_BYTES } from "@/lib/manuscript";
 
 // Replaces the Thrive manuscript form, with the same questions and choices. On submit: a
@@ -49,14 +49,23 @@ type Status = { kind: "idle" } | { kind: "working"; step: string; progress?: num
 export function ManuscriptForm({ uploadsEnabled }: { uploadsEnabled: boolean }) {
   const router = useRouter();
   const ticket = useRef<{ value: string; at: number } | null>(null);
+  // When the form appeared, for the spam filter's bot check (people take more than a couple of seconds).
+  const shownAt = useRef(0);
+  useEffect(() => {
+    shownAt.current = Date.now();
+  }, []);
   const [status, setStatus] = useState<Status>({ kind: "idle" });
   const [about, setAbout] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const working = status.kind === "working";
 
-  async function getTicket() {
+  async function getTicket(data: FormData) {
     if (ticket.current && Date.now() - ticket.current.at < 25 * 60_000) return ticket.current.value;
-    const res = await fetch("/api/manuscript/ticket/", { method: "POST" });
+    const res = await fetch("/api/manuscript/ticket/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...Object.fromEntries(["website", "firstName", "lastName", "penName", "phone"].map((k) => [k, String(data.get(k) ?? "")])), _t: String(Date.now() - shownAt.current) }),
+    });
     const body = (await res.json().catch(() => ({}))) as { ticket?: string; error?: string };
     if (!res.ok || !body.ticket) throw new Error(body.error ?? "Something went wrong. Please try again.");
     ticket.current = { value: body.ticket, at: Date.now() };
@@ -73,7 +82,8 @@ export function ManuscriptForm({ uploadsEnabled }: { uploadsEnabled: boolean }) 
     }
     try {
       setStatus({ kind: "working", step: "Preparing…" });
-      const t = await getTicket();
+      data.set("_t", String(Date.now() - shownAt.current));
+      const t = await getTicket(data);
       data.set("ticket", t);
       data.delete("manuscript");
       if (file) {

@@ -1,6 +1,6 @@
 // Shared server-side helpers for the site's forms (manuscript submission and contact).
-// Spam: a honeypot field and a same-site check for now; ePublishingWorks' own spam controller
-// plugs in at isSpam() below (TODO(dustin): which service, and its keys).
+// Spam: the same-site check here, then the spam controller in src/lib/spam/ (rate limit, bot traps,
+// pitch rules, optional Claude check), the one used on bluetowerroofs.com and the Orion site.
 // Email goes out through Resend (https://resend.com) once RESEND_API_KEY and CONTACT_TO_EMAIL are
 // set. Without them the submission is logged and still accepted, so staging and the form tests
 // work before email is configured. Every subject sent off production is tagged [staging].
@@ -10,8 +10,8 @@ export const escapeHtml = (s: string) => s.replace(/[&<>"']/g, (c) => ({ "&": "&
 
 export const isEmail = (s: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s);
 
-/** The client's IP as Vercel reports it (for a spam controller). */
-export const clientIp = (request: Request) => request.headers.get("x-real-ip") ?? request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? null;
+/** The client's IP as Vercel reports it (for the rate limit). */
+export const clientIp = (request: Request) => (request.headers.get("x-forwarded-for") ?? "").split(",")[0].trim() || request.headers.get("x-real-ip") || "unknown";
 
 /** True when the request comes from one of this site's own pages (Origin, else Referer, matches Host). */
 export function isSameSite(request: Request): boolean {
@@ -25,16 +25,6 @@ export function isSameSite(request: Request): boolean {
   }
 }
 
-/**
- * Where ePublishingWorks' spam controller plugs in: return true to drop a submission. Until it's
- * connected, the honeypot (`website` field) and the same-site check are the only filters.
- */
-export async function isSpam(form: FormData, request: Request): Promise<boolean> {
-  if (String(form.get("website") ?? "")) return true; // honeypot: hidden from people, filled in by bots
-  void request;
-  return false;
-}
-
 /** Label/value rows as simple HTML paragraphs (values escaped, line breaks kept). */
 export const rowsToHtml = (rows: [string, string][]) =>
   rows
@@ -42,9 +32,9 @@ export const rowsToHtml = (rows: [string, string][]) =>
     .map(([k, v]) => `<p><strong>${escapeHtml(k)}:</strong><br>${escapeHtml(v).replace(/\n/g, "<br>")}</p>`)
     .join("");
 
-export async function sendFormEmail({ subject, html, replyTo }: { subject: string; html: string; replyTo?: string }): Promise<"sent" | "logged" | "failed"> {
+export async function sendFormEmail({ subject, html, replyTo, to: toOverride }: { subject: string; html: string; replyTo?: string; to?: string }): Promise<"sent" | "logged" | "failed"> {
   const key = process.env.RESEND_API_KEY;
-  const to = process.env.CONTACT_TO_EMAIL;
+  const to = toOverride ?? process.env.CONTACT_TO_EMAIL;
   const tagged = process.env.VERCEL_ENV === "production" ? subject : `[staging] ${subject}`;
   if (!key || !to) {
     console.info(`[forms] email not configured (RESEND_API_KEY, CONTACT_TO_EMAIL); submission logged: ${tagged}`);
@@ -90,3 +80,22 @@ export function verifyTicket(ticket: string | null | undefined, now = Date.now()
   const got = Buffer.from(sig);
   return want.length === got.length && timingSafeEqual(want, got);
 }
+
+/**
+ * Delivers a submission the spam filter flagged: to SPAM_TO_EMAIL (marked, with the reasons) when
+ * it's set, so a false positive is never lost; otherwise only the verdict is logged, never the
+ * visitor's words.
+ */
+export async function deliverSpam(form: string, subject: string, rows: [string, string][], reasons: string[]) {
+  const to = process.env.SPAM_TO_EMAIL;
+  console.info(`[spam] ${form}: held as spam (${reasons.join("; ")})`);
+  if (!to) return;
+  await sendFormEmail({ to, subject: `[spam] ${subject}`, html: `<p><strong>Held as spam:</strong> ${escapeHtml(reasons.join("; "))}</p>${rowsToHtml(rows)}` });
+}
+
+/** FormData as a plain object for the bot traps (repeated fields joined). */
+export const formObject = (form: FormData) => {
+  const out: Record<string, string> = {};
+  for (const key of new Set(form.keys())) out[key] = form.getAll(key).map(String).join(", ");
+  return out;
+};

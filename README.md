@@ -74,7 +74,7 @@ Admin → Users → Create New. Enter their email and a temporary password, and 
 | Manuscript submission | `/submit-your-manuscript/` | `/api/manuscript/` | Same questions as the Thrive form. The file (.pdf, .doc, .docx, .zip, up to 20 MB) uploads from the browser straight to Vercel Blob under `manuscripts/` with a random, unguessable name; the email links to it. |
 | Contact | `/contact/` | `/api/contact/` | |
 
-Both forms email the team through Resend (the manuscript form then sends the visitor to `/thank-you/`; the contact form thanks them in place). Spam filtering: a honeypot field and a same-site check, with ePublishingWorks' own spam controller to plug in at `isSpam()` in `src/lib/forms.ts` (no Turnstile on this site, by Dustin's decision). Each manuscript submission gets a 30-minute signed ticket that the upload and the form both require, so the upload route only hands out Blob tokens to the site's own form. Without `RESEND_API_KEY` and `CONTACT_TO_EMAIL`, submissions are logged and still accepted (so staging works). Subjects sent off production start with `[staging]`.
+Both forms email the team through Resend (the manuscript form then sends the visitor to `/thank-you/`; the contact form thanks them in place). Spam: the controller used on bluetowerroofs.com and the Orion site, copied into `src/lib/spam/` and adapted for a publisher (no Turnstile on this site, by Dustin's decision). In order: a same-site check, a per-IP rate limit (5 a minute), bot traps (honeypot, a form sent under 2.5 s after it appeared, a junk phone number, digits in a name, a random-string message: all get a quiet "ok"), pitch rules on the free-text answers (author and reader words pull the score down), and, when `ANTHROPIC_API_KEY` is set, a Claude check of anything the rules didn't settle. Flagged submissions never reach the team; they go to `SPAM_TO_EMAIL` marked `[spam]` if it's set. Each manuscript submission gets a 30-minute signed ticket that the upload and the form both require, so the upload route only hands out Blob tokens to the site's own form. Without `RESEND_API_KEY` and `CONTACT_TO_EMAIL`, submissions are logged and still accepted (so staging works). Subjects sent off production start with `[staging]`.
 
 ## SEO and AEO features
 
@@ -103,13 +103,15 @@ Both forms email the team through Resend (the manuscript form then sends the vis
 | `INDEXNOW_KEY` | Optional. 32 hex characters (`openssl rand -hex 16`), served at `/indexnow-key.txt`. Enables IndexNow pings in production. |
 | `SITE_PASSWORD` | Optional. While set, every page asks for this password first (the admin keeps its own sign-in). |
 | `ROUTE_MANIFEST_TTL_MS` | Optional. How often the proxy refreshes its address table, in milliseconds (default 30000). |
+| `ANTHROPIC_API_KEY`, `ANTHROPIC_WORKSPACE_ID` | Optional Claude check in the spam filter (this site's own key). `SPAM_FILTER=off` turns the rules and AI check off; `SPAM_AI_MODEL` overrides the model. |
+| `SPAM_TO_EMAIL` | Optional. Where flagged submissions go, marked `[spam]`, so a false positive is never lost. |
 | `CONTENT_SOURCE` | Previews only: `files` serves the compiled Markdown instead of the CMS (no database; the admin doesn't work; pages send `noindex`). Remove it once the database is connected. |
 
 ## Launch checklist
 
 - **Vercel project** `epublishingworks-com` (created, Maverick360 team, Vercel Authentication on): connect the Neon and Blob stores, set `PAYLOAD_SECRET` and `ADMIN_SETUP_EMAIL`, then **delete `CONTENT_SOURCE`** (the preview runs without a database until then; the build refuses files mode once a real domain is attached). Make `main` the repo's default and production branch.
 - **Resend:** verify the sending domain and set `RESEND_API_KEY`, `CONTACT_TO_EMAIL`, `CONTACT_FROM_EMAIL`.
-- **Spam controller:** connect ePublishingWorks' spam controller at `isSpam()` in `src/lib/forms.ts`.
+- **Spam filter:** set `ANTHROPIC_API_KEY` (and `ANTHROPIC_WORKSPACE_ID` if the key isn't workspace-scoped) in Production for the Claude check, and `SPAM_TO_EMAIL` for flagged submissions.
 - **Admin:** after the first production deploy, create the first user at `/admin/` with the `ADMIN_SETUP_EMAIL` address, then add the editors.
 - **Catalog review:** read `migration/catalog-report.md` (books without buy links, genre judgment calls, anything the extraction couldn't resolve).
 - **Blog:** have the client review the six launch articles (in the admin under Posts).

@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 
 // Replaces the Thrive "Quick Contact" form: name, email, and message, with an inline success
-// message (as on WordPress). Spam: a honeypot here; the server adds its own checks.
+// message (as on WordPress). Spam: a honeypot and the time on screen (`_t`) go to the server's
+// filter (src/lib/spam/).
 
 const input =
   "block h-[52px] w-full rounded-[14px] border border-line bg-white px-4 text-[16px] text-navy placeholder:text-body/60 transition-[border-color,box-shadow] focus:border-blue focus:shadow-[0_0_0_4px_color-mix(in_srgb,var(--color-blue)_14%,transparent)] focus:outline-none";
@@ -14,10 +15,16 @@ type Status = { kind: "idle" | "sending" | "sent" } | { kind: "error"; message: 
 
 export function ContactForm() {
   const [status, setStatus] = useState<Status>({ kind: "idle" });
+  // When the form appeared, for the spam filter's bot check (people take more than a couple of seconds).
+  const shownAt = useRef(0);
+  useEffect(() => {
+    shownAt.current = Date.now();
+  }, []);
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const data = new FormData(e.currentTarget);
+    data.set("_t", String(Date.now() - shownAt.current));
     setStatus({ kind: "sending" });
     try {
       const res = await fetch("/api/contact/", { method: "POST", body: data });

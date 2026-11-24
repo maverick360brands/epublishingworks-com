@@ -235,7 +235,7 @@ Because `/apprentice-registration-page/` is indexable and in the sitemap, Google
 - **`/thank-you/`** is `noindex` and left out of the sitemap. Its "within 48 hours" line is kept verbatim (it conflicts with "2 to 4 business days" elsewhere; see section 11).
 - **Reviews heading typo** ("some our authors") reads "some of our authors".
 - **Navigation:** Books, Authors, About, The Advantage, Submissions, Blog, Contact (the WordPress menu had About as "Why Choose Us?", The Advantage, Submission Guidelines, and FAQ). FAQ and Reviews are in the footer.
-- **Forms:** same fields as Thrive; fields whose labels carried `*` are now actually required. Manuscript files upload to Vercel Blob (instead of the Dropbox folder "EPW Manuscript Submissions") and the notification email links to them. No Turnstile: ePublishingWorks' own spam controller will be connected (honeypot and same-site check until then).
+- **Forms:** same fields as Thrive; fields whose labels carried `*` are now actually required. Manuscript files upload to Vercel Blob (instead of the Dropbox folder "EPW Manuscript Submissions") and the notification email links to them. No Turnstile: the spam controller used on bluetowerroofs.com and the Orion site (Dustin's choice), copied into `src/lib/spam/`.
 - **Fonts:** one self-hosted variable font (Manrope) replaces Manrope, Muli, and Lato from Google Fonts.
 - **Home page:** the carousel's books are featured (in its order) on the cover wall and a new "Featured books" row; "Eternal Beloved" by Mary Ellen Johnson appears only in that carousel, not on her author page, so it isn't in the catalog yet.
 

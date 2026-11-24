@@ -3,7 +3,7 @@ source: https://epublishingworks.com/about/
 wp_id: 4638
 template: Thrive Architect landing page, site header + footer symbols
 meta_title: "About ePublishingWorks | Author-First Independent Publisher"
-meta_description: "Founded by bestselling authors in 2011, ePublishingWorks helps career-minded authors earn more, reach new readers, and focus on writing their next book."
+meta_description: "Founded by bestselling authors in 2011, ePublishingWorks helps career authors earn more, reach more readers, and focus on what they do best — writing."
 ---
 
 <!-- layout: full-width title banner, dark blue (Main Accent #0C4D9D) with a layered wave divider at the bottom; centered H1 -->

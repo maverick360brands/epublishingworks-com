@@ -9,8 +9,8 @@ import { site } from "@/lib/site";
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
   title: {
-    default: "Christian Book Publisher for Authors & Ministries | Rise UP Publications",
-    template: "%s | Rise UP",
+    default: site.homeTitle,
+    template: "%s | ePublishingWorks",
   },
   description: site.description,
   applicationName: site.name,
@@ -18,11 +18,13 @@ export const metadata: Metadata = {
     type: "website",
     siteName: site.name,
     locale: "en_US",
-    images: [{ url: "/og-default.jpg", width: 1200, height: 630, alt: site.name }],
+    images: [{ url: "/images/site/social-share.jpg", width: 1200, height: 675, alt: site.name }],
   },
   twitter: { card: "summary_large_image" },
+  // Search Console ownership, carried over from the WordPress site so the property keeps working.
+  verification: { google: "imiJzeMIxugvG_OLrrWL9IVqiQQ_Wyi9cPElAQOsm8o" },
   alternates: {
-    types: { "application/rss+xml": [{ url: "/blog/rss.xml", title: "Rise UP Publications blog" }] },
+    types: { "application/rss+xml": [{ url: "/blog/rss.xml", title: "ePublishingWorks blog" }] },
   },
 };
 

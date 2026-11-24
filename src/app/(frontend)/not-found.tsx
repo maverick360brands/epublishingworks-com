@@ -6,30 +6,45 @@ import { ArrowRight } from "@/components/icons";
 
 export const metadata: Metadata = {
   title: "Page not found",
-  description: "The page you were looking for has wandered off. Here's how to find your way back.",
+  description: "The page you were looking for isn't on our shelves. Here's how to find your way back.",
 };
 
-const CROSS = "M3.2 0h1.6v2.6h3.2v1.6H4.8V10H3.2V4.2H0V2.6h3.2z";
+// A bookshelf with one gap, and the missing book tumbling off to the side.
+const SPINES = [
+  [22, 120, "#4eb3e2"],
+  [16, 132, "#ffffff"],
+  [26, 110, "#fcb813"],
+  [18, 126, "#4eb3e2"],
+  [0, 0, ""], // the gap
+  [20, 118, "#ffffff"],
+  [28, 134, "#4eb3e2"],
+  [16, 104, "#fcb813"],
+  [22, 128, "#ffffff"],
+] as const;
+/** Each spine's left edge, worked out once: the gap is as wide as the missing book. */
+const SHELF = SPINES.reduce<{ at: number; next: number }[]>((acc, [w]) => {
+  const at = acc.length ? acc[acc.length - 1].next : 20;
+  return [...acc, { at, next: at + (w || 24) + 4 }];
+}, []);
 
-// The ninety and nine: an 11 × 9 flock of brand crosses, and one gold cross that wandered off.
-function LostSheep() {
-  const flock = Array.from({ length: 99 }, (_, i) => ({ x: (i % 11) * 22, y: Math.floor(i / 11) * 24 }));
+function MissingBook() {
   return (
-    <svg viewBox="0 0 420 240" className="h-auto w-full max-w-[520px]" role="img" aria-label="Ninety-nine crosses in a field, and one that has wandered away">
-      <g transform="translate(14 14)" fill="currentColor" className="text-white/25">
-        {flock.map((p, i) => (
-          <path key={i} d={CROSS} transform={`translate(${p.x} ${p.y})`} />
-        ))}
-      </g>
-      <path d="M250 110 C 300 90, 320 160, 372 150" fill="none" stroke="#fcb813" strokeWidth="2" strokeDasharray="4 7" strokeLinecap="round" className="lost-path" />
+    <svg viewBox="0 0 420 240" className="h-auto w-full max-w-[520px]" role="img" aria-label="A bookshelf with one book missing, and the book tumbling off to the side">
+      {SPINES.map(([w, h, color], i) => {
+        const { at } = SHELF[i];
+        if (!w) return <rect key={i} x={at} y={196 - 128} width={24} height={128} rx={3} fill="none" stroke="#fcb813" strokeWidth="2" strokeDasharray="4 6" className="lost-path" />;
+        return <rect key={i} x={at} y={196 - h} width={w} height={h} rx={3} fill={color} opacity={color === "#ffffff" ? 0.35 : 0.75} />;
+      })}
+      <rect x="12" y="196" width="300" height="8" rx="2" fill="#ffffff" opacity="0.5" />
       <g className="lost-one">
-        <path d={CROSS} transform="translate(372 136) scale(2.4)" fill="#fcb813" />
+        <rect x="352" y="118" width="24" height="128" rx="3" fill="#fcb813" transform="rotate(24 364 182)" />
+        <rect x="356" y="132" width="16" height="4" rx="1" fill="#0c2f5a" opacity="0.5" transform="rotate(24 364 182)" />
       </g>
     </svg>
   );
 }
 
-/** The "wandered off" content, also rendered by content pages whose item isn't visible. */
+/** The "not on our shelves" content, also rendered by content pages whose item isn't visible. */
 export function LostContent() {
   return (
     <>
@@ -37,28 +52,33 @@ export function LostContent() {
         <div className="mx-auto grid max-w-[1320px] items-center gap-12 lg:grid-cols-[1.1fr_1fr] lg:gap-20">
           <div>
             <p className="type-kicker !text-gold">Error 404</p>
-            <h1 className="type-display mt-4 text-[44px] text-white sm:text-[60px] lg:text-[72px]">This page wandered off</h1>
-            <figure className="mt-8 max-w-[560px] border-l-4 border-gold pl-6">
-              <blockquote className="font-alice text-[21px] leading-[1.45] text-white md:text-[24px]">
-                &ldquo;What man of you, having an hundred sheep, if he lose one of them, doth not leave the ninety and nine in the wilderness, and go after
-                that which is lost, until he find it?&rdquo;
-              </blockquote>
-              <figcaption className="mt-3 text-[15px] text-white/70">Luke 15:4 (KJV)</figcaption>
-            </figure>
+            <h1 className="type-display mt-4 text-[44px] text-white sm:text-[60px] lg:text-[72px]">This page isn&rsquo;t on our shelves</h1>
             <p className="type-lead mt-8 max-w-[560px] text-white/85">
-              The page you were looking for isn&rsquo;t here, but you&rsquo;re not lost. Let&rsquo;s get you back to the flock.
+              The page you were looking for has moved or no longer exists. Search the catalog, or start from one of the pages below.
             </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link href="/" className="btn btn-gold btn-lg">
+            <form action="/books/" className="mt-8 flex max-w-[520px] gap-2">
+              <label className="sr-only" htmlFor="lost-q">
+                Search books by title, author, or series
+              </label>
+              <input
+                id="lost-q"
+                name="q"
+                type="search"
+                placeholder="Search title, author, or series"
+                className="h-[54px] min-w-0 flex-1 rounded-full border-2 border-white/30 bg-white/10 px-5 text-[16px] text-white placeholder:text-white/60 focus:border-gold focus:outline-none"
+              />
+              <button type="submit" className="btn btn-gold btn-lg shrink-0">
+                Search
+              </button>
+            </form>
+            <div className="mt-6 flex flex-wrap gap-3">
+              <Link href="/" className="btn btn-ghost-light btn-lg">
                 Back to the Home Page <ArrowRight />
-              </Link>
-              <Link href="/books/" className="btn btn-ghost-light btn-lg">
-                Browse Our Books
               </Link>
             </div>
           </div>
           <div className="flex justify-center lg:justify-end">
-            <LostSheep />
+            <MissingBook />
           </div>
         </div>
       </section>
@@ -67,13 +87,13 @@ export function LostContent() {
           <h2 className="type-card">Popular places to start</h2>
           <ul className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {[
-              { href: "/authors/", t: "Meet our authors", d: "Pastors, evangelists, teachers, and novelists." },
-              { href: "/coaching/", t: "Publishing coaching", d: "Plan your book with our head publisher." },
-              { href: "/blog/", t: "Read the blog", d: "Guides for Christian authors." },
-              { href: "/contact/", t: "Contact us", d: "Tell us about your book." },
+              { href: "/books/", t: "Browse the books", d: "Mysteries, romance, and more, by genre." },
+              { href: "/authors/", t: "Meet our authors", d: "Every author, A to Z." },
+              { href: "/submit-your-manuscript/", t: "Submit a manuscript", d: "New books and reverted backlists." },
+              { href: "/blog/", t: "Read the blog", d: "Advice for authors, guides for readers." },
             ].map((l) => (
               <li key={l.href}>
-                <Link href={l.href} className="group block h-full rounded-[24px] bg-[#f3f6fb] p-6 no-underline transition-transform hover:-translate-y-1">
+                <Link href={l.href} className="group block h-full rounded-[24px] bg-mist p-6 no-underline transition-transform hover:-translate-y-1">
                   <span className="flex items-center justify-between font-display text-[18px] font-bold text-navy">
                     {l.t}
                     <ArrowRight className="h-[0.9em] w-[1em] text-blue transition-transform group-hover:translate-x-1" />

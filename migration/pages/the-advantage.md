@@ -4,7 +4,7 @@ wp_id: 4617
 wp_title: "The ePublishing Works Advantage"
 template: Thrive Architect landing page, site header + footer symbols
 meta_title: "The ePublishingWorks Advantage | 80–85% Author Royalties"
-meta_description: "ePublishingWorks pays 80–85% royalties — the highest in indie publishing. We handle covers, marketing, distribution, and BookBub promotion so you can write."
+meta_description: "ePublishingWorks pays 80–85% royalties — the highest in indie publishing. See how we help you write more, earn more, and reach readers worldwide."
 ---
 
 <!-- layout: full-width title banner, dark blue (Main Accent #0C4D9D) with a layered wave divider at the bottom; centered H1 -->

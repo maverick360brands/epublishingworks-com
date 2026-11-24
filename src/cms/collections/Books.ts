@@ -6,7 +6,7 @@ import { editorWithHeadings } from "../editor";
 import { pageAddressField } from "../fields/pageAddress";
 import { seoField } from "../fields/seo";
 
-const RETAILERS = ["Amazon", "Barnes & Noble", "Apple Books", "Kobo", "Google Play", "Scribd", "Audible", "Smashwords", "Bookshop", "Walmart", "Other"];
+const RETAILERS = ["Buy Direct", "Amazon", "Barnes & Noble", "Apple Books", "Kobo", "Google Play", "Scribd", "Audible", "Smashwords", "Books-A-Million", "Bookshop", "Walmart", "Other"];
 
 export const GENRES = [
   "Contemporary Romance",

@@ -38,12 +38,12 @@ export function gatePage({ next, wrong = false }: { next: string; wrong?: boolea
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>Rise UP Publications</title>
+<title>ePublishingWorks</title>
 <style>
   *{box-sizing:border-box}
   body{margin:0;min-height:100vh;display:grid;place-items:center;padding:16px;background:#0b2545;color:#0b2545;font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
   main{width:100%;max-width:400px;text-align:center;background:#fff;border-radius:20px;padding:40px 28px;box-shadow:0 20px 50px rgba(0,0,0,.35)}
-  img{width:160px;height:auto;margin-bottom:24px}
+  img{width:220px;height:auto;margin-bottom:24px}
   h1{font-size:22px;font-weight:600;margin:0 0 8px}
   p{margin:0 0 24px;color:#4a5b73;font-size:15px;line-height:1.5}
   label{display:block;text-align:left;font-size:14px;font-weight:600;margin-bottom:6px}
@@ -57,7 +57,7 @@ export function gatePage({ next, wrong = false }: { next: string; wrong?: boolea
 </head>
 <body>
 <main>
-  <img src="/images/site/logo.png" alt="Rise UP Publications">
+  <img src="/images/site/logo-primary.png" alt="ePublishingWorks">
   <h1>This site is in development</h1>
   <p>Enter the password to preview it.</p>
   <form method="post" action="/api/site-gate/">

@@ -1,12 +1,13 @@
 // The site's data access. Books, authors, posts, and redirects come from the CMS (Payload on
 // Postgres) through one cached snapshot, refreshed whenever an editor saves (cache tag
-// "content"). Developer-edited pages (privacy, terms, roadmap) still come from Markdown.
+// "content"). Developer-edited pages (the privacy policy) still come from Markdown.
 import config from "@payload-config";
 import { cacheLife, cacheTag } from "next/cache";
 import { getPayload } from "payload";
 import data from "@/generated/content.json";
 import type { Catalog } from "./catalog";
 import { docsToCatalog, type RawCatalog } from "./catalog-source";
+import { filesCatalog } from "./catalog-files";
 
 export * from "./catalog";
 
@@ -19,10 +20,14 @@ export const buildYear = (data as { buildYear: number }).buildYear;
 /** Drafts show in development and on Vercel previews (for review), never in production. */
 export const showDrafts = process.env.NODE_ENV !== "production" || process.env.VERCEL_ENV === "preview";
 
+/** CONTENT_SOURCE=files: read the compiled Markdown instead of the CMS (a preview without a database). */
+export const contentFromFiles = process.env.CONTENT_SOURCE === "files";
+
 export async function getCatalog(): Promise<Catalog> {
   "use cache";
   cacheTag("content");
   cacheLife("max");
+  if (contentFromFiles) return filesCatalog();
   const payload = await getPayload({ config });
   const all = (collection: "authors" | "books" | "posts" | "redirects", extra: object = {}) =>
     (payload.find as unknown as (a: object) => Promise<{ docs: RawCatalog["books"] }>)({ collection, limit: 10_000, depth: 1, pagination: false, ...extra }).then((r) => r.docs);

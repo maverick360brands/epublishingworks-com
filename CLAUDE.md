@@ -72,5 +72,5 @@ made in the admin create their own redirects.
 - Book and author content is edited in the admin (`/admin/`), not in `content/`. The Markdown in
   `content/` only seeds a new database.
 - Keep testimonials verbatim (`content/site/testimonials.json`).
-- Some Amazon links carry an Amazon Associates tag (`wwwebookdisco-20`), copied as-is from the WordPress
-  site. Keep retailer links verbatim unless Dustin says otherwise. TODO(dustin): confirm whose tag it is.
+- ePublishingWorks is an Amazon Associate: some Amazon links carry its tag (`wwwebookdisco-20`), and the
+  footer keeps the Amazon Associates disclosure, which the program requires. Keep retailer links verbatim.

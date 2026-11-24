@@ -1,134 +1,126 @@
 import testimonialData from "../../content/site/testimonials.json";
 
-// Site-wide settings and copy that is shared across pages.
-// Copy here was migrated verbatim (or lightly cleaned) from the WordPress site.
+// Site-wide settings and copy shared across pages. Copy and facts come from the WordPress site
+// (see migration/pages/ and migration/notes.md); FAQ answers and testimonials are verbatim.
 
 export const site = {
-  name: "Rise UP Publications",
-  shortName: "Rise UP",
-  url: process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") || "https://riseuppublications.com",
-  tagline: "Christian publisher of books, eBooks, and audiobooks",
+  name: "ePublishingWorks",
+  url: process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") || "https://epublishingworks.com",
+  tagline: "Write, Publish, Prosper",
+  homeTitle: "Publish Smarter with Higher Royalties | ePublishingWorks!",
   description:
-    "Rise UP Publications is a family-owned Christian book publisher helping pastors, teachers, evangelists, and novelists publish print books, eBooks, and audiobooks — from a written manuscript or from sermons, podcasts, and videos.",
+    "Earn more while focusing on your craft. ePublishingWorks! simplifies the publishing process, offers higher royalties, and helps promote your books—all designed to put authors first.",
+  /** One-paragraph description for the blog's "About us" box and /llms.txt. */
+  about:
+    "ePublishingWorks is an author-first independent publisher, founded in 2011 by two national bestselling authors and an entrepreneur with a love for books. We pay our authors 80% to 85% royalties and handle the business of publishing (covers, sales copy, distribution, and promotion) so they can focus on writing.",
+  foundingDate: "2011",
   phone: "866-846-5123",
   phoneHref: "tel:+18668465123",
-  founder: "Brian Paules",
-  foundingNote: "Family-owned · Over a decade of publishing",
+  email: "info@epublishingworks.com",
+  address: { street: "644 Shrewsbury Commons Ave, Suite 249", city: "Shrewsbury", region: "PA", postalCode: "17361", country: "US" },
   ga4Id: process.env.NEXT_PUBLIC_GA_ID || "",
-  calendly: {
-    oneHour: "https://calendly.com/brianpaules/1-hour-coaching-session",
-    twoHour: "https://calendly.com/brianpaules/2-hour-coaching-session",
-    quickConnect: "https://calendly.com/anna-riseup/30-minute-quick-connect",
-  },
   // Add the brand's real social profiles here; they feed Organization.sameAs in JSON-LD.
   sameAs: [] as string[],
+  logo: { src: "/images/site/logo-primary.png", width: 1200, height: 194 },
+  logoReversed: { src: "/images/site/logo-primary-reversed.png", width: 1200, height: 194 },
+  logoMark: { src: "/images/site/logo-icon-reversed.png", width: 500, height: 500 },
+  images: {
+    authorAtWork: { src: "/images/site/author-senior-laptop-kitchen.jpg", width: 1600, height: 1404, alt: "An author smiling as he types on a laptop at his kitchen table" },
+  },
   // The logo links home, so the menu starts with Books.
   nav: [
     { href: "/books/", label: "Books" },
     { href: "/authors/", label: "Authors" },
-    { href: "/coaching/", label: "Coaching" },
-    { href: "/reviews/", label: "Reviews" },
-    { href: "/blog/", label: "Blog" },
     { href: "/about/", label: "About" },
+    { href: "/the-advantage/", label: "The Advantage" },
+    { href: "/submission-guidelines/", label: "Submissions" },
+    { href: "/blog/", label: "Blog" },
     { href: "/contact/", label: "Contact" },
   ],
+  footerNav: {
+    authors: [
+      { href: "/submit-your-manuscript/", label: "Submit Your Manuscript" },
+      { href: "/submission-guidelines/", label: "Submission Guidelines" },
+      { href: "/the-advantage/", label: "Our Signature Advantage" },
+      { href: "/frequently-asked-questions/", label: "Frequently Asked Questions" },
+      { href: "/reviews/", label: "Author Reviews" },
+    ],
+    explore: [
+      { href: "/", label: "Home" },
+      { href: "/books/", label: "Books" },
+      { href: "/authors/", label: "Authors" },
+      { href: "/blog/", label: "Blog" },
+      { href: "/about/", label: "About" },
+      { href: "/contact/", label: "Contact" },
+    ],
+  },
+  /** Search titles and descriptions, verbatim from the live site (migration/seo-meta.csv), except the
+   *  FAQ description, rewritten to match what the page answers (see migration/notes.md). */
+  seo: {
+    advantage: { title: "The ePublishingWorks Advantage | 80–85% Author Royalties", description: "ePublishingWorks pays 80–85% royalties — the highest in indie publishing. See how we help you write more, earn more, and reach readers worldwide." },
+    guidelines: { title: "Manuscript Submission Guidelines | ePublishingWorks", description: "Ready to publish? Review our submission guidelines and send us your manuscript. We publish crime fiction, mystery, cozy mystery, and historical romance." },
+    submit: { title: "Submit Your Manuscript | ePublishingWorks", description: "Ready to publish? Submit your manuscript to ePublishingWorks and take the first step toward higher royalties and wider readership." },
+    about: { title: "About ePublishingWorks | Author-First Independent Publisher", description: "Founded by bestselling authors in 2011, ePublishingWorks helps career authors earn more, reach more readers, and focus on what they do best — writing." },
+    authors: { title: "Our Published Authors | ePublishingWorks", description: "Meet the mystery, romance, and cozy mystery authors who trust ePublishingWorks to publish, distribute, and promote their books worldwide." },
+    contact: { title: "Contact ePublishingWorks | Talk to a Publisher", description: "Questions about publishing your book? Reach out to the ePublishingWorks team. We're here to help career authors take the next step." },
+    faq: { title: "Frequently Asked Questions | ePublishingWorks", description: "Get answers about submitting your manuscript, backlist titles, editing, the genres we publish, and first-time authors. Have more questions? Contact us anytime." },
+    reviews: { title: "Publisher Reviews & Author Testimonials | ePublishingWorks", description: "Hear from bestselling and award-winning authors who chose ePublishingWorks. Real results, real royalties, real careers — in their own words." },
+  },
 };
 
 export type Faq = { q: string; a: string; link?: { href: string; label: string } };
 
-// From the home page FAQ, verbatim. "How should I edit my manuscript?" appeared twice on
-// the WordPress site with two different answers; they are merged into one entry here.
+// The FAQ, verbatim from the WordPress site (the same six questions appeared on Home, the FAQ
+// page, and Submission Guidelines). Paragraph breaks are "\n\n"; a link's label is linked where
+// it appears in the answer.
 export const faqs: Faq[] = [
   {
-    q: "Are you the publisher for me?",
-    a: "We work with authors who have a Christ-centered message/story, purpose, and vision. If that's you, then yes. Want to learn more?",
-    link: { href: "/contact/", label: "Contact Us" },
+    q: "How do I submit my manuscript?",
+    a: "Pretty easy peasy. Please submit your manuscript by filling out our submission form.",
+    link: { href: "/submit-your-manuscript/", label: "Please submit your manuscript by filling out our submission form" },
+  },
+  {
+    q: "Do you accept backlist titles?",
+    a: "Yes, if rights have been reverted from the original publisher. Acceptance of any book is subject to review by our experienced publishing team.\n\nWe are happy to guide our authors through what that looks like.",
+  },
+  {
+    q: "Will you edit my manuscript for me?",
+    a: "We will proofread but we have limited capacity to edit manuscripts. As one of our authors, we can connect you with the right people – legends who can help you.",
   },
   {
     q: "Does my book fit your requirements?",
-    a: "We welcome the opportunity to discuss your book and your objectives in more detail. Together, we can determine if your book is a good fit for us. In general, we are looking for books with an audience and writers with the skill and drive to produce quality work that readers will eagerly consume.",
-    link: { href: "/contact/", label: "Contact Us" },
+    a: "Great question. We'll review your manuscript to make certain.\n\nIn general, we're looking for a commercially viable writing style that meets the expectations of the genre. We prefer “evergreen” books. Serial titles with 3+ titles are preferred.",
   },
   {
-    q: "What is a 'Christian' publisher?",
-    a: "We publish content that appeals to a Christian audience. This ranges from Christian teaching materials to quality entertainment that respects Christian values.",
+    q: "What genres do you publish?",
+    a: "We primarily publish crime fiction, mystery, cozy mystery, and a lot of historical romance.\n\nYes, we will consider other genres, although we do not publish erotica.\n\nFor Christian fiction and Christian non-fiction, please see our sister brand, RiseUpPublications.com",
+    link: { href: "https://riseuppublications.com/", label: "RiseUpPublications.com" },
   },
   {
-    q: "Can I trust you with my book?",
-    a: "Many globally recognized teachers, preachers, and evangelists as well as fiction authors and YouTube content producers trust us with their words, and you can too. We take what we do very seriously. Take a look at our list of \u201creal people\u201d authors!",
-    link: { href: "/authors/", label: "Our Authors" },
-  },
-  {
-    q: "How should I edit my manuscript?",
-    a: "We recommend that you do the best you can without obsessing over the tools and process. Depending on the level of editing needed, we have capable editors for nonfiction and can connect you with an editor for your fiction work. This is a topic best addressed on an individual case basis, so feel free to schedule a 1:1 consulting session to receive the most relevant guidance for your situation.",
-    link: { href: "/coaching/", label: "Schedule a 1:1 consulting session" },
-  },
-  {
-    q: "How long should my book be?",
-    a: "Nonfiction books are usually 6,000 to 45,000 words, while fiction works should be 65,000 to 90,000 words. These are generalities, and there are exceptions. However, before embarking upon an exception, please contact us first.",
-    link: { href: "/contact/", label: "Contact Us" },
-  },
-  {
-    q: "How do I know if my book is good enough?",
-    a: "This is a common concern and not an easy question to answer because every book is unique. The best way to get started is to contact us. We can schedule a consultation meeting and provide you with honest feedback and constructive advice on your book.",
-    link: { href: "/contact/", label: "Contact Us" },
-  },
-  {
-    q: "If my book is not yet complete, is it too early to speak to a publisher?",
-    a: "Experienced authors find value in discussing a book project with a publisher as early in the process as possible, ideally in the planning stage. 1:1 consulting with a knowledgeable publishing expert can save you considerable time and result in a more effective delivery of your message. Hire us for a one or two hour 1:1 consulting session to receive unbiased guidance on your project with no obligation to publish through RUP. We also have coaching sessions with our founder, Brian Paules, which will provide invaluable and in-depth knowledge giving you the edge and confidence as you take leaps forward with your book!",
-    link: { href: "/coaching/", label: "1:1 consulting sessions" },
-  },
-  {
-    q: "Am I able to purchase a block of discounted books to give as gifts or promotion?",
-    a: "Yes! Rise UP Publication authors can place a wholesale order for any number of books over 15 copies and have them delivered anywhere in the world. This is great for purchasing books for friends, events, and even large ministries.",
-  },
-  {
-    q: "Can I turn my sermons or podcasts into a book?",
-    a: "Probably not, but we can certainly do it for you! Many of our books are produced from recorded content that is then professionally edited and polished to read like a written book. To get started, contact us to learn more.",
-    link: { href: "/contact/", label: "Contact Us" },
-  },
-  {
-    q: "I have recorded content but it's not professional quality. Is that ok?",
-    a: "As long as we can hear it and it's in a digital format, we can use the recording to create a book.",
-  },
-  {
-    q: "Can my book become an ebook or audiobook, as well?",
-    a: "We create eBooks and Paperback books from the same source files. It's extremely rare that we do not create both versions of a title. Audiobooks are a separate issue that involves a narrator reading your book and a sound engineer creating special files. Usually, we release audiobooks after the book is released in print and ebook. However, audiobook is not appropriate for every book.",
-  },
-  {
-    q: "Does Rise UP have an editor I can work with?",
-    a: "If you publish your book with us, we have in-house editing capability for non-fiction content. We can usually help you find someone to help with fiction content as fiction requires a very diverse skill set.",
+    q: "Do you accept first-time books from a new author?",
+    a: "Yes, of course! We'll look for evidence of quality and a plan for 6+ titles. Trust us, you will want to write a series too.",
   },
 ];
+/** The home page shows the same six. */
+export const homeFaqs = faqs;
 
-export type Testimonial = { id: string; quote: string; name: string; authorSlug?: string; photo?: string };
+export type Testimonial = { id: string; quote: string; name: string; authorSlug?: string; photo?: string; role?: string; headline?: string };
 
-// Verbatim from the WordPress Reviews page (only missing sentence spaces were fixed).
+// Verbatim from the WordPress Reviews and Home pages.
 export const testimonials: Testimonial[] = testimonialData;
-export const testimonial = (id: string) => testimonials.find((t) => t.id === id)!;
+export const testimonial = (id: string) => testimonials.find((t) => t.id === id);
+/** The four on the WordPress home page, in its order. */
+export const homeTestimonials = ["alice-duncan", "jo-goodman", "jillian-david", "jeanne-glidewell"].map(testimonial).filter((t): t is Testimonial => Boolean(t));
 
-export const benefits = [
-  "A Publisher that Shares Their Faith and Passion",
-  "A Reliable and Responsive Publishing Team",
-  "Retained Ownership Rights of Their Book(s)",
-  "Professional Editing & Proofreading",
-  "Pro Layout & Design for eBooks & Paperbacks",
-  "Landing Pages with Sales Links",
-  "Options for Wholesale Paperback Purchase",
-  "Flexible Royalty Options",
-  "Sales & Marketing Copy Development",
-  "Worldwide Distribution of Paperback & eBooks",
+export const authorsPageIntro = "Created by authors for authors, because ePublishingWorks! Browse every author we publish, A to Z, or by the genres they write.";
+
+/** What the publisher is looking for (Submission Guidelines, verbatim). */
+export const wantedGenres = [
+  { name: "Thriller", text: "From heart-pounding psychological tales to action-packed adventures, we welcome all types of thrillers." },
+  { name: "Mystery", text: "Intriguing whodunits, cozy mysteries, and every twist-filled narrative in between." },
+  { name: "Romance", text: "Sweet and heartfelt love stories, as well as other sub-genres of romance." },
+  { name: "Contemporary", text: "Stories that capture the spirit of today's world, from drama to light-hearted fiction." },
+  { name: "Suspense", text: "Edge-of-your-seat narratives that keep readers hooked." },
+  { name: "Historical", text: "Immersive tales from any era, meticulously woven with historical detail." },
+  { name: "Paranormal / Fantasy", text: "Worlds where magic, the supernatural, and the extraordinary come to life." },
 ];
-
-export const fictionGenres = [
-  "Christian Thriller",
-  "Christian Mystery",
-  "Christian Suspense",
-  "Christian Romance",
-  "Christian Military Romance",
-  "Christian Historical Fiction",
-  "Christian Young Adult",
-  "Christian Allegory (Truth through Story)",
-];
-
-export const nonfictionGenres = ["Evangelism", "Christian Living", "True Stories", "Inspirational stories and teaching", "Discipleship", "Teaching"];

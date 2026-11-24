@@ -163,6 +163,18 @@ if (errors.length) {
   process.exit(1);
 }
 
+// WordPress shortlinks (/?p=ID, /?page_id=ID) from the redirect map, for the proxy. Their
+// from/to columns never contain commas or quotes, so a plain split is enough here.
+const shortlinks = {};
+const redirectsCsv = path.join(root, "migration", "redirects.csv");
+if (fs.existsSync(redirectsCsv)) {
+  for (const line of fs.readFileSync(redirectsCsv, "utf8").split(/\r?\n/).slice(1)) {
+    const m = /^\/\?(p|page_id)=(\d+),([^,]+),/.exec(line);
+    if (m) shortlinks[`${m[1]}=${m[2]}`] = m[3];
+  }
+}
+
 fs.mkdirSync(outDir, { recursive: true });
+fs.writeFileSync(path.join(outDir, "shortlinks.json"), JSON.stringify(shortlinks));
 fs.writeFileSync(path.join(outDir, "content.json"), JSON.stringify({ authors, books, posts, pages, buildYear: new Date().getFullYear() }, null, 0));
-console.log(`content: ${authors.length} authors, ${books.length} books, ${posts.length} posts, ${Object.keys(pages).length} pages`);
+console.log(`content: ${authors.length} authors, ${books.length} books, ${posts.length} posts, ${Object.keys(pages).length} pages, ${Object.keys(shortlinks).length} shortlinks`);

@@ -4,8 +4,9 @@ import { JsonLd } from "@/components/JsonLd";
 import { PageBanner } from "@/components/PageBanner";
 import { StarsHeading, Testimonial } from "@/components/Testimonial";
 import { ArrowRight } from "@/components/icons";
-import { booksByAuthor, directoryAuthors, getCatalog, visibleBooks } from "@/lib/content";
-import { AuthorCard } from "@/components/AuthorCard";
+import { AUTHOR_GROUPS, authorGroups, booksByAuthor, directoryAuthors, getCatalog, visibleBooks } from "@/lib/content";
+import { toAuthorCard } from "@/components/AuthorCard";
+import { AuthorsBrowser, type DirectoryAuthor } from "@/components/AuthorsBrowser";
 import { breadcrumbSchema, graph, ids } from "@/lib/schema";
 import { authorsPageIntro, homeTestimonials, site } from "@/lib/site";
 
@@ -23,6 +24,11 @@ export default async function AuthorsPage() {
   const authors = directoryAuthors(c);
   const az = [...authors].sort((a, b) => lastName(a.name).localeCompare(lastName(b.name)) || a.name.localeCompare(b.name));
   const letters = [...new Set(az.map((a) => lastName(a.name)[0]?.toUpperCase() ?? "#"))];
+  const cards: DirectoryAuthor[] = authors.map((a) => {
+    const books = booksByAuthor(c, a.slug);
+    return { ...toAuthorCard(a, books), groups: authorGroups(books) };
+  });
+  const groups = Object.keys(AUTHOR_GROUPS).filter((g) => cards.some((a) => a.groups.includes(g)));
   return (
     <>
       <PageBanner intro={authorsPageIntro}>Our Authors</PageBanner>
@@ -57,14 +63,10 @@ export default async function AuthorsPage() {
         </div>
       </section>
 
-      <section className="px-5 pb-20 pt-14 md:pt-16 lg:px-8">
-        <ul className="mx-auto grid max-w-[1320px] grid-cols-2 gap-x-6 gap-y-14 sm:grid-cols-3 lg:grid-cols-4">
-          {authors.map((a, i) => (
-            <li key={a.slug}>
-              <AuthorCard author={a} books={booksByAuthor(c, a.slug)} priority={i < 4} />
-            </li>
-          ))}
-        </ul>
+      <section className="px-5 pb-20 pt-12 md:pt-14 lg:px-8">
+        <div className="mx-auto max-w-[1320px]">
+          <AuthorsBrowser authors={cards} groups={groups} />
+        </div>
       </section>
 
       {homeTestimonials.length ? (

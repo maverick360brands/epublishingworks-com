@@ -40,9 +40,9 @@ describe("books", () => {
     await expect(create({ collection: "books", data: book({ slug: "provider" }) })).rejects.toThrow();
   });
 
-  it("get an address suggested from the title when none is given", async () => {
-    const created = await create({ collection: "books", data: book({ title: "The Children's Bread", slug: "" }) });
-    expect(created.slug).toBe("thechildrensbread");
+  it("get a title-then-author address suggested when none is given, like the WordPress book pages", async () => {
+    const created = await create({ collection: "books", data: book({ title: "A Woman's Heart", slug: "" }) });
+    expect(created.slug).toMatch(/^a-womans-heart-[a-z0-9-]+$/);
   });
 });
 

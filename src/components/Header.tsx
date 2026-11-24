@@ -60,19 +60,20 @@ export function Header() {
     <header
       className={`sticky top-0 z-50 transition-[background-color,box-shadow,backdrop-filter] duration-300 ${
         scrolled || open
-          ? "bg-white/70 shadow-[0_1px_0_rgba(21,45,82,0.08),0_10px_30px_-18px_rgba(21,45,82,0.35)] backdrop-blur-xl backdrop-saturate-150"
+          ? "bg-white/70 shadow-[0_1px_0_rgba(12,47,90,0.08),0_10px_30px_-18px_rgba(12,47,90,0.35)] backdrop-blur-xl backdrop-saturate-150"
           : "bg-white"
       }`}
     >
       <div className={`mx-auto flex max-w-[1320px] items-center justify-between gap-4 px-5 xl:gap-6 transition-[height] duration-300 lg:px-8 ${scrolled ? "h-[68px]" : "h-[72px] lg:h-[88px]"}`}>
-        <Link href="/" aria-label="Rise UP Publications home" className="shrink-0">
+        <Link href="/" aria-label={`${site.name} home`} className="shrink-0">
           <Image
-            src="/images/site/logo.png"
-            alt="Rise UP Publications"
-            width={200}
-            height={59}
+            src={site.logo.src}
+            alt={site.name}
+            width={site.logo.width}
+            height={site.logo.height}
             priority
-            className={`h-auto transition-[width] duration-300 ${scrolled ? "w-[150px] xl:w-[165px]" : "w-[150px] xl:w-[190px]"}`}
+            sizes="240px"
+            className={`h-auto transition-[width] duration-300 ${scrolled ? "w-[180px] xl:w-[200px]" : "w-[180px] xl:w-[230px]"}`}
           />
         </Link>
 
@@ -103,7 +104,7 @@ export function Header() {
                   aria-current={isActive(item.href) ? "page" : undefined}
                   onFocus={() => pillTo(i, true)}
                   onBlur={rest}
-                  className="relative block rounded-full px-[9px] py-[9px] font-display text-[13px] font-bold uppercase tracking-[0.8px] xl:px-[15px] xl:tracking-[1.2px] text-blue no-underline hover:text-navy focus-visible:outline-offset-0"
+                  className="relative block rounded-full px-[10px] py-[9px] font-display text-[15px] font-bold tracking-[-0.01em] text-navy no-underline hover:text-blue focus-visible:outline-offset-0 xl:px-[14px]"
                 >
                   {item.label}
                 </Link>
@@ -113,8 +114,10 @@ export function Header() {
         </nav>
 
         <div className="flex items-center gap-3">
-          <Link href="/contact/" className="btn btn-gold hidden whitespace-nowrap sm:inline-flex lg:max-xl:!px-5">
-            Publish Your Book <ArrowRight className="h-[1em] w-[1.15em] lg:max-xl:hidden" />
+          <Link href="/submit-your-manuscript/" className="btn btn-gold hidden whitespace-nowrap sm:inline-flex lg:max-xl:!px-4">
+            <span className="lg:max-xl:hidden">Submit Your Manuscript</span>
+            <span className="hidden lg:max-xl:inline">Submit</span>
+            <ArrowRight className="h-[1em] w-[1.15em] lg:max-xl:hidden" />
           </Link>
           <button
             type="button"
@@ -136,8 +139,8 @@ export function Header() {
               <Link
                 href={item.href}
                 aria-current={isActive(item.href) ? "page" : undefined}
-                className={`flex items-center justify-between rounded-2xl px-4 py-3 font-display text-[15px] font-bold uppercase tracking-[1px] no-underline ${
-                  isActive(item.href) ? "bg-gold/30 text-navy" : "text-blue"
+                className={`flex items-center justify-between rounded-2xl px-4 py-3 font-display text-[17px] font-bold no-underline ${
+                  isActive(item.href) ? "bg-gold/30 text-navy" : "text-navy"
                 }`}
               >
                 {item.label}
@@ -145,8 +148,8 @@ export function Header() {
             </li>
           ))}
           <li className="mt-2 sm:hidden">
-            <Link href="/contact/" className="btn btn-gold btn-lg w-full">
-              Publish Your Book <ArrowRight />
+            <Link href="/submit-your-manuscript/" className="btn btn-gold btn-lg w-full">
+              Submit Your Manuscript <ArrowRight />
             </Link>
           </li>
         </ul>

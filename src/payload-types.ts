@@ -177,6 +177,7 @@ export interface Book {
   retailers?:
     | {
         name:
+          | 'Buy Direct'
           | 'Amazon'
           | 'Barnes & Noble'
           | 'Apple Books'
@@ -185,6 +186,7 @@ export interface Book {
           | 'Scribd'
           | 'Audible'
           | 'Smashwords'
+          | 'Books-A-Million'
           | 'Bookshop'
           | 'Walmart'
           | 'Other';

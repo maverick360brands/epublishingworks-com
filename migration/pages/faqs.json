@@ -1,0 +1,34 @@
+[
+  {
+    "q": "How do I submit my manuscript?",
+    "a": "Pretty easy peasy. Please submit your manuscript by filling out our submission form.",
+    "link": {
+      "href": "/submit-your-manuscript/",
+      "label": "Please submit your manuscript by filling out our submission form"
+    }
+  },
+  {
+    "q": "Do you accept backlist titles?",
+    "a": "Yes, if rights have been reverted from the original publisher. Acceptance of any book is subject to review by our experienced publishing team.\n\nWe are happy to guide our authors through what that looks like."
+  },
+  {
+    "q": "Will you edit my manuscript for me?",
+    "a": "We will proofread but we have limited capacity to edit manuscripts. As one of our authors, we can connect you with the right people – legends who can help you."
+  },
+  {
+    "q": "Does my book fit your requirements?",
+    "a": "Great question. We'll review your manuscript to make certain.\n\nIn general, we're looking for a commercially viable writing style that meets the expectations of the genre. We prefer “evergreen” books. Serial titles with 3+ titles are preferred."
+  },
+  {
+    "q": "What genres do you publish?",
+    "a": "We primarily publish crime fiction, mystery, cozy mystery, and a lot of historical romance.\n\nYes, we will consider other genres, although we do not publish erotica.\n\nFor Christian fiction and Christian non-fiction, please see our sister brand, RiseUpPublications.com",
+    "link": {
+      "href": "http://www.riseuppublications.com/",
+      "label": "RiseUpPublications.com"
+    }
+  },
+  {
+    "q": "Do you accept first-time books from a new author?",
+    "a": "Yes, of course! We'll look for evidence of quality and a plan for 6+ titles. Trust us, you will want to write a series too."
+  }
+]

@@ -22,7 +22,7 @@ export default buildConfig({
     meta: {
       titleSuffix: " | ePublishingWorks Admin",
       // Absolute, so shared admin links don't point at the server's own address.
-      openGraph: { images: [{ url: "https://epublishingworks.com/og-default.jpg", width: 1200, height: 630 }] },
+      openGraph: { images: [{ url: "https://epublishingworks.com/images/site/social-share.jpg", width: 1200, height: 675 }] },
     },
     importMap: { baseDir: path.resolve(dirname) },
   },

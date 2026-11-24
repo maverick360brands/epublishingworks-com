@@ -9,7 +9,7 @@ import { site } from "@/lib/site";
 export const metadata: Metadata = {
   ...notFoundMetadata,
   metadataBase: new URL(site.url),
-  title: "Page not found | Rise UP Publications",
+  title: `Page not found | ${site.name}`,
   robots: { index: false, follow: true },
 };
 

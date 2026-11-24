@@ -1,35 +1,56 @@
 import { expect, test } from "@playwright/test";
 
-test("links can preselect what the visitor is working on", async ({ page }) => {
-  await page.goto("/contact/?type=fiction", { waitUntil: "networkidle" }); // interact only after hydration
-  await expect(page.getByRole("radio", { name: /A fiction book/ })).toBeChecked();
-  await expect(page.getByRole("combobox", { name: "Genre" })).toBeVisible();
-});
+// Both forms, against a local production build: Turnstile uses Cloudflare's always-pass test
+// keys off production, and without Resend configured submissions are logged and accepted.
 
-test("each choice asks its own questions", async ({ page }) => {
+test("the contact form sends and thanks the visitor in place", async ({ page }) => {
   await page.goto("/contact/", { waitUntil: "networkidle" }); // interact only after hydration
-  await expect(page.getByRole("combobox", { name: "Genre" })).toHaveCount(0);
-  await page.getByText("Sermons, podcasts, or videos").click();
-  await expect(page.getByLabel("Where do people find your messages?")).toBeVisible();
-  await expect(page.getByRole("combobox", { name: "Genre" })).toHaveCount(0);
-  await page.getByText("A non-fiction book").click();
-  await expect(page.getByRole("combobox", { name: "Genre" })).toBeVisible();
-  await expect(page.getByLabel("Where do people find your messages?")).toHaveCount(0);
+  await page.getByLabel("Name").fill("TEST – e2e");
+  await page.getByLabel("Email").fill("e2e@example.com");
+  await page.getByLabel("Message").fill("TEST – e2e message. Ignore.");
+  const [res] = await Promise.all([
+    page.waitForResponse((r) => r.url().includes("/api/contact/") && r.request().method() === "POST"),
+    page.getByRole("button", { name: "Send Message" }).click(),
+  ]);
+  expect(res.ok()).toBe(true);
+  await expect(page.getByText("Your message is on its way")).toBeVisible();
 });
 
-test("the choices work from the keyboard", async ({ page }) => {
-  await page.goto("/contact/", { waitUntil: "networkidle" }); // interact only after hydration
-  await page.getByRole("radio", { name: /A non-fiction book/ }).focus();
-  await page.keyboard.press("ArrowRight");
-  await expect(page.getByRole("radio", { name: /A fiction book/ })).toBeChecked();
-});
-
-test("a failed send explains what to do", async ({ page }) => {
-  // Without Resend configured the API answers 503; the form must say so instead of failing silently.
-  await page.goto("/contact/?type=other", { waitUntil: "networkidle" }); // interact only after hydration
-  await page.getByLabel("First name").fill("Test");
+test("the manuscript form asks the WordPress questions and lands on the thank-you page", async ({ page }) => {
+  await page.goto("/submit-your-manuscript/", { waitUntil: "networkidle" });
+  await page.getByLabel("First name").fill("TEST – e2e");
   await page.getByLabel("Last name").fill("Author");
-  await page.getByLabel("Email").fill("test@example.com");
-  await page.getByRole("button", { name: "Send message" }).click();
-  await expect(page.getByRole("alert").filter({ hasText: /\S/ })).toContainText(/866-846-5123/);
+  await page.getByLabel("Email address").fill("e2e@example.com");
+  await page.getByLabel("Phone").fill("555-555-0100");
+  await page.getByLabel("Most appropriate genre").selectOption("Cozy Mystery");
+  await page.getByLabel("Book title").fill("TEST – e2e book");
+  await page.getByLabel("What is your book or series about?").fill("A test.");
+  await expect(page.getByText("7 of 350")).toBeVisible();
+  await page.getByLabel("No, not edited.").check();
+  await page.getByLabel("Are you seeking to solve a problem with a new publisher?").fill("TEST – e2e. Ignore.");
+  await page.getByLabel("Higher Royalties").check();
+  await page.getByLabel("Web Search").check();
+  await page.getByRole("button", { name: "Submit Manuscript" }).click();
+  await expect(page).toHaveURL(/\/thank-you\/$/, { timeout: 20_000 });
+  await expect(page.getByRole("heading", { name: "Success!" })).toBeVisible();
+});
+
+test("the manuscript form insists on at least one interest", async ({ page }) => {
+  await page.goto("/submit-your-manuscript/", { waitUntil: "networkidle" });
+  for (const [label, value] of [
+    ["First name", "T"],
+    ["Last name", "A"],
+    ["Email address", "e2e@example.com"],
+    ["Phone", "1"],
+    ["Book title", "T"],
+    ["What is your book or series about?", "T"],
+    ["Are you seeking to solve a problem with a new publisher?", "T"],
+  ]) {
+    await page.getByLabel(label).fill(value);
+  }
+  await page.getByLabel("Most appropriate genre").selectOption("Mystery");
+  await page.getByLabel("Yes, already edited.").check();
+  await page.getByLabel("Referral").check();
+  await page.getByRole("button", { name: "Submit Manuscript" }).click();
+  await expect(page.getByRole("alert")).toContainText("at least one");
 });

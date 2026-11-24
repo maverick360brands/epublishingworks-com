@@ -75,11 +75,11 @@ End with a line that makes the next step feel natural. It might restate the stak
 Here is a made-up example for an imaginary cozy historical mystery, *The Beacon Hill Bookshop Murder*:
 
 > **She came to Boston to sell books, not to solve murders.**
->
+
 > Widowed at thirty, Clara Bell has sunk every cent she has into a struggling bookshop on Beacon Hill. Then her late husband's business partner turns up dead in her stockroom, and the police have only one suspect: Clara.
->
+
 > With help from her sharp-tongued aunt and a bookish police sergeant who seems to know more than he lets on, Clara has one week to find the real killer before she loses her shop, her freedom, and the fresh start she fought so hard for.
->
+
 > The first book in the Clara Bell Mysteries, a cozy historical series set in 1920s Boston. Perfect for readers who love clever amateur sleuths, a vivid period setting, and a mystery with heart.
 
 Here is what each part is doing:

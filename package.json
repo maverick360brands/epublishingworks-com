@@ -7,7 +7,7 @@
     "predev": "node scripts/build-content.mjs",
     "dev": "next dev",
     "prebuild": "node scripts/build-content.mjs",
-    "build": "payload migrate && next build",
+    "build": "node scripts/migrate.mjs && next build",
     "start": "next start",
     "lint": "eslint",
     "content": "node scripts/build-content.mjs",
@@ -18,10 +18,7 @@
     "payload": "payload"
   },
   "dependencies": {
-    "@fontsource-variable/montserrat": "^5.3.0",
-    "@fontsource-variable/work-sans": "^5.3.0",
-    "@fontsource/alice": "^5.3.0",
-    "@fontsource/poppins": "^5.3.0",
+    "@fontsource-variable/manrope": "^5.3.0",
     "@payloadcms/db-postgres": "3.93.0",
     "@payloadcms/next": "3.93.0",
     "@payloadcms/richtext-lexical": "3.93.0",

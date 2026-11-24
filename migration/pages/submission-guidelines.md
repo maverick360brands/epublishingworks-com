@@ -3,7 +3,7 @@ source: https://epublishingworks.com/submission-guidelines/
 wp_id: 4628
 template: Thrive Architect landing page, site header + footer symbols
 meta_title: "Manuscript Submission Guidelines | ePublishingWorks"
-meta_description: "Ready to publish? Review our submission guidelines and send your manuscript to ePublishingWorks. We accept backlist and frontlist mystery, romance, and more."
+meta_description: "Ready to publish? Review our submission guidelines and send us your manuscript. We publish crime fiction, mystery, cozy mystery, and historical romance."
 ---
 
 <!-- layout: full-width title banner, dark blue (Main Accent #0C4D9D) with a layered wave divider at the bottom; centered H1 -->

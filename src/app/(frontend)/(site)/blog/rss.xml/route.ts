@@ -11,6 +11,6 @@ export async function GET() {
       }<description>${esc(p.description)}</description><category>${esc(p.category)}</category></item>`,
     )
     .join("");
-  const xml = `<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel><title>${esc(site.name)} Blog</title><link>${site.url}/blog</link><description>Advice for Christian authors on writing and publishing.</description><language>en-us</language>${items}</channel></rss>`;
+  const xml = `<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel><title>${esc(site.name)} Blog</title><link>${site.url}/blog/</link><description>Advice for authors on publishing, royalties, rights, and marketing, plus reading guides.</description><language>en-us</language>${items}</channel></rss>`;
   return new Response(xml, { headers: { "Content-Type": "application/rss+xml; charset=utf-8" } });
 }

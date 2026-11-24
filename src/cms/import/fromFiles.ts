@@ -28,10 +28,17 @@ function readDir(dir: string): ContentFile[] {
 /**
  * Rewrites Markdown the Lexical importer can't parse into equivalent Markdown it can.
  * An italic quote ending in a bold reference ("*quote **~Ref***") becomes "*quote* **_~Ref_**":
- * the same words and emphasis, with the nesting the importer drops written out flat.
+ * the same words and emphasis, with the nesting the importer drops written out flat. Backslash
+ * escapes the importer doesn't understand are resolved to the plain character.
  */
 export function normalizeMarkdown(md: string): string {
-  return md.replace(/^\*([^*\n].*?) \*\*([^*\n]+)\*\*\*[ \t]*$/gm, "*$1* **_$2_**");
+  return (
+    md
+      .replace(/^\*([^*\n].*?) \*\*([^*\n]+)\*\*\*[ \t]*$/gm, "*$1* **_$2_**")
+      // Escapes the editor's importer would keep as a literal backslash ("\[sled\]", "\~Kirkus").
+      // None of these characters can start a link, heading, or strikethrough where they appear.
+      .replace(/\\([[\]~#])/g, "$1")
+  );
 }
 
 export function readContentFiles(root: string) {
@@ -147,9 +154,13 @@ export async function importContent(payload: Payload, req?: Partial<PayloadReque
     authorIds.set(f.file, (await upsert("authors", { slug: { equals: data.slug } }, data)).id);
   }
 
-  // Books are stamped in the order the old site listed them (featured first), so "newest"
-  // lists start from the publisher's own picks rather than the import order.
-  const featured = files.books.filter((f) => f.data.featured).map((f) => f.file);
+  // Featured books (the WordPress home carousel and book landing pages) are stamped newest first,
+  // in their `featured: <rank>` order, so the home wall leads with the publisher's own picks.
+  const rankOf = (f: ContentFile) => (typeof f.data.featured === "number" ? f.data.featured : 1000);
+  const featured = files.books
+    .filter((f) => f.data.featured)
+    .sort((a, b) => rankOf(a) - rankOf(b))
+    .map((f) => f.file);
   const now = Date.now();
   for (const [i, f] of files.books.entries()) {
     const ids = ((f.data.authors || []) as string[]).map((s) => authorIds.get(s)).filter((id): id is number => id !== undefined);

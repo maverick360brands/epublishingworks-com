@@ -1,5 +1,14 @@
+import fs from "node:fs";
+import path from "node:path";
 import { withPayload } from "@payloadcms/next/withPayload";
 import type { NextConfig } from "next";
+import { readRedirectRows, shortlinkKey } from "./src/lib/redirects-csv";
+
+// Old-URL redirects from the migration map (single-hop 301s, as the site conventions ask;
+// `permanent: true` would send 308). Shortlinks (/?p=ID) are handled in src/proxy.ts.
+const legacyRedirects = readRedirectRows(fs.readFileSync(path.join(process.cwd(), "migration", "redirects.csv"), "utf8"))
+  .filter((r) => !shortlinkKey(r.from))
+  .map((r) => ({ source: r.from, destination: r.to, statusCode: r.code as 301 | 302 }));
 
 const nextConfig: NextConfig = {
   cacheComponents: true,
@@ -10,7 +19,7 @@ const nextConfig: NextConfig = {
     globalNotFound: true,
   },
   // Every URL keeps its WordPress form, including the trailing slash
-  // (e.g. /jesusisntsoft/, /authors/angeladams/). Paths without it redirect to it.
+  // (e.g. /spirits-adopted-alice-duncan/, /authors/alice-duncan/). Paths without it redirect to it.
   trailingSlash: true,
   images: {
     // Covers and photos uploaded in the admin are stored in Vercel Blob.
@@ -27,16 +36,7 @@ const nextConfig: NextConfig = {
     },
   },
   async redirects() {
-    return [
-      // WordPress system URLs that search engines and old links may still request.
-      { source: "/rise-up-publications/", destination: "/", permanent: true },
-      { source: "/sitemap_index.xml", destination: "/sitemap.xml", permanent: true },
-      { source: "/page-sitemap.xml", destination: "/sitemap.xml", permanent: true },
-      { source: "/wp-sitemap.xml", destination: "/sitemap.xml", permanent: true },
-      { source: "/feed/", destination: "/blog/rss.xml", permanent: true },
-      { source: "/wp-admin/:path*", destination: "/", permanent: false },
-      { source: "/wp-login.php", destination: "/", permanent: false },
-    ];
+    return legacyRedirects;
   },
   async headers() {
     return [

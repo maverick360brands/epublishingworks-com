@@ -4,15 +4,13 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { BookTile } from "@/components/BookTile";
 import { HeroBookWall, type WallBook } from "@/components/HeroBookWall";
-import { FaqAccordion } from "@/components/FaqAccordion";
-import { JsonLd } from "@/components/JsonLd";
+import { ClosingCta, FaqSection, ThreeSteps } from "@/components/Sections";
 import { PostCard } from "@/components/PostCard";
 import { StarsHeading, Testimonial } from "@/components/Testimonial";
 import { ArrowRight, CheckCircle, Coins, Diamond, Globe, Hourglass, Megaphone, Palette, TrendUp } from "@/components/icons";
-import { faqSchema, graph } from "@/lib/schema";
 import { bookAuthorLabel, getCatalog, heroBooks, publishedPosts, showDrafts } from "@/lib/content";
 import { wallColumns } from "@/lib/hero";
-import { homeFaqs, homeTestimonials, site } from "@/lib/site";
+import { homeTestimonials, site } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: { absolute: site.homeTitle },
@@ -46,12 +44,6 @@ const reasons: { title: string; text: string; icon: ReactNode }[] = [
   },
 ];
 
-const steps = [
-  { title: "Submit your manuscript", text: "Send us your manuscript for review.", href: "/submit-your-manuscript/" },
-  { title: "Get published", text: "We handle the details. You watch your book come to life." },
-  { title: "Earn more royalties", text: "See higher royalties and your book in more hands." },
-];
-
 export default async function HomePage() {
   const c = await getCatalog();
   // The hero wall: books marked "Feature in home hero" in the admin, topped up with recent books.
@@ -60,7 +52,6 @@ export default async function HomePage() {
   const columns = wallColumns(covers);
   const featured = wall.slice(0, 10);
   const posts = publishedPosts(c, showDrafts).slice(0, 3);
-  const half = Math.ceil(homeFaqs.length / 2);
 
   return (
     <>
@@ -70,17 +61,19 @@ export default async function HomePage() {
         <div aria-hidden="true" className="absolute inset-y-0 left-0 hidden w-[62%] bg-gradient-to-r from-navy-deep via-navy-deep/85 to-transparent lg:block" />
         <div className="relative mx-auto max-w-[1320px] px-5 pb-10 pt-14 sm:pt-20 lg:px-8 lg:pb-[120px] lg:pt-[110px]">
           <div className="max-w-[580px] xl:max-w-[620px]">
-            <p className="type-kicker !text-gold">Your path to publishing just got easier</p>
-            <h1 className="mt-4 font-display text-[48px] font-extrabold leading-[0.98] tracking-[-0.035em] text-white sm:text-[64px] lg:text-[76px]">
+            <h1 className="font-display text-[48px] font-extrabold leading-[0.98] tracking-[-0.04em] text-white sm:text-[64px] lg:text-[80px]">
               Write, Publish, <span className="text-gold">Prosper</span>
             </h1>
+            <p className="mt-5 font-display text-[20px] font-semibold leading-[1.35] text-white md:text-[23px]">
+              Your path to publishing just got easier&nbsp;&mdash; <span className="text-[#ffeec4]">ePublishing<em>Works!</em></span>
+            </p>
             <p className="mt-6 max-w-[540px] text-[18px] leading-[1.6] text-white/85 md:text-[19px]">
               At {site.name}, we handle the business of publishing (distribution, promotion, cover design, and marketing) so you can stay focused on your next
               book. <strong className="font-semibold text-white">Our authors earn 80% to 85% royalties.</strong>
             </p>
             <div className="mt-9 flex flex-wrap gap-3">
               <Link href="/submit-your-manuscript/" className="btn btn-gold btn-lg">
-                Submit Your Manuscript <ArrowRight />
+                Submit Your Manuscript to Start <ArrowRight />
               </Link>
               <Link href="/books/" className="btn btn-ghost-light btn-lg">
                 Browse Our Books
@@ -105,10 +98,10 @@ export default async function HomePage() {
 
       {/* Benefits band. */}
       <section className="bg-gold px-5 py-[18px]">
-        <ul className="mx-auto flex max-w-[1180px] flex-wrap items-center justify-center gap-x-4 gap-y-1 font-display text-[12px] font-bold uppercase tracking-[2.5px] text-navy sm:gap-x-6 sm:text-[14px] md:text-[17px] md:tracking-[3.5px]">
+        <ul className="mx-auto grid max-w-[1180px] grid-cols-2 gap-x-4 gap-y-2 text-center font-display text-[12px] font-bold uppercase tracking-[2px] text-navy sm:text-[13px] md:flex md:items-center md:justify-center md:gap-x-6 md:text-[16px] md:tracking-[3.5px]">
           {pillars.map((p, i) => (
-            <li key={p} className="flex items-center gap-4 sm:gap-6">
-              {i ? <Diamond className="h-2.5 w-2.5 shrink-0" /> : null}
+            <li key={p} className="flex items-center justify-center gap-6">
+              {i ? <Diamond className="hidden h-2.5 w-2.5 shrink-0 md:block" /> : null}
               {p}
             </li>
           ))}
@@ -209,45 +202,19 @@ export default async function HomePage() {
                 <Testimonial key={t.id} t={t} />
               ))}
             </div>
-            <p className="mt-12 text-center">
+            <p className="mt-12 flex flex-wrap justify-center gap-3">
+              <Link href="/submit-your-manuscript/" className="btn btn-gold btn-lg">
+                Join ePublishingWorks! <ArrowRight />
+              </Link>
               <Link href="/reviews/" className="btn btn-blue btn-lg">
-                Read More Author Reviews <ArrowRight />
+                Read More Author Reviews
               </Link>
             </p>
           </div>
         </section>
       ) : null}
 
-      {/* Three steps: a real sequence, so it is numbered. */}
-      <section className="px-5 py-20 lg:px-8 lg:py-28">
-        <div className="mx-auto max-w-[1320px]">
-          <p className="type-kicker">Three easy steps to</p>
-          <h2 className="type-section mt-3 max-w-[820px]">Your roadmap to becoming a published author lickety-split</h2>
-          <ol className="mt-14 grid gap-10 md:grid-cols-3 md:gap-8">
-            {steps.map((s, i) => (
-              <li key={s.title} className="relative border-t-2 border-line pt-8">
-                <span aria-hidden="true" className="absolute -top-[2px] left-0 h-[2px] w-16 bg-gold" />
-                <span aria-hidden="true" className="font-display text-[56px] font-extrabold leading-none tracking-[-2px] text-blue">
-                  0{i + 1}
-                </span>
-                <h3 className="mt-3 font-display text-[22px] font-bold leading-[1.15] tracking-[-0.3px] text-navy">{s.title}</h3>
-                <p className="mt-3 text-[16px] leading-[1.6]">
-                  {s.href ? (
-                    <Link href={s.href} className="underline decoration-gold decoration-2 underline-offset-4">
-                      {s.text}
-                    </Link>
-                  ) : (
-                    s.text
-                  )}
-                </p>
-              </li>
-            ))}
-          </ol>
-          <Link href="/submit-your-manuscript/" className="btn btn-gold btn-lg mt-14">
-            Submit Your Manuscript <ArrowRight />
-          </Link>
-        </div>
-      </section>
+      <ThreeSteps />
 
       {/* Signature advantage. */}
       <section className="bg-brand px-5 py-20 lg:px-8 lg:py-24">
@@ -270,25 +237,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* FAQ */}
-      <section id="faq" className="scroll-mt-24 px-5 py-20 lg:px-8 lg:py-28">
-        <div className="mx-auto max-w-[1100px]">
-          <h2 className="type-section text-center">Frequently asked questions</h2>
-          <div className="mt-12 grid gap-[10px] md:grid-cols-2 md:gap-[20px]">
-            <FaqAccordion items={homeFaqs.slice(0, half)} />
-            <FaqAccordion items={homeFaqs.slice(half)} />
-          </div>
-          <div className="mt-12 flex flex-wrap justify-center gap-3">
-            <Link href="/frequently-asked-questions/" className="btn btn-blue btn-lg">
-              All Questions &amp; Answers <ArrowRight />
-            </Link>
-            <Link href="/contact/" className="btn btn-lg border-2 border-line text-navy hover:border-blue hover:text-blue">
-              Reach Out to Us
-            </Link>
-          </div>
-        </div>
-        <JsonLd data={graph(faqSchema(homeFaqs))} />
-      </section>
+      <FaqSection withSchema={false} />
 
       {/* Latest articles (new on this site). */}
       {posts.length ? (
@@ -313,17 +262,7 @@ export default async function HomePage() {
         </section>
       ) : null}
 
-      {/* Closing call to action. */}
-      <section className="bg-gold px-5 py-16 lg:px-8 lg:py-20">
-        <div className="mx-auto flex max-w-[1320px] flex-col items-start gap-6 md:flex-row md:items-center md:justify-between">
-          <h2 className="max-w-[720px] font-display text-[34px] font-extrabold leading-[1.02] tracking-[-0.03em] text-navy md:text-[48px]">
-            Transform your writing into profit
-          </h2>
-          <Link href="/submit-your-manuscript/" className="btn btn-blue btn-lg shrink-0">
-            Submit Your Manuscript <ArrowRight />
-          </Link>
-        </div>
-      </section>
+      <ClosingCta />
     </>
   );
 }

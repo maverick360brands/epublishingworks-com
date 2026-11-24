@@ -1,0 +1,55 @@
+[
+  {
+    "id": "alice-duncan",
+    "name": "Alice Duncan",
+    "authorSlug": "alice-duncan",
+    "photo": "/images/site/testimonials/alice-duncan.jpg",
+    "quote": "My very first book, One Bright Morning, was published more than thirty years ago by HarperCollins. Since then, my books have been published by almost every traditional publisher known to man. It wasn't until I found ePublishingWorks! that I earned any money and/or name recognition. They also let me write what I want to write! How much better can an author's life get?",
+    "role": "Bestselling Author",
+    "headline": "It wasn't until I found ePublishingWorks that I earned any money or name recognition."
+  },
+  {
+    "id": "tm-simmons",
+    "name": "T.M. Simmons",
+    "authorSlug": "tm-simmons",
+    "photo": "/images/site/testimonials/tm-simmons.jpg",
+    "quote": "I've been with ePublishingWorks! for many years. When I got my rights back on a bunch of my books, I attempted to go the self-publishing route. It soon got tiring, since I wanted to write, not do all the formatting, promotion, etc. I contacted ePublishingWorks! and it was such a relief. They helped me have time to write again. Their accounting and payments were much better than standard New York publishers; (i.e., four times per year rather than once a year).\n\nBrian and his team are easily accessible, forthcoming, and honest about their company and how their process works. With ePW, you're a vital part of the decision-making and your career path. I've published both my backlist and new titles with them.\n\nAlso, as we authors age, ePW makes it convenient for our heirs to deal with matters after our demise. I've had absolutely no drawbacks working with them for all these many years now.",
+    "role": "Bestselling Author",
+    "headline": "With ePW, you're a vital part of the decision-making and your career path. I've published both my backlist and new titles with them."
+  },
+  {
+    "id": "jillian-david",
+    "name": "Jillian David",
+    "authorSlug": "jillian-david",
+    "photo": "/images/site/testimonials/jillian-david.jpg",
+    "quote": "Brian and the team rebranded my series and adjusted pricing, helping me achieve Amazon and Barnes & Noble bestseller rankings in multiple categories.\n\nI appreciated their transparency throughout the publishing process and their quick, thoughtful responses to my questions.\n\nWhen my publisher shut down, author Kathy Lyons/Jade Lee connected me with ePublishing Works! and years later, it’s still some of the best writing advice I’ve ever received.",
+    "role": "Bestselling & Award-winning Author",
+    "headline": "...best writing advice I’ve ever received."
+  },
+  {
+    "id": "jo-goodman",
+    "name": "Jo Goodman",
+    "authorSlug": "jo-goodman",
+    "photo": "/images/site/testimonials/jo-goodman.jpg",
+    "quote": "ePublishingWorks! has given life to my backlist and made my stories accessible to new readers.",
+    "role": "Author"
+  },
+  {
+    "id": "david-o-stewart",
+    "name": "David O. Stewart",
+    "authorSlug": "david-o-stewart",
+    "photo": "/images/site/testimonials/david-o-stewart.jpg",
+    "quote": "I was frustrated that the original publisher of my historical mystery trilogy slapped boring covers on the books and stopped promotion way too early. ePublishingWorks! produced high-quality covers and gave the series a second life. Brian and his team are smart, responsive, and kept the trilogy alive for thousands of additional sales. Honorable and honest, too.",
+    "role": "Author of The Lincoln Deception",
+    "headline": "...produced high-quality covers and gave the series a second life. ... Honorable and honest, too."
+  },
+  {
+    "id": "jeanne-glidewell",
+    "name": "Jeanne Glidewell",
+    "authorSlug": "jeanne-glidewell",
+    "photo": "/images/site/testimonials/jeanne-glidewell.jpg",
+    "quote": "Choosing ePublishingWorks! was the best decision for my writing career. They handle everything so I can focus on writing. An amazing team and a remarkable publisher—I highly recommend them!",
+    "role": "Author",
+    "headline": "Choosing ePublishingWorks! was the best decision..."
+  }
+]

@@ -1,35 +1,17 @@
 import localFont from "next/font/local";
 
-// Self-hosted variable fonts: no render-blocking request to Google Fonts.
-const montserrat = localFont({
-  src: "../../node_modules/@fontsource-variable/montserrat/files/montserrat-latin-wght-normal.woff2",
-  variable: "--font-montserrat",
-  weight: "100 900",
+// One self-hosted variable font for the whole site: Manrope, the brand face of the WordPress
+// site, weights 200–800 in a single ~25 KB file (Latin, including accented names). It replaces
+// three Google Fonts families (Manrope, Muli, Lato: about 14 files and a render-blocking request
+// to another server). Next preloads it and sizes the fallback to match, so text doesn't jump
+// when it arrives. Manrope has no italic; browsers slant it for emphasis, which suits a
+// geometric sans.
+const manrope = localFont({
+  src: "../../node_modules/@fontsource-variable/manrope/files/manrope-latin-wght-normal.woff2",
+  variable: "--font-manrope",
+  weight: "200 800",
   display: "swap",
-});
-const workSans = localFont({
-  src: [
-    { path: "../../node_modules/@fontsource-variable/work-sans/files/work-sans-latin-wght-normal.woff2", style: "normal" },
-    { path: "../../node_modules/@fontsource-variable/work-sans/files/work-sans-latin-wght-italic.woff2", style: "italic" },
-  ],
-  variable: "--font-work-sans",
-  weight: "100 900",
-  display: "swap",
-});
-// Book titles on author and spotlight pages use Poppins; the About page quote uses Alice.
-const poppins = localFont({
-  src: [
-    { path: "../../node_modules/@fontsource/poppins/files/poppins-latin-400-normal.woff2", weight: "400", style: "normal" },
-    { path: "../../node_modules/@fontsource/poppins/files/poppins-latin-400-italic.woff2", weight: "400", style: "italic" },
-  ],
-  variable: "--font-poppins",
-  display: "swap",
-});
-const alice = localFont({
-  src: "../../node_modules/@fontsource/alice/files/alice-latin-400-normal.woff2",
-  variable: "--font-alice",
-  weight: "400",
-  display: "swap",
+  adjustFontFallback: "Arial",
 });
 
-export const fontClassName = `${montserrat.variable} ${workSans.variable} ${poppins.variable} ${alice.variable} antialiased`;
+export const fontClassName = `${manrope.variable} antialiased`;

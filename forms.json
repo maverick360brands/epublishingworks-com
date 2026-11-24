@@ -1,0 +1,37 @@
+{
+  "productionHosts": ["epublishingworks.com", "www.epublishingworks.com"],
+  "forms": [
+    {
+      "name": "manuscript-submission",
+      "path": "/submit-your-manuscript/",
+      "fields": {
+        "input[name=firstName]": "TEST – reviewer",
+        "input[name=lastName]": "Staging",
+        "input[name=email]": "reviewer-test@example.com",
+        "input[name=phone]": "555-555-0100",
+        "select[name=genre]": { "select": "Cozy Mystery" },
+        "input[name=title]": "TEST – reviewer submission",
+        "textarea[name=about]": "TEST – reviewer submission from staging. Ignore.",
+        "input[name=edited][value='No, not edited.']": { "check": true },
+        "textarea[name=problem]": "TEST – reviewer submission from staging. Ignore.",
+        "input[name=interests][value='Higher Royalties']": { "check": true },
+        "input[name=heardFrom][value='Other']": { "check": true }
+      },
+      "submit": "form button[type=submit]",
+      "successText": "Thank you for your submission",
+      "endpoint": "/api/manuscript/"
+    },
+    {
+      "name": "contact",
+      "path": "/contact/",
+      "fields": {
+        "input[name=name]": "TEST – reviewer",
+        "input[name=email]": "reviewer-test@example.com",
+        "textarea[name=message]": "TEST – reviewer submission from staging. Ignore."
+      },
+      "submit": "form button[type=submit]",
+      "successText": "Your message is on its way",
+      "endpoint": "/api/contact/"
+    }
+  ]
+}

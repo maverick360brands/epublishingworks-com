@@ -130,6 +130,27 @@ export function seriesSiblings(c: Catalog, book: Book): Book[] {
     .sort((a, b) => (a.seriesNumber ?? 0) - (b.seriesNumber ?? 0));
 }
 
+/**
+ * The Authors page's genre groups (the tabs of the WordPress Authors page), as a roll-up of the
+ * book genres. An author belongs to every group their visible books fall into.
+ */
+export const AUTHOR_GROUPS: Record<string, string[]> = {
+  Romance: ["Contemporary Romance", "Historical Romance", "Romantic Suspense", "Paranormal & Fantasy Romance", "Western"],
+  Mystery: ["Mystery", "Cozy Mystery"],
+  "Thriller / Action & Adventure": ["Thriller & Suspense"],
+  "Women's & Historical Fiction": ["Literary & Women's Fiction", "Historical Fiction"],
+  "Science Fiction & Fantasy": ["Fantasy & Science Fiction"],
+  "Young Adult & Children's": ["Young Adult", "Children's"],
+  "Non-Fiction": ["Nonfiction", "Memoir & Biography"],
+};
+
+export function authorGroups(books: Pick<Book, "genre">[]): string[] {
+  const genres = new Set(books.map((b) => b.genre));
+  return Object.entries(AUTHOR_GROUPS)
+    .filter(([, members]) => members.some((g) => genres.has(g)))
+    .map(([group]) => group);
+}
+
 /** Authors listed on the Authors page: visible, with at least one visible book. */
 export function directoryAuthors(c: Catalog): Author[] {
   const withBooks = new Set(visibleBooks(c).flatMap((b) => b.authorSlugs));

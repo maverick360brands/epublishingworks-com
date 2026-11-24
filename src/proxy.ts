@@ -5,6 +5,7 @@ import { RESERVED_ROOT_SEGMENTS } from "@/cms/slugs";
 import { resolveSlug } from "@/lib/catalog";
 import { createManifestCache, loadManifest, manifestToCatalog } from "@/lib/route-manifest";
 import { GATE_COOKIE, gatePage, gateResponseInit, isUnlocked } from "@/lib/site-gate";
+import shortlinks from "@/generated/shortlinks.json";
 
 // Book pages live at the site root (/spirits-adopted-alice-duncan/), authors at /authors/<name>/, and posts at
 // /blog/<slug>/, matching the WordPress URLs. Under Cache Components a page streams before it
@@ -47,7 +48,16 @@ export async function proxy(request: NextRequest) {
   if (!(await isUnlocked(request.cookies.get(GATE_COOKIE)?.value, process.env.SITE_PASSWORD))) {
     return new NextResponse(gatePage({ next: pathname + search }), gateResponseInit(401));
   }
+  // WordPress shortlinks (/?p=4617) go straight to the page's address, without the query.
+  if (pathname === "/") {
+    const p = request.nextUrl.searchParams;
+    const key = p.has("p") ? `p=${p.get("p")}` : p.has("page_id") ? `page_id=${p.get("page_id")}` : null;
+    const to = key ? (shortlinks as Record<string, string>)[key] : undefined;
+    if (to) return NextResponse.redirect(new URL(to, request.url), 301);
+  }
   if (!isContentPath(pathname.split("/").filter(Boolean))) return NextResponse.next();
+  // A preview without a database (CONTENT_SOURCE=files) has no address table; pages decide.
+  if (process.env.CONTENT_SOURCE === "files") return NextResponse.next();
   const manifest = await getManifest();
   if (!manifest) return NextResponse.next();
   const result = resolveSlug(manifestToCatalog(manifest, { includeDrafts }), pathname);

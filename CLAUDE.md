@@ -75,6 +75,10 @@ made in the admin create their own redirects.
 ## Site-specific rules
 
 - Forms don't use Turnstile, overriding the kit convention; they use the spam controller (see Forms and integrations).
+- Branches (Dustin, 2026-11-24): agents push to `main` themselves, without asking Dustin first. This overrides the
+  conventions' rules that `main` changes only through the promotion PR, after an approver says go live, and not before
+  the site's first go-live. Changes still go through `staging` and pass `site-reviewer` first. `main` was created from
+  `staging` on 2026-11-24, before go-live.
 - Book and author content is edited in the admin (`/admin/`), not in `content/`. The Markdown in
   `content/` only seeds a new database.
 - Keep testimonials verbatim (`content/site/testimonials.json`).

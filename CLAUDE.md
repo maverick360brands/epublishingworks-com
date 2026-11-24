@@ -51,7 +51,8 @@ Thrive Apprentice course URLs were dropped on purpose (no course); see `migratio
 
 ## Forms and integrations
 
-- Forms: manuscript submission (`/submit-your-manuscript/`, with file upload to Vercel Blob) and contact
+- Forms: manuscript submission (`/submit-your-manuscript/`, with file upload to a private Vercel Blob store,
+  `MANUSCRIPTS_READ_WRITE_TOKEN`; the email links to `/api/manuscript/file/`, which only signed-in editors can open) and contact
   (`/contact/`). Both email the team through Resend. TODO(dustin): recipient addresses (`CONTACT_TO_EMAIL`).
 - Spam: no Cloudflare Turnstile on this site. Dustin (2026-11-24): use the spam controller from bluetowerroofs.com
   and the Orion site. Copied into `src/lib/spam/` and adapted (no import or shared module): same-site check, rate

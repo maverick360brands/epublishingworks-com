@@ -93,9 +93,9 @@ export function ManuscriptForm({ uploadsEnabled }: { uploadsEnabled: boolean }) 
       data.delete("manuscript");
       if (file) {
         setStatus({ kind: "working", step: "Uploading your manuscript…", progress: 0 });
-        const safe = file.name.replace(/[^\w.-]+/g, "-").slice(-120);
+        const safe = file.name.replace(/[^\w.-]+/g, "-").replace(/\.{2,}/g, ".").slice(-120);
         const blob = await upload(`manuscripts/${safe}`, file, {
-          access: "public",
+          access: "private",
           handleUploadUrl: "/api/manuscript/upload/",
           clientPayload: t,
           multipart: file.size > 5 * 1024 * 1024,

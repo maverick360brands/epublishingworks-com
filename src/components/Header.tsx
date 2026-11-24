@@ -133,7 +133,15 @@ export function Header() {
         </div>
       </div>
 
-      <nav id="mobile-nav" aria-label="Main" hidden={!open} className="border-t border-blue/10 lg:hidden">
+      <nav
+        id="mobile-nav"
+        aria-label="Main"
+        hidden={!open}
+        onClick={(e) => {
+          if ((e.target as HTMLElement).closest("a")) setOpenOn(null);
+        }}
+        className="border-t border-blue/10 lg:hidden"
+      >
         <ul className="mx-auto max-w-[1320px] px-5 py-3">
           {site.nav.map((item) => (
             <li key={item.href}>

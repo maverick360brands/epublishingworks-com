@@ -71,6 +71,11 @@
     outline: 2px solid var(--color-blue);
     outline-offset: 2px;
   }
+  /* On the dark bands the blue ring disappears into the background: white there. */
+  :is(.bg-brand, .bg-navy, .bg-navy-deep) :focus-visible,
+  .btn-ghost-light:focus-visible {
+    outline-color: #fff;
+  }
   @media (prefers-reduced-motion: reduce) {
     *,
     *::before,

@@ -85,7 +85,7 @@ export default function SubmissionGuidelinesPage() {
             If you meet the above criteria and are ready to take the next step in your publishing journey, click the button below. Once we receive your submission, our team
             will carefully review it and respond with clear &ldquo;<strong className="italic text-white">Next Steps</strong>&rdquo; within 2 to 4 business days.
           </p>
-          <div className="mt-8 flex flex-wrap gap-3">
+          <div className="mt-8 flex flex-wrap justify-center gap-3">
             <Link href="/submit-your-manuscript/" className="btn btn-gold btn-lg">
               Start Your Publishing Journey <ArrowRight />
             </Link>

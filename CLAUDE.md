@@ -54,10 +54,12 @@ Thrive Apprentice course URLs were dropped on purpose (no course); see `migratio
 - Forms: manuscript submission (`/submit-your-manuscript/`, with file upload to a private Vercel Blob store,
   `MANUSCRIPTS_READ_WRITE_TOKEN`; the email links to `/api/manuscript/file/`, which only signed-in editors can open) and contact
   (`/contact/`). Both email the team through Resend. TODO(dustin): recipient addresses (`CONTACT_TO_EMAIL`).
-- Every "Submit Your Manuscript" CTA has a "Start With a Sample" partner (`src/components/SampleCta.tsx`), which opens
+- Every "Submit Your Manuscript" CTA has a "Start With a Sample" partner (`src/components/SampleCta.tsx`; the one
+  exception is the compact button in the desktop header, where there's no room; the phone menu has both), which opens
   the form with "Sample chapters" chosen; the form asks what's being sent and needs a file only for the full
   manuscript or sample chapters (Dustin, 2026-11-24). The padlock notice on the form (`SecureBadge.tsx`) states only
-  what the build does: HTTPS, private store, editor-only downloads. Change it if the storage changes.
+  what the build does: HTTPS (HSTS in `next.config.ts`), private store, downloads only for people signed in to the
+  admin; the storage lines show only when uploads are on. Change it if the storage changes.
 - Spam: no Cloudflare Turnstile on this site. Dustin (2026-11-24): use the spam controller from bluetowerroofs.com
   and the Orion site. Copied into `src/lib/spam/` and adapted (no import or shared module): same-site check, rate
   limit (5 a minute per IP), bot traps (honeypot, `_t` under 2.5 s, junk phone, digits in names, random strings),

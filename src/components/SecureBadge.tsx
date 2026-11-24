@@ -1,10 +1,15 @@
 // The secure-form signal (Dustin, 2026-11-24: "a 3D padlock … so they feel safe submitting").
-// Every claim here is true of the build: the site is HTTPS-only (HSTS), manuscripts go to a
-// private Blob store, and only editors signed in to the admin can open them
-// (src/app/api/manuscript/file/route.ts). Keep it that way if the storage changes.
+// Every claim here is true of the build: the site is HTTPS-only (HSTS in next.config.ts), manuscripts
+// go to a private Blob store, and only people signed in to the admin can open them
+// (src/app/api/manuscript/file/route.ts). The storage lines show only when uploads are on.
+// Keep it that way if the storage changes.
+
+import { useId } from "react";
 
 /** A padlock with depth: brushed-steel shackle, gold body with a lit bevel and a thick edge, navy keyhole, soft shadow. */
-export function Padlock3D({ id, className = "" }: { id: string; className?: string }) {
+export function Padlock3D({ className = "" }: { className?: string }) {
+  // Gradient ids unique per padlock, so two on one page never share them.
+  const id = `lock${useId().replace(/[^a-zA-Z0-9_-]/g, "")}`;
   const g = (name: string) => `${id}-${name}`;
   return (
     <svg viewBox="0 0 96 96" aria-hidden="true" className={className}>
@@ -57,17 +62,20 @@ export function Padlock3D({ id, className = "" }: { id: string; className?: stri
   );
 }
 
-const CHECKS = ["An encrypted connection from your browser to us", "Your files are stored privately, never on a public link", "Only our editorial team can open your manuscript"];
+const CONNECTION = "An encrypted connection from your browser to us";
+const WITH_UPLOADS = [CONNECTION, "Your files are stored privately, never on a public link", "Only signed-in members of our team can open your files"];
+const WITHOUT_UPLOADS = [CONNECTION, "We never sell your information"];
 
 /** The panel at the top of the manuscript form. */
-export function SecureNotice({ className = "" }: { className?: string }) {
+export function SecureNotice({ uploads, className = "" }: { uploads: boolean; className?: string }) {
+  const checks = uploads ? WITH_UPLOADS : WITHOUT_UPLOADS;
   return (
     <div className={`flex items-start gap-4 rounded-[22px] border border-line bg-mist/70 p-5 sm:items-center sm:p-6 ${className}`}>
-      <Padlock3D id="lock-notice" className="h-[72px] w-[72px] shrink-0 sm:h-[84px] sm:w-[84px]" />
+      <Padlock3D className="h-[72px] w-[72px] shrink-0 sm:h-[84px] sm:w-[84px]" />
       <div>
         <p className="font-display text-[19px] font-extrabold tracking-[-0.01em] text-navy">Secure submission</p>
         <ul className="mt-2 space-y-1.5 text-[14.5px] leading-[1.45] text-body">
-          {CHECKS.map((c) => (
+          {checks.map((c) => (
             <li key={c} className="flex gap-2">
               <svg aria-hidden="true" viewBox="0 0 16 16" className="mt-[3px] h-[14px] w-[14px] shrink-0 text-blue" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M3 8.5l3.2 3L13 4.5" />
@@ -85,7 +93,7 @@ export function SecureNotice({ className = "" }: { className?: string }) {
 export function SecureLine({ text = "Secure, encrypted submission", className = "" }: { text?: string; className?: string }) {
   return (
     <p className={`flex items-center gap-2 text-[14px] font-semibold text-navy ${className}`}>
-      <Padlock3D id="lock-line" className="h-[26px] w-[26px] shrink-0" />
+      <Padlock3D className="h-[26px] w-[26px] shrink-0" />
       {text}
     </p>
   );

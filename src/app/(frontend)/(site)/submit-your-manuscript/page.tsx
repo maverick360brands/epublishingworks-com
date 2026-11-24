@@ -94,7 +94,7 @@ export default async function SubmitManuscriptPage() {
             <p className="mt-2 text-[15px] text-body">
               Fields marked <span className="text-gold-ink">*</span> are required.
             </p>
-            <SecureNotice className="mt-6" />
+            <SecureNotice uploads={manuscriptUploadsEnabled()} className="mt-6" />
             <div className="mt-8">
               <ManuscriptForm uploadsEnabled={manuscriptUploadsEnabled()} />
             </div>

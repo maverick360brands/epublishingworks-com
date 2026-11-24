@@ -24,7 +24,7 @@ export function SampleNote({ tone = "light", className = "" }: { tone?: Tone; cl
       Not ready to send the whole book?{" "}
       <Link
         href={SAMPLE_HREF}
-        className={`font-semibold underline decoration-2 underline-offset-4 ${tone === "dark" ? "text-white decoration-gold hover:text-gold" : "text-navy decoration-gold hover:text-blue"}`}
+        className={`font-semibold underline decoration-2 underline-offset-4 ${tone === "dark" ? "text-white decoration-gold hover:text-gold focus-visible:outline-white" : "text-navy decoration-gold hover:text-blue"}`}
       >
         Start with a sample
       </Link>

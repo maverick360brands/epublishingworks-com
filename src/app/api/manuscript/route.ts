@@ -23,11 +23,13 @@ const FIELDS = {
   problem: "Problem to solve with a new publisher",
   interests: "Most interested in",
   heardFrom: "Heard about us from",
-  sending: "Sending",
+  sending: "What you're sending",
   fileName: "Manuscript file",
   fileUrl: "Manuscript link (sign in to the admin to open it)",
 } as const;
 type Field = keyof typeof FIELDS;
+// Added to the email subject; the full manuscript needs no note.
+const SUBJECT_KIND: Record<string, string> = { "Sample chapters": "sample chapters", "A synopsis or outline": "synopsis or outline", "A published (backlist) book": "backlist book" };
 const REQUIRED: Field[] = ["firstName", "lastName", "email", "phone", "genre", "title", "about", "edited", "problem", "interests", "heardFrom", "sending"];
 
 export async function POST(request: Request) {
@@ -66,7 +68,7 @@ export async function POST(request: Request) {
   }
 
   const rows = (Object.keys(FIELDS) as Field[]).map((f): [string, string] => [FIELDS[f], data[f]]);
-  const kind = data.sending === SENDING[0] ? "" : ` (${data.sending.toLowerCase()})`;
+  const kind = SUBJECT_KIND[data.sending] ? ` (${SUBJECT_KIND[data.sending]})` : "";
   const subject = `Manuscript submission${kind}: ${data.title} (${data.firstName} ${data.lastName})`;
   const verdict = await checkSpam("manuscript", data);
   if (verdict.kind !== "ok") {

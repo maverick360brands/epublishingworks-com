@@ -27,12 +27,12 @@ export default async function BlogIndex() {
       <PageBanner
         intro="Straight answers for authors on publishing, royalties, rights, and marketing, plus reading guides for the mysteries and romances we publish."
         actions={
-          <>
+          <div className="flex flex-wrap gap-3">
             <Link href="/submit-your-manuscript/" className="btn btn-gold !px-5 !py-3 !text-[15px]">
               Submit Your Manuscript
             </Link>
             <SampleButton tone="dark" size="sm" />
-          </>
+          </div>
         }
       >
         The ePublishingWorks Blog

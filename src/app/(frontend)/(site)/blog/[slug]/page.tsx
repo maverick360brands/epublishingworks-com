@@ -17,7 +17,7 @@ import { metaFor, pageMetadata } from "@/lib/seo";
 import { inlineCtaFor, splitAfterSection } from "@/lib/inline-cta";
 import { articleSchema, breadcrumbSchema, faqSchema, graph } from "@/lib/schema";
 import { site, testimonials } from "@/lib/site";
-import { SampleNote } from "@/components/SampleCta";
+import { SampleButton, SampleNote } from "@/components/SampleCta";
 
 export async function generateStaticParams() {
   const posts = publishedPosts(await getCatalog(), showDrafts);
@@ -112,6 +112,7 @@ export default async function PostPage({ params }: PageProps<"/blog/[slug]">) {
               <Link href={post.category === "For Readers" ? "/books/" : "/submit-your-manuscript/"} className="btn btn-gold !px-5 !py-3 !text-[15px]">
                 {post.category === "For Readers" ? "Browse the Books" : "Submit Your Manuscript"}
               </Link>
+              {post.category === "For Readers" ? null : <SampleButton tone="dark" size="sm" />}
               <Link href="/contact/" className="text-[15px] font-semibold text-white no-underline hover:text-gold">
                 Questions? Talk to a publisher
               </Link>

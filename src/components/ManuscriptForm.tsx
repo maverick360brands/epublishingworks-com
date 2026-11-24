@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { upload } from "@vercel/blob/client";
-import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
+import { Suspense, useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { MANUSCRIPT_EXTENSIONS, MANUSCRIPT_MAX_BYTES, NEEDS_FILE, SAMPLE_CHOICE, SENDING } from "@/lib/manuscript";
 import { SecureLine } from "./SecureBadge";
 
@@ -68,6 +68,16 @@ const Fieldset = ({ legend, children }: { legend: string; children: ReactNode })
 
 type Status = { kind: "idle" } | { kind: "working"; step: string; progress?: number } | { kind: "error"; message: string };
 
+/** Picks "Sample chapters" whenever the address carries ?send=sample, including a link to this same page. */
+function SendFromQuery({ onSample }: { onSample: () => void }) {
+  const send = useSearchParams().get("send");
+  useEffect(() => {
+    if (send === "sample") onSample();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [send]);
+  return null;
+}
+
 export function ManuscriptForm({ uploadsEnabled }: { uploadsEnabled: boolean }) {
   const router = useRouter();
   const ticket = useRef<{ value: string; at: number } | null>(null);
@@ -81,10 +91,6 @@ export function ManuscriptForm({ uploadsEnabled }: { uploadsEnabled: boolean }) 
   const [file, setFile] = useState<File | null>(null);
   // What the author is sending; "Start With a Sample" links open the form with sample chapters chosen.
   const [sending, setSending] = useState("");
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    if (new URLSearchParams(window.location.search).get("send") === "sample") setSending(SAMPLE_CHOICE);
-  }, []);
   const fileRequired = uploadsEnabled && NEEDS_FILE.has(sending);
   const working = status.kind === "working";
 
@@ -208,7 +214,7 @@ export function ManuscriptForm({ uploadsEnabled }: { uploadsEnabled: boolean }) 
           <p className={label} id="edited-label">
             Has your book already been edited?{req}
           </p>
-          <div role="radiogroup" aria-labelledby="edited-label" className="grid gap-3 sm:grid-cols-2">
+          <div role="radiogroup" aria-labelledby="edited-label" aria-required="true" className="grid gap-3 sm:grid-cols-2">
             <Choice type="radio" name="edited" value="Yes, already edited." required />
             <Choice type="radio" name="edited" value="No, not edited." />
           </div>
@@ -238,7 +244,7 @@ export function ManuscriptForm({ uploadsEnabled }: { uploadsEnabled: boolean }) 
           <p className={label} id="heard-label">
             How did you hear about ePublishingWorks?{req}
           </p>
-          <div role="radiogroup" aria-labelledby="heard-label" className="grid gap-3 sm:grid-cols-3">
+          <div role="radiogroup" aria-labelledby="heard-label" aria-required="true" className="grid gap-3 sm:grid-cols-3">
             {SOURCES.map((v, i) => (
               <Choice key={v} type="radio" name="heardFrom" value={v} required={i === 0} />
             ))}
@@ -247,11 +253,14 @@ export function ManuscriptForm({ uploadsEnabled }: { uploadsEnabled: boolean }) 
       </Fieldset>
 
       <Fieldset legend="Your manuscript">
+        <Suspense fallback={null}>
+          <SendFromQuery onSample={() => setSending(SAMPLE_CHOICE)} />
+        </Suspense>
         <div>
           <p className={label} id="sending-label">
             What are you sending?{req}
           </p>
-          <div role="radiogroup" aria-labelledby="sending-label" className="grid gap-3 sm:grid-cols-2">
+          <div role="radiogroup" aria-labelledby="sending-label" aria-required="true" className="grid gap-3 sm:grid-cols-2">
             {SENDING.map((v, i) => (
               <Choice key={v} type="radio" name="sending" value={v} required={i === 0} checked={sending === v} onChange={setSending} />
             ))}
@@ -268,6 +277,7 @@ export function ManuscriptForm({ uploadsEnabled }: { uploadsEnabled: boolean }) 
               <input
                 type="file"
                 name="manuscript"
+                aria-required={fileRequired}
                 accept={MANUSCRIPT_EXTENSIONS}
                 onChange={(e) => {
                   const f = e.target.files?.[0] ?? null;

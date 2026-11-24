@@ -66,6 +66,15 @@ test("Start With a Sample opens the form with sample chapters chosen", async ({ 
   await expect(page.getByText("Secure submission")).toBeVisible();
 });
 
+test("Start With a Sample works from the submit page itself", async ({ page }) => {
+  await page.goto("/submit-your-manuscript/", { waitUntil: "networkidle" });
+  await expect(page.getByLabel("Sample chapters")).not.toBeChecked();
+  await page.getByRole("main").getByRole("link", { name: "start with a sample" }).first().click();
+  await expect(page).toHaveURL(/\?send=sample#submit$/);
+  await expect(page.getByLabel("Sample chapters")).toBeChecked();
+  await expect(page.getByRole("button", { name: "Send for Review" })).toBeVisible();
+});
+
 test("a synopsis or outline goes through without a file", async ({ page }) => {
   await page.goto("/submit-your-manuscript/?send=sample", { waitUntil: "networkidle" });
   await page.getByLabel("First name").fill("TEST – e2e");

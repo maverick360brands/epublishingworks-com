@@ -18,7 +18,7 @@ const SOURCES = ["Web Search", "Referral", "Online Ad", "In-Person Event", "Emai
 const ABOUT_MAX = 350;
 
 const input =
-  "block h-[52px] w-full rounded-[14px] border border-line bg-white px-4 text-[16px] text-navy placeholder:text-body/60 transition-[border-color,box-shadow] focus:border-blue focus:shadow-[0_0_0_4px_color-mix(in_srgb,var(--color-blue)_14%,transparent)] focus:outline-none";
+  "block h-[52px] w-full rounded-[14px] border border-line bg-white px-4 text-[16px] text-navy placeholder:text-body transition-[border-color,box-shadow] focus:border-blue focus:shadow-[0_0_0_4px_color-mix(in_srgb,var(--color-blue)_14%,transparent)] focus:outline-none";
 const area = `${input} h-auto min-h-[130px] py-3 leading-[1.55]`;
 const label = "mb-2 block font-display text-[15px] font-bold text-navy";
 const group = "font-display text-[19px] font-bold tracking-[-0.01em] text-navy";

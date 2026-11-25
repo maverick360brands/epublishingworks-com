@@ -13,8 +13,23 @@ export type BookTileData = {
 };
 
 // Catalog tile: tilting cover, title, author, and series. The whole tile is the link.
-// `compact` shows the cover alone (the title stays available to screen readers).
-export function BookTile({ book, priority = false, headingLevel = "h3", compact = false }: { book: BookTileData; priority?: boolean; headingLevel?: "h2" | "h3"; compact?: boolean }) {
+// `compact` shows the cover alone (the title stays available to screen readers); `dense` is the
+// smaller type for the full catalog grid, where seven covers share a row.
+export function BookTile({
+  book,
+  priority = false,
+  headingLevel = "h3",
+  compact = false,
+  dense = false,
+  sizes,
+}: {
+  book: BookTileData;
+  priority?: boolean;
+  headingLevel?: "h2" | "h3";
+  compact?: boolean;
+  dense?: boolean;
+  sizes?: string;
+}) {
   const H = headingLevel;
   return (
     <Link href={book.href} className="group block no-underline">
@@ -23,7 +38,7 @@ export function BookTile({ book, priority = false, headingLevel = "h3", compact 
         alt={`Cover of ${book.title}`}
         width={book.coverWidth}
         height={book.coverHeight}
-        sizes={compact ? "120px" : "(min-width: 1280px) 210px, (min-width: 768px) 25vw, 45vw"}
+        sizes={sizes ?? (compact ? "120px" : "(min-width: 1280px) 210px, (min-width: 768px) 25vw, 45vw")}
         priority={priority}
       />
       {compact ? (
@@ -32,9 +47,9 @@ export function BookTile({ book, priority = false, headingLevel = "h3", compact 
         </span>
       ) : (
         <>
-          <H className="mt-4 font-display text-[16px] font-bold leading-[1.25] tracking-[-0.01em] text-navy transition-colors group-hover:text-blue">{book.title}</H>
-          <p className="mt-1 text-[14px] leading-[1.4] text-body">{book.author}</p>
-          {book.series ? <p className="mt-1 text-[13px] font-semibold text-gold-ink">{book.series}</p> : null}
+          <H className={`font-display font-bold leading-[1.25] tracking-[-0.01em] text-navy transition-colors group-hover:text-blue ${dense ? "mt-3.5 text-[15px]" : "mt-4 text-[16px]"}`}>{book.title}</H>
+          <p className={`mt-1 leading-[1.4] text-body ${dense ? "text-[13.5px]" : "text-[14px]"}`}>{book.author}</p>
+          {book.series ? <p className={`mt-1 font-semibold leading-[1.35] text-gold-ink ${dense ? "text-[12.5px]" : "text-[13px]"}`}>{book.series}</p> : null}
         </>
       )}
     </Link>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { BookTile, type BookTileData } from "./BookTile";
 
 export type CatalogBook = BookTileData & { genre: string; authorSort: string; seriesNumber: number | null; seriesName: string; rank: number };
@@ -31,7 +31,7 @@ function initialState(genres: string[]) {
 // The full catalog: genre chips (with counts), search by title, author, or series, and a sort.
 // The filter state is mirrored into the address bar. Tiles come PAGE at a time ("Show more"):
 // all 510 at once made the page heavy to render; search and filters still cover every book.
-const PAGE = 60;
+const PAGE = 84; // whole rows at 7, 6, 4, 3 and 2 across
 
 export function BooksBrowser({ books }: { books: CatalogBook[] }) {
   const genres = useMemo(() => {
@@ -43,9 +43,16 @@ export function BooksBrowser({ books }: { books: CatalogBook[] }) {
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<Sort>("featured");
   const [limit, setLimit] = useState(PAGE);
+  const countRef = useRef<HTMLParagraphElement>(null);
+  // Picking a genre or a sort "reshelves" the grid: the covers rise into place once (not while
+  // typing a search, and not on the first load, so nothing waits to appear).
+  // `reshelf` remounts the grid; `shelving` is on only until the next search or "Show more".
+  const [reshelf, setReshelf] = useState(0);
+  const [shelving, setShelving] = useState(false);
+  const reshelve = () => (setReshelf((n) => n + 1), setShelving(true));
   // A new filter, search, or sort starts again from the first page.
-  const pick = (g: string) => (setGenre(g), setLimit(PAGE));
-  const search = (q: string) => (setQuery(q), setLimit(PAGE));
+  const pick = (g: string) => (setGenre(g), setLimit(PAGE), reshelve());
+  const search = (q: string) => (setQuery(q), setLimit(PAGE), setShelving(false));
 
   useEffect(() => {
     const s = initialState(genres.map(([g]) => g));
@@ -100,14 +107,14 @@ export function BooksBrowser({ books }: { books: CatalogBook[] }) {
             value={query}
             onChange={(e) => search(e.target.value)}
             placeholder="Search title, author, or series"
-            className="h-[54px] w-full rounded-full border-2 border-line bg-white pl-12 pr-5 text-[16px] text-navy placeholder:text-body/70 focus:border-blue focus:outline-none"
+            className="h-[54px] w-full rounded-full border-2 border-line bg-white pl-12 pr-5 text-[16px] text-navy placeholder:text-body focus:border-blue focus:outline-none"
           />
         </label>
         <label className="flex items-center gap-3 text-[15px] font-semibold text-navy">
           Sort
           <select
             value={sort}
-            onChange={(e) => (setSort(e.target.value as Sort), setLimit(PAGE))}
+            onChange={(e) => (setSort(e.target.value as Sort), setLimit(PAGE), reshelve())}
             className="h-[46px] rounded-full border-2 border-line bg-white px-4 text-[15px] font-semibold text-navy focus:border-blue focus:outline-none"
           >
             {SORTS.map((s) => (
@@ -120,28 +127,34 @@ export function BooksBrowser({ books }: { books: CatalogBook[] }) {
       </div>
 
       <div role="group" aria-label="Filter by genre" className="-mx-5 mt-6 overflow-x-auto px-5 pb-2 [scrollbar-width:thin] lg:mx-0 lg:overflow-visible lg:px-0">
-        <ul className="flex gap-2 lg:flex-wrap">
+        <ul className="flex gap-2 py-1 lg:flex-wrap">
           {chip("all", "All books", books.length)}
           {genres.map(([g, n]) => chip(g, g, n))}
         </ul>
       </div>
 
-      <p className="mt-6 text-[15px] text-body" aria-live="polite">
+      <p ref={countRef} tabIndex={-1} className="mt-6 text-[15px] text-body focus:outline-none" aria-live="polite">
         {shown.length === books.length ? `${books.length} books` : `${shown.length} of ${books.length} books`}
       </p>
 
       {shown.length ? (
         <>
-          <ul className="mt-6 grid grid-cols-2 gap-x-6 gap-y-12 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+          <ul key={reshelf} className="mt-8 grid grid-cols-2 gap-x-5 gap-y-10 min-[540px]:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 lg:gap-x-6 xl:grid-cols-7">
             {shown.slice(0, limit).map((b, i) => (
-              <li key={b.slug}>
-                <BookTile book={b} priority={i < 5} headingLevel="h2" />
+              <li key={b.slug} className={shelving ? "shelf-in" : undefined} style={shelving ? { animationDelay: `${Math.min(i, 13) * 35}ms` } : undefined}>
+                <BookTile
+                  book={b}
+                  dense
+                  priority={i < 7}
+                  headingLevel="h2"
+                  sizes="(min-width: 1280px) 172px, (min-width: 1024px) 15vw, (min-width: 768px) 23vw, (min-width: 540px) 30vw, 45vw"
+                />
               </li>
             ))}
           </ul>
           {shown.length > limit ? (
             <div className="mt-14 text-center">
-              <button type="button" onClick={() => setLimit((n) => n + PAGE)} className="btn btn-blue">
+              <button type="button" onClick={() => (setShelving(false), setLimit((n) => n + PAGE))} className="btn btn-blue">
                 Show More Books
               </button>
               <p className="mt-3 text-[14px] text-body">
@@ -159,6 +172,8 @@ export function BooksBrowser({ books }: { books: CatalogBook[] }) {
             onClick={() => {
               search("");
               pick("all");
+              countRef.current?.focus(); // the button is gone once the books are back
+
             }}
             className="btn btn-blue mt-5"
           >

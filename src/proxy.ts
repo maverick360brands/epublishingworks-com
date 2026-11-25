@@ -7,6 +7,7 @@ import { isProductionHost } from "@/lib/hosts";
 import { createManifestCache, loadManifest, manifestToCatalog } from "@/lib/route-manifest";
 import { GATE_COOKIE, gatePage, gateResponseInit, isUnlocked } from "@/lib/site-gate";
 import shortlinks from "@/generated/shortlinks.json";
+import { legacyImage } from "@/lib/legacy-images";
 
 // Book pages live at the site root (/spirits-adopted-alice-duncan/), authors at /authors/<name>/, and posts at
 // /blog/<slug>/, matching the WordPress URLs. Under Cache Components a page streams before it
@@ -71,6 +72,15 @@ export async function proxy(request: NextRequest) {
     const to = key ? (shortlinks as Record<string, string>)[key] : undefined;
     if (to) return NextResponse.redirect(new URL(to, request.url), 301);
   }
+  // Old WordPress image addresses forward in one 301 (migration/image-redirects.csv): a site image to
+  // its file here; a cover or author photo, through a rewrite, to that item's current image (the CMS
+  // decides it, so the forward follows edits). Any other /wp-content/ file is a real 404.
+  if (pathname.startsWith("/wp-content/")) {
+    const target = legacyImage(pathname);
+    if (!target) return NextResponse.rewrite(new URL("/__not-found/__/__/", request.url));
+    if ("path" in target) return NextResponse.redirect(new URL(target.path, request.url), 301);
+    return NextResponse.rewrite(new URL(`/api/legacy-image/${target.kind}/${encodeURIComponent(target.slug)}/`, request.url));
+  }
   const segments = pathname.split("/").filter(Boolean);
   const strayFile =
     (segments.length === 1 && segments[0].includes(".") && !ROOT_FILES.has(segments[0])) ||
@@ -92,5 +102,5 @@ export async function proxy(request: NextRequest) {
 export const config = {
   // Pages only: skip Next.js internals, the admin, API routes, and files with an extension
   // (images, fonts), except the feeds that list the site's content, which the gate also covers.
-  matcher: ["/", "/((?!_next/|admin(?:/|$)|api/|.*\\.[a-zA-Z0-9]+$).+)", "/sitemap.xml", "/llms.txt", "/blog/rss.xml", "/robots.txt", "/:file([^/]+\\.[^/]+)", "/:dir(authors|blog)/:file([^/]+\\.[^/]+)"],
+  matcher: ["/", "/((?!_next/|admin(?:/|$)|api/|.*\\.[a-zA-Z0-9]+$).+)", "/sitemap.xml", "/llms.txt", "/blog/rss.xml", "/robots.txt", "/:file([^/]+\\.[^/]+)", "/:dir(authors|blog)/:file([^/]+\\.[^/]+)", "/wp-content/:path*"],
 };

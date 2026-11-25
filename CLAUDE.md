@@ -98,11 +98,23 @@ Database: Neon Postgres, for the CMS (books, authors, blog posts, redirects, edi
 No other domains. Old-URL redirects are in `migration/redirects.csv` and `next.config.ts`; address changes
 made in the admin create their own redirects.
 
+Old image addresses (Dustin, 2026-11-25: forward them so covers keep their Google Images traffic):
+`migration/image-redirects.csv` maps each file in WordPress's flat `/wp-content/uploads/` folder to its book, author
+or site image here, matched by the image itself, else ISBN or file name. A cover or author photo (`item` column)
+forwards in one 301 to that item's current image, the one its page shows (on Vercel, the Blob URL), resolved when
+asked by `src/app/api/legacy-image/`, so a cover replaced in the admin is followed; a site image forwards to its file.
+Size copies (`-300x450`, `-scaled`) included (`src/lib/legacy-images.ts`). Files with no counterpart (stock photos,
+titles not in the catalog) and the dated folders (an older, unrelated use of the install) stay 404 (Vercel's own
+firewall answers some of those probe addresses with a 403).
+
 ## Site-specific rules
 
 - Forms don't use Turnstile, overriding the kit convention; they use the spam controller (see Forms and integrations).
 - Branches: `main` was created from `staging` on 2026-11-24, before go-live, and is Vercel's production branch.
   Publishing follows the kit's change loop (1.3.0: agents merge the `staging` → `main` PR themselves, no approval step).
+  Merge that `staging` → `main` PR with a merge commit, never a squash: a squashed publish leaves `main` off
+  `staging`'s history and the next publish conflicts (it did on 2026-11-25; fixed by #16, which merged `main` into
+  `staging` keeping staging's files). Work-branch PRs into `staging` may be squashed.
 - Book and author content is edited in the admin (`/admin/`), not in `content/`. The Markdown in
   `content/` only seeds a new database.
 - Blog covers: one house style, a cut-paper collage in navy, logo blue, sky and gold on cream (Dustin,

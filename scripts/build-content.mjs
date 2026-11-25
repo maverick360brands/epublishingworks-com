@@ -176,7 +176,35 @@ if (fs.existsSync(redirectsCsv)) {
   }
 }
 
+// Old WordPress image addresses (/wp-content/uploads/<file>) and what each forwards to
+// (migration/image-redirects.csv: matched by image, ISBN or file name). A book or author row forwards to
+// that item's current cover or photo ("book:<slug>", resolved when asked, so it follows edits in the
+// admin); a site image row to its file here. Keys are lower-case file names; the proxy also maps
+// WordPress's size copies (-300x450) back to their file. No commas or quotes in the from/to/item columns.
+const legacyImages = {};
+const imagesCsv = path.join(root, "migration", "image-redirects.csv");
+if (!fs.existsSync(imagesCsv)) {
+  console.error("migration/image-redirects.csv is missing: old image addresses would stop forwarding.");
+  process.exit(1);
+}
+const imageLines = fs.readFileSync(imagesCsv, "utf8").split(/\r?\n/).slice(1).filter(Boolean);
+// An item names the address segment of a book or author that exists, or the forward would ship as a 404.
+const itemAddresses = new Set([...books.map((b) => b.url), ...authors.map((a) => a.url)]);
+for (const line of imageLines) {
+  const m = /^\/wp-content\/uploads\/([^,/]+),(\/images\/[^,]+),((book|author):([a-z0-9_-]+))?,/.exec(line);
+  if (!m) {
+    console.error(`migration/image-redirects.csv: can't read this row: ${line}`);
+    process.exit(1);
+  }
+  if (m[3] && !itemAddresses.has(m[4] === "book" ? `/${m[5]}/` : `/authors/${m[5]}/`)) {
+    console.error(`migration/image-redirects.csv: no ${m[4]} at that address: ${line}`);
+    process.exit(1);
+  }
+  legacyImages[m[1].toLowerCase()] = m[3] || m[2];
+}
+
 fs.mkdirSync(outDir, { recursive: true });
 fs.writeFileSync(path.join(outDir, "shortlinks.json"), JSON.stringify(shortlinks));
+fs.writeFileSync(path.join(outDir, "legacy-images.json"), JSON.stringify(legacyImages));
 fs.writeFileSync(path.join(outDir, "content.json"), JSON.stringify({ authors, books, posts, pages, buildYear: new Date().getFullYear() }, null, 0));
-console.log(`content: ${authors.length} authors, ${books.length} books, ${posts.length} posts, ${Object.keys(pages).length} pages, ${Object.keys(shortlinks).length} shortlinks`);
+console.log(`content: ${authors.length} authors, ${books.length} books, ${posts.length} posts, ${Object.keys(pages).length} pages, ${Object.keys(shortlinks).length} shortlinks, ${Object.keys(legacyImages).length} old image addresses`);

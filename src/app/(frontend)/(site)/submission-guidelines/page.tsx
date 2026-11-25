@@ -7,8 +7,10 @@ import { JsonLd } from "@/components/JsonLd";
 import { PageBanner } from "@/components/PageBanner";
 import { ArrowRight } from "@/components/icons";
 import { breadcrumbSchema, graph } from "@/lib/schema";
-import { site, wantedGenres } from "@/lib/site";
-import { SampleButton, SampleNote } from "@/components/SampleCta";
+import { site } from "@/lib/site";
+import { SampleButton } from "@/components/SampleCta";
+import { GenreShelves, genreShelves } from "@/components/GenreShelves";
+import { getCatalog } from "@/lib/content";
 
 export const metadata: Metadata = pageMetadata({
   title: { absolute: site.seo.guidelines.title },
@@ -17,7 +19,8 @@ export const metadata: Metadata = pageMetadata({
 });
 
 // Copy is the WordPress page's, verbatim. Its second H1 ("Getting Started Is Simple") is an H2 here.
-export default function SubmissionGuidelinesPage() {
+export default async function SubmissionGuidelinesPage() {
+  const shelves = genreShelves(await getCatalog());
   return (
     <>
       <PageBanner kicker="Submissions">Our Submission Guidelines</PageBanner>
@@ -33,7 +36,15 @@ export default function SubmissionGuidelinesPage() {
                 most: your writing.
               </p>
               <p className="rounded-[20px] bg-sun-pale px-6 py-5 font-bold text-navy">
-                We&rsquo;re actively seeking <em>backlist</em> (previously published) and <em>frontlist</em> (not yet published) titles right now!
+                We&rsquo;re actively seeking{" "}
+                <mark className="marker">
+                  <em>backlist</em>
+                </mark>{" "}
+                (previously published) and{" "}
+                <mark className="marker">
+                  <em>frontlist</em>
+                </mark>{" "}
+                (not yet published) titles right now!
               </p>
               <p>
                 Career-minded authors who have a minimum of three completed books (backlist and/or frontlist) in the same genre or sub-genre are best. If this sounds like
@@ -61,20 +72,7 @@ export default function SubmissionGuidelinesPage() {
         <div className="mx-auto max-w-[1320px]">
           <p className="type-kicker">What&rsquo;s in our wheelhouse?</p>
           <h2 className="type-section mt-3">Here&rsquo;s the type of stuff we really want&hellip;</h2>
-          <ul className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {wantedGenres.map((g) => (
-              <li key={g.name} className="rounded-[24px] bg-white p-7 shadow-[0_1px_2px_rgba(12,47,90,0.06)]">
-                <h3 className="font-display text-[21px] font-bold tracking-[-0.01em] text-navy">{g.name}</h3>
-                <p className="mt-2 text-[16px] leading-[1.6]">{g.text}</p>
-              </li>
-            ))}
-            <li className="flex flex-col items-center justify-center gap-4 rounded-[24px] bg-navy-deep p-7 text-center">
-              <Link href="/submit-your-manuscript/" className="btn btn-gold btn-lg text-center">
-                Submit Your Manuscript to Get Started
-              </Link>
-              <SampleNote tone="dark" className="!text-[14px]" />
-            </li>
-          </ul>
+          <GenreShelves shelves={shelves} />
         </div>
       </section>
 

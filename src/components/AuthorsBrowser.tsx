@@ -42,7 +42,6 @@ export function AuthorsBrowser({ authors, groups }: { authors: DirectoryAuthor[]
     // A letter or a search reads best alphabetically by last name; otherwise keep our order.
     return letter || query.trim() ? [...list].sort((a, b) => surnameFor(a, letter).localeCompare(surnameFor(b, letter)) || a.name.localeCompare(b.name)) : list;
   }, [narrowed, letter, query]);
-  const count = (g: string) => authors.filter((a) => a.groups.includes(g)).length;
   const filtered = group !== "all" || letter || query.trim();
   // The buttons that clear the filters disappear (or disable themselves) once pressed, so focus moves
   // to the directory's heading: screen readers keep their place, and phones don't pop the keyboard
@@ -50,18 +49,17 @@ export function AuthorsBrowser({ authors, groups }: { authors: DirectoryAuthor[]
   const toTop = () => headingRef.current?.focus();
   const clear = () => (setGroup("all"), setLetter(""), setQuery(""), toTop());
 
-  const chip = (id: string, label: string, n: number) => (
+  const chip = (id: string, label: string) => (
     <li key={id} className="shrink-0">
       <button
         type="button"
         aria-pressed={group === id}
         onClick={() => setGroup(id)}
-        className={`flex items-center gap-2 rounded-full border px-4 py-2 text-[15px] font-semibold transition-colors ${
+        className={`flex items-center rounded-full border px-4 py-2 text-[15px] font-semibold transition-colors ${
           group === id ? "border-blue bg-blue text-white" : "border-line bg-white text-navy hover:border-blue hover:text-blue"
         }`}
       >
         {label}
-        <span className={`rounded-full px-2 py-0.5 text-[12px] tabular-nums ${group === id ? "bg-white/20 text-white" : "bg-mist text-body"}`}>{n}</span>
       </button>
     </li>
   );
@@ -87,20 +85,15 @@ export function AuthorsBrowser({ authors, groups }: { authors: DirectoryAuthor[]
               className="h-[52px] w-full rounded-full border-2 border-line bg-white pl-11 pr-5 text-[16px] text-navy placeholder:text-body focus:border-blue focus:outline-none"
             />
           </label>
-          <p className="text-[15px] text-body" aria-live="polite">
-            {filtered ? (
-              <>
-                <strong className="font-bold text-navy">{shown.length}</strong> of {authors.length} authors
-                <button type="button" onClick={clear} className="ml-3 font-semibold text-blue underline decoration-2 underline-offset-4 hover:text-navy">
-                  Show all
-                </button>
-              </>
-            ) : (
-              <>
-                <strong className="font-bold text-navy">{authors.length}</strong> authors
-              </>
-            )}
+          {/* No visible totals (Dustin, 2026-11-25); screen readers still hear how many match a filter. */}
+          <p className="sr-only" aria-live="polite">
+            {filtered ? `${shown.length} ${shown.length === 1 ? "author matches" : "authors match"}` : ""}
           </p>
+          {filtered ? (
+            <button type="button" onClick={clear} className="shrink-0 text-[15px] font-semibold text-blue underline decoration-2 underline-offset-4 hover:text-navy">
+              Show all authors
+            </button>
+          ) : null}
         </div>
 
         {/* A–Z by last name: a letter with no authors (in the chosen genre or search) is shown but can't be
@@ -136,8 +129,8 @@ export function AuthorsBrowser({ authors, groups }: { authors: DirectoryAuthor[]
 
         <div role="group" aria-label="Filter authors by genre" className="-mx-5 mt-5 overflow-x-auto px-5 pb-1 sm:-mx-7 sm:px-7 lg:mx-0 lg:overflow-visible lg:px-0">
           <ul className="flex gap-2 py-1 lg:flex-wrap">
-            {chip("all", "All genres", authors.length)}
-            {groups.map((g) => chip(g, g, count(g)))}
+            {chip("all", "All genres")}
+            {groups.map((g) => chip(g, g))}
           </ul>
         </div>
       </div>

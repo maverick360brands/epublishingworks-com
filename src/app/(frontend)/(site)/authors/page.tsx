@@ -5,7 +5,7 @@ import { JsonLd } from "@/components/JsonLd";
 import { AuthorsHero } from "@/components/AuthorsHero";
 import { StarsHeading, Testimonial } from "@/components/Testimonial";
 import { ArrowRight } from "@/components/icons";
-import { AUTHOR_GROUPS, authorGroups, booksByAuthor, directoryAuthors, getCatalog, visibleBooks } from "@/lib/content";
+import { AUTHOR_GROUPS, authorGroups, booksByAuthor, directoryAuthors, getCatalog } from "@/lib/content";
 import { toAuthorCard } from "@/components/AuthorCard";
 import { AuthorsBrowser, type DirectoryAuthor } from "@/components/AuthorsBrowser";
 import { breadcrumbSchema, graph, ids } from "@/lib/schema";
@@ -37,7 +37,7 @@ export default async function AuthorsPage() {
   const groups = Object.keys(AUTHOR_GROUPS).filter((g) => cards.some((a) => a.groups.includes(g)));
   return (
     <>
-      <AuthorsHero title="Our Authors" intro={authorsPageIntro} faces={faces} authorCount={authors.length} bookCount={visibleBooks(c).length} />
+      <AuthorsHero title="Our Authors" intro={authorsPageIntro} faces={faces} />
 
       <section aria-labelledby="every-author" className="relative px-5 pb-24 lg:px-8">
         <div className="relative mx-auto -mt-8 max-w-[1320px] md:-mt-10">

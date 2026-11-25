@@ -13,6 +13,7 @@ import { bookAuthorLabel, getCatalog, heroBooks, publishedPosts, showDrafts } fr
 import { wallColumns } from "@/lib/hero";
 import { homeTestimonials, site } from "@/lib/site";
 import { SampleNote } from "@/components/SampleCta";
+import { CountUp } from "@/components/CountUp";
 
 export const metadata: Metadata = pageMetadata({
   title: { absolute: site.homeTitle },
@@ -226,7 +227,10 @@ export default async function HomePage() {
           {/* The big number says what it is (Dustin, 2026-11-24). */}
           <figure className="m-0">
             <p aria-hidden="true" className="font-display text-[88px] font-extrabold leading-none tracking-[-0.04em] text-gold sm:text-[120px] lg:text-[150px]">
-              80<span className="text-white/90">–</span>85<span className="text-[0.5em] align-top">%</span>
+              <CountUp to={80} />
+              <span className="text-white/90">–</span>
+              <CountUp to={85} duration={1400} />
+              <span className="text-[0.5em] align-top">%</span>
             </p>
             <figcaption className="mt-5 max-w-[360px] border-l-4 border-gold pl-4 font-display text-[22px] font-extrabold leading-[1.2] tracking-[-0.01em] text-white sm:text-[26px]">
               Our authors earn <span className="whitespace-nowrap">80% to 85% royalties</span>

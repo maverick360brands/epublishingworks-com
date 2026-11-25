@@ -12,6 +12,7 @@
   --color-gold: #fcb813; /* buttons and highlights (navy text on gold, 7.4:1) */
   --color-sun: #ffe530; /* the WordPress site's bright accent, used sparingly */
   --color-gold-ink: #8a6100; /* gold for small text on white, 5.5:1 */
+  --color-tangerine: #e8590c; /* eyebrows only: 19px bold (large text), 3.6:1 on white */
   --color-body: #464d59; /* body text, 8.6:1 on white */
   --color-ink: #1f2630; /* book descriptions */
   --color-line: #dbe3ee; /* borders and rules */
@@ -70,6 +71,14 @@
   :focus-visible {
     outline: 2px solid var(--color-blue);
     outline-offset: 2px;
+  }
+  ::selection {
+    background: #ffe39a;
+    color: var(--color-navy);
+  }
+  input,
+  textarea {
+    caret-color: var(--color-blue);
   }
   /* On the dark bands the blue ring disappears into the background: white there. */
   :is(.bg-brand, .bg-navy, .bg-navy-deep) :focus-visible,
@@ -413,12 +422,25 @@
     color: var(--color-navy);
   }
   /* Short label above a heading: sentence case, not tracked capitals. */
+  /* Eyebrows (Dustin, 2026-11-25): tangerine, 19px at every width. That's large text, so 3.58:1 on
+     white and 3.30:1 on mist pass; never set one smaller. On the dark bands they stay gold. */
   .type-kicker {
     font-family: var(--font-display);
-    font-size: 15px;
-    font-weight: 700;
-    letter-spacing: -0.005em;
-    color: var(--color-gold-ink);
+    font-size: 19px;
+    line-height: 1.3;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    color: var(--color-tangerine);
+  }
+  /* Small metadata label above a title inside a card (a book's series or genre). */
+  .type-label {
+    font-family: var(--font-display);
+    font-size: 13px;
+    line-height: 1.35;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-blue);
   }
   .type-lead {
     font-size: clamp(18px, 0.4vw + 16.5px, 20px);
@@ -641,3 +663,98 @@
     animation: none;
   }
 }
+
+/* FAQ answers slide open where the browser can animate to auto height; elsewhere they just open. */
+@supports (interpolate-size: allow-keywords) {
+  :root {
+    interpolate-size: allow-keywords;
+  }
+  .faq-item::details-content {
+    height: 0;
+    overflow: clip;
+    transition:
+      height 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+      content-visibility 0.35s allow-discrete;
+  }
+  .faq-item[open]::details-content {
+    height: auto;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .faq-item::details-content {
+      transition: none;
+    }
+  }
+}
+
+/* Books reshelving after a genre or sort change: each cover rises into place, staggered. */
+@keyframes shelf-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+    filter: blur(3px);
+  }
+}
+.shelf-in {
+  animation: shelf-in 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .shelf-in {
+    animation: none;
+  }
+}
+
+/* Authors roll call: each portrait comes into focus once, like a photo developing. It starts
+   visible (dim and soft), so nothing on the first screen waits to appear. */
+@keyframes roll-call {
+  from {
+    opacity: 0.35;
+    filter: blur(6px);
+    transform: scale(0.94);
+  }
+}
+.roll-call {
+  animation: roll-call 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .roll-call {
+    animation: none;
+  }
+}
+
+/* Manuscript sent (thank-you page): the badge pops, its check draws, the manuscript settles in. */
+@keyframes sent-pop {
+  from {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+}
+@keyframes sent-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+}
+@keyframes sent-settle {
+  from {
+    transform: translateY(18px) rotate(-1.5deg);
+    opacity: 0.4;
+    filter: blur(4px);
+  }
+}
+.sent-badge {
+  animation: sent-pop 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.sent-check {
+  stroke-dasharray: 1;
+  animation: sent-draw 0.45s 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.sent-art {
+  animation: sent-settle 0.9s 0.15s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .sent-badge,
+  .sent-check,
+  .sent-art {
+    animation: none;
+  }
+}
+

@@ -1,12 +1,12 @@
 import { expect, test } from "@playwright/test";
 
-// The catalog page shows 60 books at a time; search and genre filters cover every book.
+// The catalog page shows 84 books at a time (12 rows of 7); search and genre filters cover every book.
 test("the books page pages its tiles and searches the whole catalog", async ({ page }) => {
   await page.goto("/books/", { waitUntil: "networkidle" });
   const tiles = page.locator("main ul.grid > li");
-  await expect(tiles).toHaveCount(60);
+  await expect(tiles).toHaveCount(84);
   await page.getByRole("button", { name: "Show More Books" }).click();
-  await expect(tiles).toHaveCount(120);
+  await expect(tiles).toHaveCount(168);
   await page.getByPlaceholder("Search title, author, or series").fill("Dancing Angels");
   await expect(tiles.first()).toContainText("Dancing Angels");
   await expect(page.getByRole("button", { name: "Show More Books" })).toHaveCount(0);

@@ -252,6 +252,13 @@ Because `/apprentice-registration-page/` is indexable and in the sitemap, Google
 - **Secure-form signal (Dustin, 2026-11-24).** A 3D padlock (`src/components/SecureBadge.tsx`) heads the manuscript form with checks that are true of the build: an encrypted connection (HSTS in `next.config.ts`), files in a private store with no public link, and only signed-in members of the team can open them. The two file lines show only when uploads are on; otherwise the second check is "We never sell your information". On the dark bands, keyboard focus rings are white (the blue one disappeared into the background). A small padlock line sits by the submit buttons of both forms.
 - **The big 80–85% (Dustin, 2026-11-24).** The large figure in the home page's Signature Advantage band now carries the label "Our authors earn 80% to 85% royalties".
 - **Blog covers (Dustin, 2026-11-24).** Every post has a cut-paper collage illustration in the brand colors (he chose it from three sample styles). They're made in Sume ($0.45 for the three samples, the set and one redo) and committed in `public/images/blog/` (2048px WebP covers, 1200×630 JPEG link-preview images). The recipe is in `docs/blog-covers.md`. The category on a cover is a small label; the fallback artwork used to set it larger than the post titles.
+- **Design pass (Dustin, 2026-11-25).**
+  - **Authors page.** The top is reimagined: the title, intro and counts sit beside a roll call of 20 author portraits; phones show a row of faces. A finder panel replaces the A–Z list of names: search by name, an A–Z strip by last name, and the genre chips, all working together. Portraits are smaller (six across instead of four) with more space between them.
+  - **Books page.** Seven covers across instead of five, with slightly smaller type.
+  - **Eyebrows.** Tangerine at 19px (were brown-gold at 15px).
+  - **FAQ.** Items have a hover state (tint, blue question, filled icon).
+  - **Menu.** "Submissions" is now "Find Your Fit", and the header button is "Get Started".
+  - **Delight touches.** See CLAUDE.md, Design.
 
 ## 11. Copy issues spotted (not fixed in the page files; copy is verbatim)
 

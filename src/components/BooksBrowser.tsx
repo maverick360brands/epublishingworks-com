@@ -31,7 +31,7 @@ function initialState(genres: string[]) {
 // The full catalog: genre chips (with counts), search by title, author, or series, and a sort.
 // The filter state is mirrored into the address bar. Tiles come PAGE at a time ("Show more"):
 // all 510 at once made the page heavy to render; search and filters still cover every book.
-const PAGE = 60;
+const PAGE = 84; // whole rows at 7, 6, 4, 3 and 2 across
 
 export function BooksBrowser({ books }: { books: CatalogBook[] }) {
   const genres = useMemo(() => {
@@ -43,8 +43,11 @@ export function BooksBrowser({ books }: { books: CatalogBook[] }) {
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<Sort>("featured");
   const [limit, setLimit] = useState(PAGE);
+  // Picking a genre or a sort "reshelves" the grid: the covers rise into place once (not while
+  // typing a search, and not on the first load, so nothing waits to appear).
+  const [reshelf, setReshelf] = useState(0);
   // A new filter, search, or sort starts again from the first page.
-  const pick = (g: string) => (setGenre(g), setLimit(PAGE));
+  const pick = (g: string) => (setGenre(g), setLimit(PAGE), setReshelf((n) => n + 1));
   const search = (q: string) => (setQuery(q), setLimit(PAGE));
 
   useEffect(() => {
@@ -107,7 +110,7 @@ export function BooksBrowser({ books }: { books: CatalogBook[] }) {
           Sort
           <select
             value={sort}
-            onChange={(e) => (setSort(e.target.value as Sort), setLimit(PAGE))}
+            onChange={(e) => (setSort(e.target.value as Sort), setLimit(PAGE), setReshelf((n) => n + 1))}
             className="h-[46px] rounded-full border-2 border-line bg-white px-4 text-[15px] font-semibold text-navy focus:border-blue focus:outline-none"
           >
             {SORTS.map((s) => (
@@ -132,10 +135,16 @@ export function BooksBrowser({ books }: { books: CatalogBook[] }) {
 
       {shown.length ? (
         <>
-          <ul className="mt-6 grid grid-cols-2 gap-x-6 gap-y-12 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+          <ul key={reshelf} className="mt-8 grid grid-cols-2 gap-x-5 gap-y-10 min-[540px]:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 lg:gap-x-6 xl:grid-cols-7">
             {shown.slice(0, limit).map((b, i) => (
-              <li key={b.slug}>
-                <BookTile book={b} priority={i < 5} headingLevel="h2" />
+              <li key={b.slug} className={reshelf ? "shelf-in" : undefined} style={reshelf ? { animationDelay: `${Math.min(i, 13) * 35}ms` } : undefined}>
+                <BookTile
+                  book={b}
+                  dense
+                  priority={i < 7}
+                  headingLevel="h2"
+                  sizes="(min-width: 1280px) 172px, (min-width: 1024px) 15vw, (min-width: 768px) 23vw, (min-width: 540px) 30vw, 45vw"
+                />
               </li>
             ))}
           </ul>

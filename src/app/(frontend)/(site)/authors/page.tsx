@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { pageMetadata } from "@/lib/seo";
 import { JsonLd } from "@/components/JsonLd";
-import { PageBanner } from "@/components/PageBanner";
+import { AuthorsHero } from "@/components/AuthorsHero";
 import { StarsHeading, Testimonial } from "@/components/Testimonial";
 import { ArrowRight } from "@/components/icons";
 import { AUTHOR_GROUPS, authorGroups, booksByAuthor, directoryAuthors, getCatalog, visibleBooks } from "@/lib/content";
@@ -24,49 +24,19 @@ const lastName = (name: string) => name.trim().split(/\s+/).at(-1) ?? name;
 export default async function AuthorsPage() {
   const c = await getCatalog();
   const authors = directoryAuthors(c);
-  const az = [...authors].sort((a, b) => lastName(a.name).localeCompare(lastName(b.name)) || a.name.localeCompare(b.name));
-  const letters = [...new Set(az.map((a) => lastName(a.name)[0]?.toUpperCase() ?? "#"))];
   const cards: DirectoryAuthor[] = authors.map((a) => {
     const books = booksByAuthor(c, a.slug);
-    return { ...toAuthorCard(a, books), groups: authorGroups(books) };
+    const last = lastName(a.name);
+    return { ...toAuthorCard(a, books), groups: authorGroups(books), initial: last[0]?.toUpperCase() ?? "#", sortName: `${last} ${a.name}` };
   });
+  const faces = authors.filter((a) => a.photo).map((a) => ({ slug: a.slug, name: a.name, url: a.url, photo: a.photo }));
   const groups = Object.keys(AUTHOR_GROUPS).filter((g) => cards.some((a) => a.groups.includes(g)));
   return (
     <>
-      <PageBanner intro={authorsPageIntro}>Our Authors</PageBanner>
+      <AuthorsHero title="Our Authors" intro={authorsPageIntro} faces={faces} authorCount={authors.length} bookCount={visibleBooks(c).length} />
 
-      {/* A–Z index of every author, by last name. */}
-      <section aria-labelledby="az-heading" className="border-b border-line px-5 py-10 lg:px-8">
-        <div className="mx-auto max-w-[1320px]">
-          <div className="flex flex-wrap items-baseline justify-between gap-3">
-            <h2 id="az-heading" className="type-card">
-              Find an author
-            </h2>
-            <p className="text-[15px] text-body">
-              {authors.length} authors · {visibleBooks(c).length} books
-            </p>
-          </div>
-          <dl className="mt-6 grid gap-x-8 gap-y-4 sm:grid-cols-2 lg:grid-cols-4">
-            {letters.map((l) => (
-              <div key={l} className="flex gap-3">
-                <dt className="w-6 shrink-0 font-display text-[18px] font-extrabold text-gold-ink">{l}</dt>
-                <dd className="flex flex-wrap gap-x-3 gap-y-1 text-[15px] leading-[1.5]">
-                  {az
-                    .filter((a) => (lastName(a.name)[0]?.toUpperCase() ?? "#") === l)
-                    .map((a) => (
-                      <Link key={a.slug} href={a.url} className="font-semibold text-navy no-underline hover:text-blue hover:underline">
-                        {a.name}
-                      </Link>
-                    ))}
-                </dd>
-              </div>
-            ))}
-          </dl>
-        </div>
-      </section>
-
-      <section className="px-5 pb-20 pt-12 md:pt-14 lg:px-8">
-        <div className="mx-auto max-w-[1320px]">
+      <section aria-label="Every author" className="relative px-5 pb-24 lg:px-8">
+        <div className="relative mx-auto -mt-8 max-w-[1320px] md:-mt-10">
           <AuthorsBrowser authors={cards} groups={groups} />
         </div>
       </section>

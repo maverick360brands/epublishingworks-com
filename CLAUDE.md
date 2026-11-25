@@ -109,6 +109,9 @@ photos, titles not in the catalog) and the dated folders (an older, unrelated us
 - Forms don't use Turnstile, overriding the kit convention; they use the spam controller (see Forms and integrations).
 - Branches: `main` was created from `staging` on 2026-11-24, before go-live, and is Vercel's production branch.
   Publishing follows the kit's change loop (1.3.0: agents merge the `staging` → `main` PR themselves, no approval step).
+  Merge that `staging` → `main` PR with a merge commit, never a squash: a squashed publish leaves `main` off
+  `staging`'s history and the next publish conflicts (it did on 2026-11-25; fixed by #16, which merged `main` into
+  `staging` keeping staging's files). Work-branch PRs into `staging` may be squashed.
 - Book and author content is edited in the admin (`/admin/`), not in `content/`. The Markdown in
   `content/` only seeds a new database.
 - Blog covers: one house style, a cut-paper collage in navy, logo blue, sky and gold on cream (Dustin,

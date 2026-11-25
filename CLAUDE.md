@@ -98,6 +98,12 @@ Database: Neon Postgres, for the CMS (books, authors, blog posts, redirects, edi
 No other domains. Old-URL redirects are in `migration/redirects.csv` and `next.config.ts`; address changes
 made in the admin create their own redirects.
 
+Old image addresses (Dustin, 2026-11-25: forward them so covers keep their Google Images traffic):
+`migration/image-redirects.csv` maps each file in WordPress's flat `/wp-content/uploads/` folder to the same image
+here (`/images/books|authors|site/…`), matched by the image itself, else ISBN or file name. The proxy answers with one
+301 (`src/lib/legacy-images.ts`), size copies (`-300x450`, `-scaled`) included. Files with no counterpart (stock
+photos, titles not in the catalog) and the dated folders (an older, unrelated use of the install) stay 404.
+
 ## Site-specific rules
 
 - Forms don't use Turnstile, overriding the kit convention; they use the spam controller (see Forms and integrations).

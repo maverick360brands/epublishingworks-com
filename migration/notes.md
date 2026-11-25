@@ -268,8 +268,13 @@ Because `/apprentice-registration-page/` is indexable and in the sitemap, Google
   the placeholder template by one 301 to `/books/`); all 177 redirect rules answer with their code and land on a live
   page in one hop; all 585 sitemap URLs return 200 with a unique title and description, a canonical on
   epublishingworks.com, Open Graph tags and one H1. All 510 books are linked from their author's page (and listed in
-  the `/books/` ItemList); all 57 authors from `/authors/`. Old `/wp-content/uploads/` image addresses return 404
-  (nothing on the old site linked to them; Google Images may have some).
+  the `/books/` ItemList); all 57 authors from `/authors/`. Old `/wp-content/uploads/` image addresses: see below.
+- **Old image addresses forwarded (Dustin, 2026-11-25).** The live media library (REST API: 1,302 items, the same as
+  the WXR) was matched to the new images by perceptual hash (598 identical images), then by ISBN or file name where
+  the new site has newer art for the same book or author (31). `migration/image-redirects.csv` has 629 rows: 542
+  covers, 61 author photos, 26 site images. All 951 of their addresses (each file plus WordPress's size copies)
+  301 in one hop to an image that loads. Not forwarded, by design: 53 files with no counterpart (stock photos, Rise UP
+  titles, five Jo Goodman titles and a Jade Lee box set not in the catalog) and the 621 files in dated folders.
 
 ## 11. Copy issues spotted (not fixed in the page files; copy is verbatim)
 

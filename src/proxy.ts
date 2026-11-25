@@ -7,6 +7,7 @@ import { isProductionHost } from "@/lib/hosts";
 import { createManifestCache, loadManifest, manifestToCatalog } from "@/lib/route-manifest";
 import { GATE_COOKIE, gatePage, gateResponseInit, isUnlocked } from "@/lib/site-gate";
 import shortlinks from "@/generated/shortlinks.json";
+import { legacyImage } from "@/lib/legacy-images";
 
 // Book pages live at the site root (/spirits-adopted-alice-duncan/), authors at /authors/<name>/, and posts at
 // /blog/<slug>/, matching the WordPress URLs. Under Cache Components a page streams before it
@@ -71,6 +72,12 @@ export async function proxy(request: NextRequest) {
     const to = key ? (shortlinks as Record<string, string>)[key] : undefined;
     if (to) return NextResponse.redirect(new URL(to, request.url), 301);
   }
+  // Old WordPress image addresses forward to the same image on this site in one 301
+  // (migration/image-redirects.csv); any other /wp-content/ file is a real 404.
+  if (pathname.startsWith("/wp-content/")) {
+    const to = legacyImage(pathname);
+    return to ? NextResponse.redirect(new URL(to, request.url), 301) : NextResponse.rewrite(new URL("/__not-found/__/__/", request.url));
+  }
   const segments = pathname.split("/").filter(Boolean);
   const strayFile =
     (segments.length === 1 && segments[0].includes(".") && !ROOT_FILES.has(segments[0])) ||
@@ -92,5 +99,5 @@ export async function proxy(request: NextRequest) {
 export const config = {
   // Pages only: skip Next.js internals, the admin, API routes, and files with an extension
   // (images, fonts), except the feeds that list the site's content, which the gate also covers.
-  matcher: ["/", "/((?!_next/|admin(?:/|$)|api/|.*\\.[a-zA-Z0-9]+$).+)", "/sitemap.xml", "/llms.txt", "/blog/rss.xml", "/robots.txt", "/:file([^/]+\\.[^/]+)", "/:dir(authors|blog)/:file([^/]+\\.[^/]+)"],
+  matcher: ["/", "/((?!_next/|admin(?:/|$)|api/|.*\\.[a-zA-Z0-9]+$).+)", "/sitemap.xml", "/llms.txt", "/blog/rss.xml", "/robots.txt", "/:file([^/]+\\.[^/]+)", "/:dir(authors|blog)/:file([^/]+\\.[^/]+)", "/wp-content/:path*"],
 };

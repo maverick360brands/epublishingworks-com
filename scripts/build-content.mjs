@@ -176,7 +176,20 @@ if (fs.existsSync(redirectsCsv)) {
   }
 }
 
+// Old WordPress image addresses (/wp-content/uploads/<file>) and the new image each one forwards to
+// (migration/image-redirects.csv: matched by image, ISBN or file name). Keys are lower-case file names;
+// the proxy also maps WordPress's size variants (-300x450) back to their file. No commas or quotes in them.
+const legacyImages = {};
+const imagesCsv = path.join(root, "migration", "image-redirects.csv");
+if (fs.existsSync(imagesCsv)) {
+  for (const line of fs.readFileSync(imagesCsv, "utf8").split(/\r?\n/).slice(1)) {
+    const m = /^\/wp-content\/uploads\/([^,/]+),(\/images\/[^,]+),/.exec(line);
+    if (m) legacyImages[m[1].toLowerCase()] = m[2];
+  }
+}
+
 fs.mkdirSync(outDir, { recursive: true });
 fs.writeFileSync(path.join(outDir, "shortlinks.json"), JSON.stringify(shortlinks));
+fs.writeFileSync(path.join(outDir, "legacy-images.json"), JSON.stringify(legacyImages));
 fs.writeFileSync(path.join(outDir, "content.json"), JSON.stringify({ authors, books, posts, pages, buildYear: new Date().getFullYear() }, null, 0));
-console.log(`content: ${authors.length} authors, ${books.length} books, ${posts.length} posts, ${Object.keys(pages).length} pages, ${Object.keys(shortlinks).length} shortlinks`);
+console.log(`content: ${authors.length} authors, ${books.length} books, ${posts.length} posts, ${Object.keys(pages).length} pages, ${Object.keys(shortlinks).length} shortlinks, ${Object.keys(legacyImages).length} old image addresses`);

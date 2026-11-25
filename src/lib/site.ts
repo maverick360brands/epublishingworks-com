@@ -115,14 +115,14 @@ export const homeTestimonials = ["alice-duncan", "jo-goodman", "jillian-david", 
 export const authorsPageIntro = "Created by authors for authors, because ePublishingWorks! Browse every author we publish, A to Z, or by the genres they write.";
 
 /** What the publisher is looking for (Submission Guidelines, verbatim). */
-// The submission guidelines' genre shelves. `name` and `text` are the WordPress copy, verbatim. `shelf` lists the
-// catalog genres whose covers fill the shelf; the first is where the tile links on /books/.
+// The submission guidelines' genre shelves. `name` and `text` are the WordPress copy, verbatim. `genre` is the catalog
+// genre whose covers fill the shelf and where the tile links on /books/.
 export const wantedGenres = [
-  { name: "Thriller", text: "From heart-pounding psychological tales to action-packed adventures, we welcome all types of thrillers.", shelf: ["Thriller & Suspense"] },
-  { name: "Mystery", text: "Intriguing whodunits, cozy mysteries, and every twist-filled narrative in between.", shelf: ["Mystery", "Cozy Mystery"] },
-  { name: "Romance", text: "Sweet and heartfelt love stories, as well as other sub-genres of romance.", shelf: ["Contemporary Romance", "Historical Romance"] },
-  { name: "Contemporary", text: "Stories that capture the spirit of today's world, from drama to light-hearted fiction.", shelf: ["Literary & Women's Fiction", "Contemporary Romance"] },
-  { name: "Suspense", text: "Edge-of-your-seat narratives that keep readers hooked.", shelf: ["Romantic Suspense", "Thriller & Suspense"] },
-  { name: "Historical", text: "Immersive tales from any era, meticulously woven with historical detail.", shelf: ["Historical Romance", "Historical Fiction"] },
-  { name: "Paranormal / Fantasy", text: "Worlds where magic, the supernatural, and the extraordinary come to life.", shelf: ["Paranormal & Fantasy Romance", "Fantasy & Science Fiction"] },
+  { name: "Thriller", text: "From heart-pounding psychological tales to action-packed adventures, we welcome all types of thrillers.", genre: "Thriller & Suspense" },
+  { name: "Mystery", text: "Intriguing whodunits, cozy mysteries, and every twist-filled narrative in between.", genre: "Mystery" },
+  { name: "Romance", text: "Sweet and heartfelt love stories, as well as other sub-genres of romance.", genre: "Contemporary Romance" },
+  { name: "Contemporary", text: "Stories that capture the spirit of today's world, from drama to light-hearted fiction.", genre: "Literary & Women's Fiction" },
+  { name: "Suspense", text: "Edge-of-your-seat narratives that keep readers hooked.", genre: "Romantic Suspense" },
+  { name: "Historical", text: "Immersive tales from any era, meticulously woven with historical detail.", genre: "Historical Romance" },
+  { name: "Paranormal / Fantasy", text: "Worlds where magic, the supernatural, and the extraordinary come to life.", genre: "Paranormal & Fantasy Romance" },
 ];

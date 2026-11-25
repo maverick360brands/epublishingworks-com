@@ -57,7 +57,7 @@ spacing, or layout decisions without his direction.
   readers still hear how many results match a search or filter. JSON-LD `numberOfItems` stays.
 - Submission guidelines genre area (`GenreShelves.tsx`; Dustin, 2026-11-25: "make the genre area 5X more
   interesting"): each genre is a shelf of real catalog covers, fanned, linking to that genre on `/books/`; copy
-  verbatim. Which catalog genres feed each shelf: `wantedGenres[].shelf` in `src/lib/site.ts`. Books whose
+  verbatim. Each shelf's catalog genre (its covers and its link): `wantedGenres[].genre` in `src/lib/site.ts`. Books whose
   cover is still a WordPress stand-in ("Coming Soon") are kept off the shelves (`STAND_IN_COVERS`).
 
 ## Pages

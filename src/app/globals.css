@@ -787,19 +787,22 @@
   position: relative;
   --tilt: 7deg;
 }
+/* Covers are sized to the fan's column (a size container), so the fan, its tilt and its hover spread stay inside
+   it at every width: three covers take about 82% of the column at rest and 91% spread; five take 81% and 95%. */
+.fan-wrap {
+  container-type: inline-size;
+}
 .fan-narrow {
-  --w: 94px;
-  --step: 54px;
+  --w: min(94px, 34cqi);
+  --step: min(54px, 18cqi);
 }
 .fan-wide {
-  --w: 92px;
-  --step: 40px;
+  --w: min(104px, 24cqi);
+  --step: min(46px, 10cqi);
 }
-@media (min-width: 640px) {
-  .fan-wide {
-    --w: 104px;
-    --step: 46px;
-  }
+.fan-narrow,
+.fan-wide {
+  height: calc(var(--w) * 1.5 + 14px);
 }
 .fan::after {
   content: "";
@@ -830,7 +833,7 @@
 }
 .genre-tile:hover .fan-inner,
 .genre-tile:focus-within .fan-inner {
-  transform: translateX(calc(var(--k) * 14px)) rotate(calc(var(--k) * 3deg)) translateY(calc(max(0, 1 - var(--d)) * -10px));
+  transform: translateX(calc(var(--k) * 2.5cqi)) rotate(calc(var(--k) * 2deg)) translateY(calc(max(0, 1 - var(--d)) * -10px));
 }
 .your-book {
   rotate: -4deg;

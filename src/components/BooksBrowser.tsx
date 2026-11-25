@@ -28,7 +28,7 @@ function initialState(genres: string[]) {
   return { genre: genres.includes(g) ? g : "all", query: params.get("q") ?? "" };
 }
 
-// The full catalog: genre chips (with counts), search by title, author, or series, and a sort.
+// The full catalog: genre chips, search by title, author, or series, and a sort.
 // The filter state is mirrored into the address bar. Tiles come PAGE at a time ("Show more"):
 // all 510 at once made the page heavy to render; search and filters still cover every book.
 const PAGE = 84; // whole rows at 7, 6, 4, 3 and 2 across

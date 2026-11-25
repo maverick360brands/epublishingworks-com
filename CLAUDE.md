@@ -41,6 +41,15 @@ Brand carried over from the WordPress site (logo, palette, fonts: see `migration
 with the riseuppublications.com component system. Designs come from Dustin. Don't change type, color,
 spacing, or layout decisions without his direction.
 
+- Eyebrows (`.type-kicker`): tangerine `#e8590c`, 19px extra-bold at every width (Dustin, 2026-11-25). At that
+  size it's large text, so its 3.6:1 on white passes; never set an eyebrow smaller. Gold on the dark bands.
+  Small labels in the author page's book list (a book's series or genre) use `.type-label` (13px blue caps),
+  not the eyebrow.
+- Menu: "Find Your Fit" opens the submission guidelines; the header button is "Get Started" (Dustin, 2026-11-25).
+- Delight touches (2026-11-25), all off with reduced motion: the authors roll call comes into focus once;
+  books reshelve (rise in) after a genre or sort change; the home 80–85% counts up once when scrolled to;
+  the thank-you check draws itself and the manuscript illustration settles in; FAQs slide open.
+
 ## Pages
 
 Every WordPress URL keeps its address (see `migration/urls.csv`). Book pages live at the site root as

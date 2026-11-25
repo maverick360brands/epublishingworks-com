@@ -33,7 +33,7 @@ export const site = {
     { href: "/authors/", label: "Authors" },
     { href: "/about/", label: "About" },
     { href: "/the-advantage/", label: "The Advantage" },
-    { href: "/submission-guidelines/", label: "Submissions" },
+    { href: "/submission-guidelines/", label: "Find Your Fit" },
     { href: "/blog/", label: "Blog" },
     { href: "/contact/", label: "Contact" },
   ],

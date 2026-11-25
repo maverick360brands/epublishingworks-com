@@ -152,8 +152,8 @@ export default async function AuthorPage({ params }: PageProps<"/authors/[author
                     >
                       <TiltCover src={b.cover} alt={`Cover of ${b.title}`} width={b.coverWidth} height={b.coverHeight} sizes="150px" priority={gi === 0 && i < 2 && !author.photo} />
                       <span className="flex flex-col">
-                        {b.series ? <span className="type-kicker">{b.seriesNumber !== null ? `${b.series}, Book ${b.seriesNumber}` : b.series}</span> : <span className="type-kicker">{b.genre}</span>}
-                        <span className="mt-1 font-display text-[22px] font-bold leading-[1.15] tracking-[-0.01em] text-blue sm:text-[25px]">{b.title}</span>
+                        {b.series ? <span className="type-label">{b.seriesNumber !== null ? `${b.series}, Book ${b.seriesNumber}` : b.series}</span> : <span className="type-label">{b.genre}</span>}
+                        <span className="mt-2 font-display text-[22px] font-bold leading-[1.15] tracking-[-0.01em] text-navy transition-colors group-hover:text-blue sm:text-[25px]">{b.title}</span>
                         {b.subtitle && b.seriesNumber === null ? <span className="mt-1.5 text-[15px] font-medium leading-[1.4] text-navy">{b.subtitle}</span> : null}
                         <span className="mt-3 line-clamp-3 text-[15px] leading-[1.6] text-body" lang={b.language === "es" ? "es" : undefined}>
                           {b.summary}

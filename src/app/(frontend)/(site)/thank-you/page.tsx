@@ -1,7 +1,8 @@
+import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { pageMetadata } from "@/lib/seo";
-import { ArrowRight, CheckCircle } from "@/components/icons";
+import { ArrowRight } from "@/components/icons";
 
 // Where the manuscript form sends authors after a successful submission. A confirmation page,
 // so it stays out of search results and the sitemap (it was indexable on WordPress).
@@ -21,14 +22,32 @@ const next = [
 export default function ThankYouPage() {
   return (
     <>
-      <section className="bg-brand px-5 py-20 lg:px-8 lg:py-28">
-        <div className="mx-auto max-w-[860px] text-center">
-          <span className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-gold">
-            <CheckCircle className="h-9 w-9 [&_circle]:fill-navy [&_path]:stroke-white" />
-          </span>
-          <h1 className="type-display mt-6 text-[44px] text-white md:text-[60px]">Success!</h1>
-          <p className="mt-5 font-display text-[22px] font-bold text-white md:text-[26px]">Thank you for your submission to ePublishingWorks!</p>
-          <p className="type-lead mx-auto mt-4 max-w-[560px] text-white/85">Our team will review your information and reach out within 48 hours.</p>
+      {/* Sending a manuscript is a big step for an author, so the page marks it: the check draws
+          itself once and the manuscript (the blog's cut-paper illustration) settles into view. */}
+      <section className="bg-brand overflow-hidden px-5 py-20 lg:px-8 lg:py-24">
+        <div className="mx-auto grid max-w-[1100px] items-center gap-12 lg:grid-cols-[1fr_440px] lg:gap-16">
+          <div className="text-center lg:text-left">
+            <span className="sent-badge mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-gold lg:mx-0">
+              <svg aria-hidden="true" viewBox="0 0 30 30" className="h-9 w-9">
+                <path d="M8.5 15.5l4.2 4.2 8.8-9.2" pathLength={1} className="sent-check" fill="none" stroke="var(--color-navy)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </span>
+            <h1 className="type-display mt-6 text-[44px] text-white md:text-[60px]">Success!</h1>
+            <p className="mt-5 font-display text-[22px] font-bold text-white md:text-[26px]">Thank you for your submission to ePublishingWorks!</p>
+            <p className="type-lead mx-auto mt-4 max-w-[560px] text-white/85 lg:mx-0">Our team will review your information and reach out within 48 hours.</p>
+          </div>
+          <div className="sent-art mx-auto w-full max-w-[440px] overflow-hidden rounded-[28px] shadow-[0_30px_60px_-30px_rgba(5,15,35,0.7)]">
+            <Image
+              src="/images/blog/how-to-submit-a-manuscript-to-a-publisher.webp"
+              alt=""
+              width={2048}
+              height={1152}
+              sizes="(min-width: 1024px) 440px, 90vw"
+              priority
+              className="aspect-[4/3] h-auto w-full object-cover"
+              style={{ objectPosition: "74% 50%" }}
+            />
+          </div>
         </div>
       </section>
 

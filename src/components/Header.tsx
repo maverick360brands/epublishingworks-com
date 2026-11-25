@@ -115,10 +115,9 @@ export function Header() {
         </nav>
 
         <div className="flex items-center gap-3">
-          <Link href="/submit-your-manuscript/" className="btn btn-gold hidden whitespace-nowrap sm:inline-flex lg:max-xl:!px-4">
-            <span className="lg:max-xl:hidden">Submit Your Manuscript</span>
-            <span className="hidden lg:max-xl:inline">Submit</span>
-            <ArrowRight className="h-[1em] w-[1.15em] lg:max-xl:hidden" />
+          <Link href="/submit-your-manuscript/" className="btn btn-gold group/cta hidden whitespace-nowrap sm:inline-flex lg:max-xl:!px-4">
+            Get Started
+            <ArrowRight className="h-[1em] w-[1.15em] transition-transform duration-300 ease-out group-hover/cta:translate-x-0.5" />
           </Link>
           <button
             type="button"
@@ -158,7 +157,7 @@ export function Header() {
           ))}
           <li className="mt-2 sm:hidden">
             <Link href="/submit-your-manuscript/" className="btn btn-gold btn-lg w-full">
-              Submit Your Manuscript <ArrowRight />
+              Get Started <ArrowRight />
             </Link>
           </li>
           <li className="mt-2">

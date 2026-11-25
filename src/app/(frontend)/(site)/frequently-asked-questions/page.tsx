@@ -26,7 +26,7 @@ export default function FaqPage() {
       <section className="px-5 py-16 lg:px-8 lg:py-24">
         <div className="mx-auto grid max-w-[1320px] gap-12 lg:grid-cols-[1fr_340px] lg:gap-16">
           <div>
-            <FaqAccordion items={faqs} />
+            <FaqAccordion items={faqs} headingLevel="h2" />
             <p className="mt-10 text-[17px]">
               <strong className="font-bold text-navy">Still have questions?</strong> No problem,{" "}
               <Link href="/contact/" className="font-semibold underline decoration-gold decoration-2 underline-offset-4">

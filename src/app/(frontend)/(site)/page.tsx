@@ -171,7 +171,7 @@ export default async function HomePage() {
                 </h2>
               </div>
               <Link href="/books/" className="inline-flex items-center gap-2 text-[16px] font-bold text-navy no-underline hover:text-blue">
-                All {c.books.filter((b) => !b.hidden).length} books <ArrowRight className="h-[0.9em] w-[1em]" />
+                All books <ArrowRight className="h-[0.9em] w-[1em]" />
               </Link>
             </div>
             <ul className="mt-10 grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 lg:grid-cols-5">

@@ -4,7 +4,7 @@ import type { Author, Book } from "@/lib/content";
 
 type Cover = { slug: string; cover: string; coverWidth: number; coverHeight: number; title: string };
 /** Just what a directory card shows, so it can be passed to the client-side browser. */
-export type AuthorCardData = Pick<Author, "slug" | "name" | "role" | "photo" | "url"> & { bookCount: number; covers: Cover[] };
+export type AuthorCardData = Pick<Author, "slug" | "name" | "role" | "photo" | "url"> & { covers: Cover[] };
 
 export const toAuthorCard = (author: Author, books: Book[]): AuthorCardData => ({
   slug: author.slug,
@@ -12,11 +12,10 @@ export const toAuthorCard = (author: Author, books: Book[]): AuthorCardData => (
   role: author.role,
   photo: author.photo,
   url: author.url,
-  bookCount: books.length,
   covers: books.slice(0, 3).map((b) => ({ slug: b.slug, cover: b.cover, coverWidth: b.coverWidth, coverHeight: b.coverHeight, title: b.title })),
 });
 
-// Directory card: a blue-duotone portrait that blooms into color on hover, with the
+// Directory card: a grayscale portrait under a light wash that blooms into color on hover, with the
 // author's covers stacked at the corner (they fan out on hover). Sized for six across
 // (Dustin, 2026-11-25: smaller photos, more breathing room).
 export function AuthorCard({ author, priority = false }: { author: AuthorCardData; priority?: boolean }) {
@@ -25,7 +24,7 @@ export function AuthorCard({ author, priority = false }: { author: AuthorCardDat
   return (
     <Link href={author.url} className="group block no-underline">
       <span className="relative block">
-        <span className="relative block aspect-[4/5] overflow-hidden rounded-[20px] bg-blue">
+        <span className="relative block aspect-[4/5] overflow-hidden rounded-[20px] bg-mist">
           {src ? (
             <Image
               src={src}
@@ -33,12 +32,12 @@ export function AuthorCard({ author, priority = false }: { author: AuthorCardDat
               fill
               sizes="(min-width: 1280px) 200px, (min-width: 1024px) 18vw, (min-width: 768px) 23vw, (min-width: 640px) 30vw, 45vw"
               priority={priority}
-              className={`${author.photo ? "object-cover object-top" : "object-contain p-8"} grayscale transition-[filter,transform] duration-500 ease-out group-hover:scale-[1.04] group-hover:grayscale-0`}
+              className={`${author.photo ? "object-cover object-top" : "object-contain p-8"} grayscale contrast-[0.88] brightness-[1.06] transition-[filter,transform] duration-500 ease-out group-hover:grayscale-0 group-hover:contrast-100 group-hover:brightness-100 group-focus-visible:grayscale-0 group-focus-visible:contrast-100 group-focus-visible:brightness-100 group-hover:scale-[1.04]`}
             />
           ) : null}
-          {/* Brand-blue duotone that lifts on hover. */}
-          <span aria-hidden="true" className="absolute inset-0 bg-blue/45 mix-blend-multiply transition-opacity duration-500 group-hover:opacity-0" />
-          <span aria-hidden="true" className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-navy-deep/60 to-transparent" />
+          {/* A light grayscale wash that blooms into color on hover or focus (Dustin, 2026-11-25). */}
+          <span aria-hidden="true" className="absolute inset-0 bg-white/30 transition-opacity duration-500 ease-out group-hover:opacity-0 group-focus-visible:opacity-0" />
+          <span aria-hidden="true" className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-navy-deep/25 to-transparent" />
         </span>
         {stack.length ? (
           <span aria-hidden="true" className="absolute -bottom-3 right-2 flex h-[64px] items-end">
@@ -64,7 +63,7 @@ export function AuthorCard({ author, priority = false }: { author: AuthorCardDat
       </span>
       <span className="mt-5 block font-display text-[18px] font-bold leading-[1.2] tracking-[-0.015em] text-navy transition-colors group-hover:text-blue">{author.name}</span>
       <span className="mt-1 block text-[14px] leading-[1.45] text-body">
-        {[author.role, `${author.bookCount} ${author.bookCount === 1 ? "book" : "books"}`].filter(Boolean).join(" · ")}
+        {author.role}
       </span>
     </Link>
   );

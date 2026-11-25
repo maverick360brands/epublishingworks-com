@@ -48,7 +48,17 @@ spacing, or layout decisions without his direction.
 - Menu: "Find Your Fit" opens the submission guidelines; the header button is "Get Started" (Dustin, 2026-11-25).
 - Delight touches (2026-11-25), all off with reduced motion: the authors roll call comes into focus once;
   books reshelve (rise in) after a genre or sort change; the home 80–85% counts up once when scrolled to;
-  the thank-you check draws itself and the manuscript illustration settles in; FAQs slide open.
+  the thank-you check draws itself and the manuscript illustration settles in; FAQs slide open; "backlist" and
+  "frontlist" on the submission guidelines get a highlighter swipe; the genre shelves fan open on scroll.
+- Author portraits (authors page, cards and roll call): grayscale under a light white wash, full color on hover
+  or focus (Dustin, 2026-11-25). Not the blue duotone.
+- No counts of authors or books anywhere on the site or in `/llms.txt`: no totals, no counts on genre or series
+  chips, none on author cards or author pages (Dustin, 2026-11-25: "Don't need to broadcast that"). Screen
+  readers still hear how many results match a search or filter. JSON-LD `numberOfItems` stays.
+- Submission guidelines genre area (`GenreShelves.tsx`; Dustin, 2026-11-25: "make the genre area 5X more
+  interesting"): each genre is a shelf of real catalog covers, fanned, linking to that genre on `/books/`; copy
+  verbatim. Which catalog genres feed each shelf: `wantedGenres[].shelf` in `src/lib/site.ts`. Books whose
+  cover is still a WordPress stand-in ("Coming Soon") are kept off the shelves (`STAND_IN_COVERS`).
 
 ## Pages
 

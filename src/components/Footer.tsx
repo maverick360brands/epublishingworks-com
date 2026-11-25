@@ -90,7 +90,7 @@ export function Footer() {
               </Link>
             </p>
           </div>
-          <p className="max-w-[900px] text-[13px] leading-[1.5] text-white/50">
+          <p className="max-w-[900px] text-[13px] leading-[1.5] text-white/60">
             ePublishing Works is a participant in the Amazon Services LLC Associates Program, an affiliate advertising program designed to provide a means for sites to earn
             advertising fees by advertising and linking to amazon.com.
           </p>

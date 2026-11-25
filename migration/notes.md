@@ -259,6 +259,17 @@ Because `/apprentice-registration-page/` is indexable and in the sitemap, Google
   - **FAQ.** Items have a hover state (tint, blue question, filled icon).
   - **Menu.** "Submissions" is now "Find Your Fit", and the header button is "Get Started".
   - **Delight touches.** See CLAUDE.md, Design.
+- **Follow-up (Dustin, 2026-11-25).** Author portraits are grayscale under a light wash (color on hover). Every count of
+  authors or books is gone (page totals, genre and series chips, author cards and pages, the home "All books" link,
+  `/llms.txt`). "Backlist" and "frontlist" are highlighted on the submission guidelines, and its genre cards became
+  shelves of real covers. Four books still carry a WordPress stand-in cover: Barbarcia, Liberty Unleashed and The
+  Devil's Caldera (gray "Coming Soon") and Port City Rat Trap ("Coming Spring 2024"); upload the real covers in the admin.
+- **SEO check before the switch (2026-11-25), local build.** All 73 WordPress pages answer (72 at the same address,
+  the placeholder template by one 301 to `/books/`); all 177 redirect rules answer with their code and land on a live
+  page in one hop; all 585 sitemap URLs return 200 with a unique title and description, a canonical on
+  epublishingworks.com, Open Graph tags and one H1. All 510 books are linked from their author's page (and listed in
+  the `/books/` ItemList); all 57 authors from `/authors/`. Old `/wp-content/uploads/` image addresses return 404
+  (nothing on the old site linked to them; Google Images may have some).
 
 ## 11. Copy issues spotted (not fixed in the page files; copy is verbatim)
 

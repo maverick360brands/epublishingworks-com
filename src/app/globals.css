@@ -758,3 +758,114 @@
   }
 }
 
+
+/* A highlighter swipe on a key word (Dustin, 2026-11-25: "highlight both frontlist and backlist"). The marker
+   sweeps across once on load, the second a beat after the first; with reduced motion it is simply there. */
+.marker {
+  color: inherit;
+  padding: 0 0.2em;
+  margin: 0 -0.05em;
+  border-radius: 0.3em 0.18em 0.34em 0.2em;
+  background: linear-gradient(100deg, color-mix(in srgb, var(--color-gold) 48%, white), color-mix(in srgb, var(--color-gold) 62%, white)) no-repeat 0 0 / 100% 100%;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  animation: marker-swipe 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.35s both;
+}
+.marker ~ .marker {
+  animation-delay: 0.8s;
+}
+@keyframes marker-swipe {
+  from {
+    background-size: 0% 100%;
+  }
+}
+
+/* Genre shelves on the submission guidelines (GenreShelves.tsx): real covers fanned on a soft ledge. The fan opens
+   from a stack as its tile scrolls into view (where scroll-driven animation is supported; elsewhere it is simply
+   fanned) and spreads a little more under the pointer or when the tile's link has focus. */
+.fan {
+  position: relative;
+  --tilt: 7deg;
+}
+/* Covers are sized to the fan's column (a size container), so the fan, its tilt and its hover spread stay inside
+   it at every width: three covers take about 82% of the column at rest and 91% spread; five take 81% and 95%. */
+.fan-wrap {
+  container-type: inline-size;
+}
+.fan-narrow {
+  --w: min(94px, 34cqi);
+  --step: min(54px, 18cqi);
+}
+.fan-wide {
+  --w: min(104px, 24cqi);
+  --step: min(46px, 10cqi);
+}
+.fan-narrow,
+.fan-wide {
+  height: calc(var(--w) * 1.5 + 14px);
+}
+.fan::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -8px;
+  width: 78%;
+  height: 16px;
+  translate: -50% 0;
+  border-radius: 999px;
+  background: var(--ledge, rgb(12 47 90 / 0.18));
+  filter: blur(9px);
+}
+.fan-cover {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: var(--w);
+  margin-left: calc(var(--w) / -2);
+  transform-origin: 50% 100%;
+  transform: translateX(calc(var(--k) * var(--step))) rotate(calc(var(--k) * var(--tilt)));
+  z-index: calc(10 - var(--d));
+}
+.fan-inner {
+  display: block;
+  transform-origin: 50% 100%;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.genre-tile:hover .fan-inner,
+.genre-tile:focus-within .fan-inner {
+  transform: translateX(calc(var(--k) * 2.5cqi)) rotate(calc(var(--k) * 2deg)) translateY(calc(max(0, 1 - var(--d)) * -10px));
+}
+.your-book {
+  rotate: -4deg;
+  transition: rotate 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.genre-tile:hover .your-book,
+.genre-tile:focus-within .your-book {
+  rotate: 0deg;
+}
+@keyframes fan-open {
+  from {
+    transform: translateX(0) rotate(0deg);
+  }
+}
+@supports (animation-timeline: view()) {
+  .fan-cover {
+    animation: fan-open linear both;
+    animation-timeline: view();
+    animation-range: entry 15% cover 40%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .marker,
+  .fan-cover {
+    animation: none;
+  }
+  .fan-inner,
+  .your-book {
+    transition: none;
+  }
+  .genre-tile:hover .fan-inner,
+  .genre-tile:focus-within .fan-inner {
+    transform: none;
+  }
+}

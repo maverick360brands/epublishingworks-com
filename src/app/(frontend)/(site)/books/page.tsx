@@ -5,7 +5,7 @@ import { BooksBrowser, type CatalogBook } from "@/components/BooksBrowser";
 import { JsonLd } from "@/components/JsonLd";
 import { PageBanner } from "@/components/PageBanner";
 import { ArrowRight } from "@/components/icons";
-import { authorsOfBook, bookAuthorLabel, booksPageOrder, directoryAuthors, getCatalog } from "@/lib/content";
+import { authorsOfBook, bookAuthorLabel, booksPageOrder, getCatalog } from "@/lib/content";
 import { breadcrumbSchema, graph, ids } from "@/lib/schema";
 import { site } from "@/lib/site";
 import { SampleButton } from "@/components/SampleCta";
@@ -41,19 +41,11 @@ export default async function BooksPage() {
     genre: b.genre,
     rank,
   }));
-  const authorCount = directoryAuthors(c).length;
 
   return (
     <>
       <PageBanner
-        intro={
-          <>
-            <strong className="font-semibold text-white">
-              {books.length} books from {authorCount} authors.
-            </strong>{" "}
-            Search by title, author, or series, or browse by genre. Every book links straight to the major retailers.
-          </>
-        }
+        intro="Search by title, author, or series, or browse by genre. Every book links straight to the major retailers."
       >
         Books
       </PageBanner>

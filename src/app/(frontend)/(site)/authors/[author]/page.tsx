@@ -56,7 +56,6 @@ export default async function AuthorPage({ params }: PageProps<"/authors/[author
   const standalone = books.filter((b) => !b.series);
   if (standalone.length) groups.push({ series: "", books: standalone });
   const grouped = groups.length > 1;
-  const seriesCount = groups.filter((g) => g.series).length;
 
   return (
     <>
@@ -94,13 +93,9 @@ export default async function AuthorPage({ params }: PageProps<"/authors/[author
           <div>
             {author.role ? <p className="type-kicker !text-gold">{author.role}</p> : null}
             <h1 className="mt-3 font-display text-[40px] font-extrabold uppercase leading-[1] tracking-[-1px] text-white sm:text-[54px] lg:text-[64px]">{author.name}</h1>
-            <p className="mt-4 text-[17px] text-white/75">
-              {books.length} {books.length === 1 ? "book" : "books"} with {site.name}
-              {seriesCount ? ` · ${seriesCount} series` : ""}
-            </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <a href="#books" className="btn btn-gold btn-lg">
-                See {books.length === 1 ? "the Book" : `All ${books.length} Books`} <ArrowRight className="h-[1em] w-[1.15em] rotate-90" />
+                See {books.length === 1 ? "the Book" : "All Books"} <ArrowRight className="h-[1em] w-[1.15em] rotate-90" />
               </a>
               {author.website ? (
                 <a href={author.website} target="_blank" rel="noopener" className="btn btn-ghost-light btn-lg">
@@ -127,8 +122,8 @@ export default async function AuthorPage({ params }: PageProps<"/authors/[author
               <ul className="flex flex-wrap gap-2">
                 {groups.map((g, i) => (
                   <li key={g.series || "standalone"}>
-                    <a href={`#group-${i}`} className="inline-flex items-center gap-2 rounded-full border border-line bg-white px-4 py-2 text-[14px] font-semibold text-navy no-underline hover:border-blue hover:text-blue">
-                      {g.series || "Other books"} <span className="rounded-full bg-mist px-2 text-[12px] text-body">{g.books.length}</span>
+                    <a href={`#group-${i}`} className="inline-flex items-center rounded-full border border-line bg-white px-4 py-2 text-[14px] font-semibold text-navy no-underline hover:border-blue hover:text-blue">
+                      {g.series || "Other books"}
                     </a>
                   </li>
                 ))}

@@ -28,7 +28,7 @@ function initialState(genres: string[]) {
   return { genre: genres.includes(g) ? g : "all", query: params.get("q") ?? "" };
 }
 
-// The full catalog: genre chips (with counts), search by title, author, or series, and a sort.
+// The full catalog: genre chips, search by title, author, or series, and a sort.
 // The filter state is mirrored into the address bar. Tiles come PAGE at a time ("Show more"):
 // all 510 at once made the page heavy to render; search and filters still cover every book.
 const PAGE = 84; // whole rows at 7, 6, 4, 3 and 2 across
@@ -43,7 +43,7 @@ export function BooksBrowser({ books }: { books: CatalogBook[] }) {
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<Sort>("featured");
   const [limit, setLimit] = useState(PAGE);
-  const countRef = useRef<HTMLParagraphElement>(null);
+  const allRef = useRef<HTMLButtonElement>(null);
   // Picking a genre or a sort "reshelves" the grid: the covers rise into place once (not while
   // typing a search, and not on the first load, so nothing waits to appear).
   // `reshelf` remounts the grid; `shelving` is on only until the next search or "Show more".
@@ -77,18 +77,18 @@ export function BooksBrowser({ books }: { books: CatalogBook[] }) {
       .sort(sorters[sort]);
   }, [books, genre, query, sort]);
 
-  const chip = (id: string, label: string, count: number) => (
+  const chip = (id: string, label: string) => (
     <li key={id} className="shrink-0">
       <button
+        ref={id === "all" ? allRef : undefined}
         type="button"
         aria-pressed={genre === id}
         onClick={() => pick(id)}
-        className={`flex items-center gap-2 rounded-full border px-4 py-2 text-[15px] font-semibold transition-colors ${
+        className={`flex items-center rounded-full border px-4 py-2 text-[15px] font-semibold transition-colors ${
           genre === id ? "border-blue bg-blue text-white" : "border-line bg-white text-navy hover:border-blue hover:text-blue"
         }`}
       >
         {label}
-        <span className={`rounded-full px-2 py-0.5 text-[12px] tabular-nums ${genre === id ? "bg-white/20 text-white" : "bg-mist text-body"}`}>{count}</span>
       </button>
     </li>
   );
@@ -128,13 +128,14 @@ export function BooksBrowser({ books }: { books: CatalogBook[] }) {
 
       <div role="group" aria-label="Filter by genre" className="-mx-5 mt-6 overflow-x-auto px-5 pb-2 [scrollbar-width:thin] lg:mx-0 lg:overflow-visible lg:px-0">
         <ul className="flex gap-2 py-1 lg:flex-wrap">
-          {chip("all", "All books", books.length)}
-          {genres.map(([g, n]) => chip(g, g, n))}
+          {chip("all", "All books")}
+          {genres.map(([g]) => chip(g, g))}
         </ul>
       </div>
 
-      <p ref={countRef} tabIndex={-1} className="mt-6 text-[15px] text-body focus:outline-none" aria-live="polite">
-        {shown.length === books.length ? `${books.length} books` : `${shown.length} of ${books.length} books`}
+      {/* No visible totals (Dustin, 2026-11-25); screen readers still hear how many match a search or genre. */}
+      <p className="sr-only" aria-live="polite">
+        {shown.length === books.length ? "" : `${shown.length} ${shown.length === 1 ? "book matches" : "books match"}`}
       </p>
 
       {shown.length ? (
@@ -157,9 +158,6 @@ export function BooksBrowser({ books }: { books: CatalogBook[] }) {
               <button type="button" onClick={() => (setShelving(false), setLimit((n) => n + PAGE))} className="btn btn-blue">
                 Show More Books
               </button>
-              <p className="mt-3 text-[14px] text-body">
-                Showing {limit} of {shown.length}
-              </p>
             </div>
           ) : null}
         </>
@@ -172,7 +170,7 @@ export function BooksBrowser({ books }: { books: CatalogBook[] }) {
             onClick={() => {
               search("");
               pick("all");
-              countRef.current?.focus(); // the button is gone once the books are back
+              allRef.current?.focus(); // the button is gone once the books are back; land on "All books"
 
             }}
             className="btn btn-blue mt-5"

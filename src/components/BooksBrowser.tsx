@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { BookTile, type BookTileData } from "./BookTile";
 
 export type CatalogBook = BookTileData & { genre: string; authorSort: string; seriesNumber: number | null; seriesName: string; rank: number };
@@ -43,6 +43,7 @@ export function BooksBrowser({ books }: { books: CatalogBook[] }) {
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<Sort>("featured");
   const [limit, setLimit] = useState(PAGE);
+  const countRef = useRef<HTMLParagraphElement>(null);
   // Picking a genre or a sort "reshelves" the grid: the covers rise into place once (not while
   // typing a search, and not on the first load, so nothing waits to appear).
   // `reshelf` remounts the grid; `shelving` is on only until the next search or "Show more".
@@ -126,13 +127,13 @@ export function BooksBrowser({ books }: { books: CatalogBook[] }) {
       </div>
 
       <div role="group" aria-label="Filter by genre" className="-mx-5 mt-6 overflow-x-auto px-5 pb-2 [scrollbar-width:thin] lg:mx-0 lg:overflow-visible lg:px-0">
-        <ul className="flex gap-2 lg:flex-wrap">
+        <ul className="flex gap-2 py-1 lg:flex-wrap">
           {chip("all", "All books", books.length)}
           {genres.map(([g, n]) => chip(g, g, n))}
         </ul>
       </div>
 
-      <p className="mt-6 text-[15px] text-body" aria-live="polite">
+      <p ref={countRef} tabIndex={-1} className="mt-6 text-[15px] text-body focus:outline-none" aria-live="polite">
         {shown.length === books.length ? `${books.length} books` : `${shown.length} of ${books.length} books`}
       </p>
 
@@ -171,6 +172,8 @@ export function BooksBrowser({ books }: { books: CatalogBook[] }) {
             onClick={() => {
               search("");
               pick("all");
+              countRef.current?.focus(); // the button is gone once the books are back
+
             }}
             className="btn btn-blue mt-5"
           >

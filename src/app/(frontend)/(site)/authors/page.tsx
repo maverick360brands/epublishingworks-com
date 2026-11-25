@@ -40,9 +40,6 @@ export default async function AuthorsPage() {
       <AuthorsHero title="Our Authors" intro={authorsPageIntro} faces={faces} authorCount={authors.length} bookCount={visibleBooks(c).length} />
 
       <section aria-labelledby="every-author" className="relative px-5 pb-24 lg:px-8">
-        <h2 id="every-author" className="sr-only">
-          Find an author
-        </h2>
         <div className="relative mx-auto -mt-8 max-w-[1320px] md:-mt-10">
           <AuthorsBrowser authors={cards} groups={groups} />
         </div>

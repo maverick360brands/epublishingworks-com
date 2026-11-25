@@ -17,7 +17,7 @@ export function AuthorsBrowser({ authors, groups }: { authors: DirectoryAuthor[]
   const [group, setGroup] = useState("all");
   const [letter, setLetter] = useState("");
   const [query, setQuery] = useState("");
-  const searchRef = useRef<HTMLInputElement>(null);
+  const headingRef = useRef<HTMLHeadingElement>(null);
 
   useEffect(() => {
     const g = new URLSearchParams(window.location.search).get("genre");
@@ -44,8 +44,11 @@ export function AuthorsBrowser({ authors, groups }: { authors: DirectoryAuthor[]
   }, [narrowed, letter, query]);
   const count = (g: string) => authors.filter((a) => a.groups.includes(g)).length;
   const filtered = group !== "all" || letter || query.trim();
-  // The buttons that clear the filters disappear once pressed, so focus moves to the search box.
-  const clear = () => (setGroup("all"), setLetter(""), setQuery(""), searchRef.current?.focus());
+  // The buttons that clear the filters disappear (or disable themselves) once pressed, so focus moves
+  // to the directory's heading: screen readers keep their place, and phones don't pop the keyboard
+  // up over the results the way focusing the search box would.
+  const toTop = () => headingRef.current?.focus();
+  const clear = () => (setGroup("all"), setLetter(""), setQuery(""), toTop());
 
   const chip = (id: string, label: string, n: number) => (
     <li key={id} className="shrink-0">
@@ -65,6 +68,9 @@ export function AuthorsBrowser({ authors, groups }: { authors: DirectoryAuthor[]
 
   return (
     <div>
+      <h2 id="every-author" ref={headingRef} tabIndex={-1} className="sr-only">
+        Find an author
+      </h2>
       <div className="rounded-[28px] border border-line bg-white p-5 shadow-[0_24px_60px_-40px_rgba(12,47,90,0.45)] sm:p-7">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <label className="relative block w-full md:max-w-[380px]">
@@ -74,7 +80,6 @@ export function AuthorsBrowser({ authors, groups }: { authors: DirectoryAuthor[]
               <path d="M13 13l5 5" strokeLinecap="round" />
             </svg>
             <input
-              ref={searchRef}
               type="search"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
@@ -112,7 +117,7 @@ export function AuthorsBrowser({ authors, groups }: { authors: DirectoryAuthor[]
                     disabled={!has && !on}
                     aria-pressed={on}
                     aria-label={`Last names starting with ${l}`}
-                    onClick={() => setLetter(on ? "" : l)}
+                    onClick={() => (setLetter(on ? "" : l), on && !has && toTop())}
                     className={`flex h-9 w-9 items-center justify-center rounded-full font-display text-[15px] font-extrabold transition-[background-color,color,transform] duration-200 ease-out ${
                       on
                         ? "bg-blue text-white"

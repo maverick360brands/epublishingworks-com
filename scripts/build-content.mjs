@@ -188,10 +188,16 @@ if (!fs.existsSync(imagesCsv)) {
   process.exit(1);
 }
 const imageLines = fs.readFileSync(imagesCsv, "utf8").split(/\r?\n/).slice(1).filter(Boolean);
+// An item names the address segment of a book or author that exists, or the forward would ship as a 404.
+const itemAddresses = new Set([...books.map((b) => b.url), ...authors.map((a) => a.url)]);
 for (const line of imageLines) {
-  const m = /^\/wp-content\/uploads\/([^,/]+),(\/images\/[^,]+),((?:book|author):[a-z0-9_-]+)?,/.exec(line);
+  const m = /^\/wp-content\/uploads\/([^,/]+),(\/images\/[^,]+),((book|author):([a-z0-9_-]+))?,/.exec(line);
   if (!m) {
     console.error(`migration/image-redirects.csv: can't read this row: ${line}`);
+    process.exit(1);
+  }
+  if (m[3] && !itemAddresses.has(m[4] === "book" ? `/${m[5]}/` : `/authors/${m[5]}/`)) {
+    console.error(`migration/image-redirects.csv: no ${m[4]} at that address: ${line}`);
     process.exit(1);
   }
   legacyImages[m[1].toLowerCase()] = m[3] || m[2];

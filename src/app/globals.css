@@ -666,7 +666,7 @@
 
 /* FAQ answers slide open where the browser can animate to auto height; elsewhere they just open. */
 @supports (interpolate-size: allow-keywords) {
-  :root {
+  .faq-item {
     interpolate-size: allow-keywords;
   }
   .faq-item::details-content {

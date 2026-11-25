@@ -1,9 +1,12 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { AuthorCard, type AuthorCardData } from "./AuthorCard";
 
-export type DirectoryAuthor = AuthorCardData & { groups: string[]; initial: string; sortName: string };
+export type DirectoryAuthor = AuthorCardData & { groups: string[]; surnames: string[] };
+
+/** The surname to file an author under for a letter (an author with two names has two). */
+const surnameFor = (a: DirectoryAuthor, letter: string) => (letter && a.surnames.find((s) => s[0]?.toUpperCase() === letter)) || a.surnames[0] || a.name;
 
 const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 
@@ -14,6 +17,7 @@ export function AuthorsBrowser({ authors, groups }: { authors: DirectoryAuthor[]
   const [group, setGroup] = useState("all");
   const [letter, setLetter] = useState("");
   const [query, setQuery] = useState("");
+  const searchRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const g = new URLSearchParams(window.location.search).get("genre");
@@ -27,18 +31,21 @@ export function AuthorsBrowser({ authors, groups }: { authors: DirectoryAuthor[]
     if (url !== `${window.location.pathname}${window.location.search}`) window.history.replaceState(null, "", url);
   }, [group]);
 
-  const initials = useMemo(() => new Set(authors.map((a) => a.initial)), [authors]);
-  const shown = useMemo(() => {
+  // Genre and search narrow the list first; the A–Z strip then offers only letters that still have someone.
+  const narrowed = useMemo(() => {
     const q = query.trim().toLowerCase();
-    const list = authors.filter(
-      (a) => (group === "all" || a.groups.includes(group)) && (!letter || a.initial === letter) && (!q || a.name.toLowerCase().includes(q)),
-    );
+    return authors.filter((a) => (group === "all" || a.groups.includes(group)) && (!q || a.name.toLowerCase().includes(q)));
+  }, [authors, group, query]);
+  const initials = useMemo(() => new Set(narrowed.flatMap((a) => a.surnames.map((s) => s[0]?.toUpperCase()))), [narrowed]);
+  const shown = useMemo(() => {
+    const list = letter ? narrowed.filter((a) => a.surnames.some((s) => s[0]?.toUpperCase() === letter)) : narrowed;
     // A letter or a search reads best alphabetically by last name; otherwise keep our order.
-    return letter || q ? [...list].sort((a, b) => a.sortName.localeCompare(b.sortName)) : list;
-  }, [authors, group, letter, query]);
+    return letter || query.trim() ? [...list].sort((a, b) => surnameFor(a, letter).localeCompare(surnameFor(b, letter)) || a.name.localeCompare(b.name)) : list;
+  }, [narrowed, letter, query]);
   const count = (g: string) => authors.filter((a) => a.groups.includes(g)).length;
   const filtered = group !== "all" || letter || query.trim();
-  const clear = () => (setGroup("all"), setLetter(""), setQuery(""));
+  // The buttons that clear the filters disappear once pressed, so focus moves to the search box.
+  const clear = () => (setGroup("all"), setLetter(""), setQuery(""), searchRef.current?.focus());
 
   const chip = (id: string, label: string, n: number) => (
     <li key={id} className="shrink-0">
@@ -67,11 +74,12 @@ export function AuthorsBrowser({ authors, groups }: { authors: DirectoryAuthor[]
               <path d="M13 13l5 5" strokeLinecap="round" />
             </svg>
             <input
+              ref={searchRef}
               type="search"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Find an author by name"
-              className="h-[52px] w-full rounded-full border-2 border-line bg-white pl-11 pr-5 text-[16px] text-navy placeholder:text-body/70 focus:border-blue focus:outline-none"
+              className="h-[52px] w-full rounded-full border-2 border-line bg-white pl-11 pr-5 text-[16px] text-navy placeholder:text-body focus:border-blue focus:outline-none"
             />
           </label>
           <p className="text-[15px] text-body" aria-live="polite">
@@ -90,9 +98,10 @@ export function AuthorsBrowser({ authors, groups }: { authors: DirectoryAuthor[]
           </p>
         </div>
 
-        {/* A–Z by last name: a letter with no authors is shown but can't be picked. */}
-        <div role="group" aria-label="Authors by last name" className="-mx-5 mt-5 overflow-x-auto border-t border-line px-5 pt-5 [scrollbar-width:none] sm:-mx-7 sm:px-7 md:mx-0 md:overflow-visible md:px-0">
-          <ul className="flex gap-1 md:flex-wrap">
+        {/* A–Z by last name: a letter with no authors (in the chosen genre or search) is shown but can't be
+            picked; a picked letter stays pressable so it can always be cleared. */}
+        <div role="group" aria-label="Authors by last name" className="-mx-5 mt-5 overflow-x-auto border-t border-line px-5 pb-1 pt-5 [scrollbar-width:none] sm:-mx-7 sm:px-7 md:mx-0 md:overflow-visible md:px-0">
+          <ul className="flex gap-1 py-1 md:flex-wrap">
             {LETTERS.map((l) => {
               const has = initials.has(l);
               const on = letter === l;
@@ -100,7 +109,7 @@ export function AuthorsBrowser({ authors, groups }: { authors: DirectoryAuthor[]
                 <li key={l} className="shrink-0">
                   <button
                     type="button"
-                    disabled={!has}
+                    disabled={!has && !on}
                     aria-pressed={on}
                     aria-label={`Last names starting with ${l}`}
                     onClick={() => setLetter(on ? "" : l)}
@@ -121,7 +130,7 @@ export function AuthorsBrowser({ authors, groups }: { authors: DirectoryAuthor[]
         </div>
 
         <div role="group" aria-label="Filter authors by genre" className="-mx-5 mt-5 overflow-x-auto px-5 pb-1 sm:-mx-7 sm:px-7 lg:mx-0 lg:overflow-visible lg:px-0">
-          <ul className="flex gap-2 lg:flex-wrap">
+          <ul className="flex gap-2 py-1 lg:flex-wrap">
             {chip("all", "All genres", authors.length)}
             {groups.map((g) => chip(g, g, count(g)))}
           </ul>

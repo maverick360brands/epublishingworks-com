@@ -18,16 +18,20 @@ export const metadata: Metadata = pageMetadata({
   path: "/authors/",
 });
 
-/** "Alice Duncan" → "Duncan"; used for the A–Z index. */
-const lastName = (name: string) => name.trim().split(/\s+/).at(-1) ?? name;
+/** "Alice Duncan" → ["Duncan"]; "Eileen Dreyer / Kathleen Korbel" → ["Dreyer", "Korbel"]. Used for the A–Z index,
+ *  so an author who writes under two names is found under both letters. */
+const surnames = (name: string) =>
+  name
+    .split("/")
+    .map((part) => part.trim().split(/\s+/).at(-1) ?? "")
+    .filter(Boolean);
 
 export default async function AuthorsPage() {
   const c = await getCatalog();
   const authors = directoryAuthors(c);
   const cards: DirectoryAuthor[] = authors.map((a) => {
     const books = booksByAuthor(c, a.slug);
-    const last = lastName(a.name);
-    return { ...toAuthorCard(a, books), groups: authorGroups(books), initial: last[0]?.toUpperCase() ?? "#", sortName: `${last} ${a.name}` };
+    return { ...toAuthorCard(a, books), groups: authorGroups(books), surnames: surnames(a.name) };
   });
   const faces = authors.filter((a) => a.photo).map((a) => ({ slug: a.slug, name: a.name, url: a.url, photo: a.photo }));
   const groups = Object.keys(AUTHOR_GROUPS).filter((g) => cards.some((a) => a.groups.includes(g)));
@@ -35,7 +39,10 @@ export default async function AuthorsPage() {
     <>
       <AuthorsHero title="Our Authors" intro={authorsPageIntro} faces={faces} authorCount={authors.length} bookCount={visibleBooks(c).length} />
 
-      <section aria-label="Every author" className="relative px-5 pb-24 lg:px-8">
+      <section aria-labelledby="every-author" className="relative px-5 pb-24 lg:px-8">
+        <h2 id="every-author" className="sr-only">
+          Find an author
+        </h2>
         <div className="relative mx-auto -mt-8 max-w-[1320px] md:-mt-10">
           <AuthorsBrowser authors={cards} groups={groups} />
         </div>

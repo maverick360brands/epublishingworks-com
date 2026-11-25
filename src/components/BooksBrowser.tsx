@@ -45,10 +45,13 @@ export function BooksBrowser({ books }: { books: CatalogBook[] }) {
   const [limit, setLimit] = useState(PAGE);
   // Picking a genre or a sort "reshelves" the grid: the covers rise into place once (not while
   // typing a search, and not on the first load, so nothing waits to appear).
+  // `reshelf` remounts the grid; `shelving` is on only until the next search or "Show more".
   const [reshelf, setReshelf] = useState(0);
+  const [shelving, setShelving] = useState(false);
+  const reshelve = () => (setReshelf((n) => n + 1), setShelving(true));
   // A new filter, search, or sort starts again from the first page.
-  const pick = (g: string) => (setGenre(g), setLimit(PAGE), setReshelf((n) => n + 1));
-  const search = (q: string) => (setQuery(q), setLimit(PAGE));
+  const pick = (g: string) => (setGenre(g), setLimit(PAGE), reshelve());
+  const search = (q: string) => (setQuery(q), setLimit(PAGE), setShelving(false));
 
   useEffect(() => {
     const s = initialState(genres.map(([g]) => g));
@@ -103,14 +106,14 @@ export function BooksBrowser({ books }: { books: CatalogBook[] }) {
             value={query}
             onChange={(e) => search(e.target.value)}
             placeholder="Search title, author, or series"
-            className="h-[54px] w-full rounded-full border-2 border-line bg-white pl-12 pr-5 text-[16px] text-navy placeholder:text-body/70 focus:border-blue focus:outline-none"
+            className="h-[54px] w-full rounded-full border-2 border-line bg-white pl-12 pr-5 text-[16px] text-navy placeholder:text-body focus:border-blue focus:outline-none"
           />
         </label>
         <label className="flex items-center gap-3 text-[15px] font-semibold text-navy">
           Sort
           <select
             value={sort}
-            onChange={(e) => (setSort(e.target.value as Sort), setLimit(PAGE), setReshelf((n) => n + 1))}
+            onChange={(e) => (setSort(e.target.value as Sort), setLimit(PAGE), reshelve())}
             className="h-[46px] rounded-full border-2 border-line bg-white px-4 text-[15px] font-semibold text-navy focus:border-blue focus:outline-none"
           >
             {SORTS.map((s) => (
@@ -137,7 +140,7 @@ export function BooksBrowser({ books }: { books: CatalogBook[] }) {
         <>
           <ul key={reshelf} className="mt-8 grid grid-cols-2 gap-x-5 gap-y-10 min-[540px]:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 lg:gap-x-6 xl:grid-cols-7">
             {shown.slice(0, limit).map((b, i) => (
-              <li key={b.slug} className={reshelf ? "shelf-in" : undefined} style={reshelf ? { animationDelay: `${Math.min(i, 13) * 35}ms` } : undefined}>
+              <li key={b.slug} className={shelving ? "shelf-in" : undefined} style={shelving ? { animationDelay: `${Math.min(i, 13) * 35}ms` } : undefined}>
                 <BookTile
                   book={b}
                   dense
@@ -150,7 +153,7 @@ export function BooksBrowser({ books }: { books: CatalogBook[] }) {
           </ul>
           {shown.length > limit ? (
             <div className="mt-14 text-center">
-              <button type="button" onClick={() => setLimit((n) => n + PAGE)} className="btn btn-blue">
+              <button type="button" onClick={() => (setShelving(false), setLimit((n) => n + PAGE))} className="btn btn-blue">
                 Show More Books
               </button>
               <p className="mt-3 text-[14px] text-body">

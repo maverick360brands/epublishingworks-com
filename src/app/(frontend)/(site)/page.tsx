@@ -229,7 +229,7 @@ export default async function HomePage() {
             <p aria-hidden="true" className="font-display text-[88px] font-extrabold leading-none tracking-[-0.04em] text-gold sm:text-[120px] lg:text-[150px]">
               <CountUp to={80} />
               <span className="text-white/90">–</span>
-              <CountUp to={85} duration={1400} />
+              <CountUp to={85} />
               <span className="text-[0.5em] align-top">%</span>
             </p>
             <figcaption className="mt-5 max-w-[360px] border-l-4 border-gold pl-4 font-display text-[22px] font-extrabold leading-[1.2] tracking-[-0.01em] text-white sm:text-[26px]">

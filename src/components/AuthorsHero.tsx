@@ -73,7 +73,6 @@ export function AuthorsHero({
                 alt=""
                 fill
                 sizes="96px"
-                priority={i < 10}
                 className="object-cover object-top grayscale transition-[filter,transform] duration-500 ease-out group-hover:scale-[1.06] group-hover:grayscale-0"
               />
               <span className="absolute inset-0 bg-blue/45 mix-blend-multiply transition-opacity duration-500 group-hover:opacity-0" />

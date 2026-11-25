@@ -15,7 +15,6 @@ export function CountUp({ to, duration = 1200 }: { to: number; duration?: number
     if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const r = el.getBoundingClientRect();
     if (r.top < window.innerHeight && r.bottom > 0) return; // already visible: leave it be
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setValue(0);
     let frame = 0;
     const io = new IntersectionObserver(

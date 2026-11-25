@@ -99,10 +99,13 @@ No other domains. Old-URL redirects are in `migration/redirects.csv` and `next.c
 made in the admin create their own redirects.
 
 Old image addresses (Dustin, 2026-11-25: forward them so covers keep their Google Images traffic):
-`migration/image-redirects.csv` maps each file in WordPress's flat `/wp-content/uploads/` folder to the same image
-here (`/images/books|authors|site/…`), matched by the image itself, else ISBN or file name. The proxy answers with one
-301 (`src/lib/legacy-images.ts`), size copies (`-300x450`, `-scaled`) included. Files with no counterpart (stock
-photos, titles not in the catalog) and the dated folders (an older, unrelated use of the install) stay 404.
+`migration/image-redirects.csv` maps each file in WordPress's flat `/wp-content/uploads/` folder to its book, author
+or site image here, matched by the image itself, else ISBN or file name. A cover or author photo (`item` column)
+forwards in one 301 to that item's current image, the one its page shows (on Vercel, the Blob URL), resolved when
+asked by `src/app/api/legacy-image/`, so a cover replaced in the admin is followed; a site image forwards to its file.
+Size copies (`-300x450`, `-scaled`) included (`src/lib/legacy-images.ts`). Files with no counterpart (stock photos,
+titles not in the catalog) and the dated folders (an older, unrelated use of the install) stay 404 (Vercel's own
+firewall answers some of those probe addresses with a 403).
 
 ## Site-specific rules
 

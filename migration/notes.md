@@ -270,11 +270,12 @@ Because `/apprentice-registration-page/` is indexable and in the sitemap, Google
   epublishingworks.com, Open Graph tags and one H1. All 510 books are linked from their author's page (and listed in
   the `/books/` ItemList); all 57 authors from `/authors/`. Old `/wp-content/uploads/` image addresses: see below.
 - **Old image addresses forwarded (Dustin, 2026-11-25).** The live media library (REST API: 1,302 items, the same as
-  the WXR) was matched to the new images by perceptual hash (598 identical images), then by ISBN or file name where
-  the new site has newer art for the same book or author (31). `migration/image-redirects.csv` has 629 rows: 542
-  covers, 61 author photos, 26 site images. All 951 of their addresses (each file plus WordPress's size copies)
-  301 in one hop to an image that loads. Not forwarded, by design: 53 files with no counterpart (stock photos, Rise UP
-  titles, five Jo Goodman titles and a Jade Lee box set not in the catalog) and the 621 files in dated folders.
+  the WXR) was matched to this site's images by perceptual hash, then by ISBN or file name where the site has newer art
+  for the same book. `migration/image-redirects.csv` has 628 rows: 543 covers and 57 author photos (forwarded to the
+  item's current image, the one its page shows) and 28 site images (logos, stock photos, the four testimonial
+  portraits). 599 rows are the identical image, 28 the same book with newer art, and the old share image goes to the new one. Not forwarded, by design: 54
+  flat files with no counterpart (stock photos, Rise UP titles, five Jo Goodman titles, a Jade Lee box set and Eternal
+  Beloved, none in the catalog), 620 files in dated folders and one Thrive theme image.
 
 ## 11. Copy issues spotted (not fixed in the page files; copy is verbatim)
 

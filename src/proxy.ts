@@ -72,11 +72,14 @@ export async function proxy(request: NextRequest) {
     const to = key ? (shortlinks as Record<string, string>)[key] : undefined;
     if (to) return NextResponse.redirect(new URL(to, request.url), 301);
   }
-  // Old WordPress image addresses forward to the same image on this site in one 301
-  // (migration/image-redirects.csv); any other /wp-content/ file is a real 404.
+  // Old WordPress image addresses forward in one 301 (migration/image-redirects.csv): a site image to
+  // its file here; a cover or author photo, through a rewrite, to that item's current image (the CMS
+  // decides it, so the forward follows edits). Any other /wp-content/ file is a real 404.
   if (pathname.startsWith("/wp-content/")) {
-    const to = legacyImage(pathname);
-    return to ? NextResponse.redirect(new URL(to, request.url), 301) : NextResponse.rewrite(new URL("/__not-found/__/__/", request.url));
+    const target = legacyImage(pathname);
+    if (!target) return NextResponse.rewrite(new URL("/__not-found/__/__/", request.url));
+    if ("path" in target) return NextResponse.redirect(new URL(target.path, request.url), 301);
+    return NextResponse.rewrite(new URL(`/api/legacy-image/${target.kind}/${encodeURIComponent(target.slug)}/`, request.url));
   }
   const segments = pathname.split("/").filter(Boolean);
   const strayFile =

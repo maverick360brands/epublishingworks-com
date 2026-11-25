@@ -176,16 +176,25 @@ if (fs.existsSync(redirectsCsv)) {
   }
 }
 
-// Old WordPress image addresses (/wp-content/uploads/<file>) and the new image each one forwards to
-// (migration/image-redirects.csv: matched by image, ISBN or file name). Keys are lower-case file names;
-// the proxy also maps WordPress's size variants (-300x450) back to their file. No commas or quotes in them.
+// Old WordPress image addresses (/wp-content/uploads/<file>) and what each forwards to
+// (migration/image-redirects.csv: matched by image, ISBN or file name). A book or author row forwards to
+// that item's current cover or photo ("book:<slug>", resolved when asked, so it follows edits in the
+// admin); a site image row to its file here. Keys are lower-case file names; the proxy also maps
+// WordPress's size copies (-300x450) back to their file. No commas or quotes in the from/to/item columns.
 const legacyImages = {};
 const imagesCsv = path.join(root, "migration", "image-redirects.csv");
-if (fs.existsSync(imagesCsv)) {
-  for (const line of fs.readFileSync(imagesCsv, "utf8").split(/\r?\n/).slice(1)) {
-    const m = /^\/wp-content\/uploads\/([^,/]+),(\/images\/[^,]+),/.exec(line);
-    if (m) legacyImages[m[1].toLowerCase()] = m[2];
+if (!fs.existsSync(imagesCsv)) {
+  console.error("migration/image-redirects.csv is missing: old image addresses would stop forwarding.");
+  process.exit(1);
+}
+const imageLines = fs.readFileSync(imagesCsv, "utf8").split(/\r?\n/).slice(1).filter(Boolean);
+for (const line of imageLines) {
+  const m = /^\/wp-content\/uploads\/([^,/]+),(\/images\/[^,]+),((?:book|author):[a-z0-9_-]+)?,/.exec(line);
+  if (!m) {
+    console.error(`migration/image-redirects.csv: can't read this row: ${line}`);
+    process.exit(1);
   }
+  legacyImages[m[1].toLowerCase()] = m[3] || m[2];
 }
 
 fs.mkdirSync(outDir, { recursive: true });
